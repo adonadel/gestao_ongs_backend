@@ -4,7 +4,10 @@ namespace App\Http\Controllers;
 
 use App\Http\Services\User\CreateUserService;
 use App\Http\Services\User\QueryUserService;
+use App\Models\User;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Hash;
 
 class UserController extends Controller
 {
@@ -12,9 +15,17 @@ class UserController extends Controller
     {
         $credentials = $request->only(['email', 'password']);
 
-        if (!$token = auth()->attempt($credentials)) {
-            abort(401);
+        $user = User::query()
+            ->whereHas('person', function (Builder $query) use ($credentials) {
+                $query->where('email', data_get($credentials, 'email'));
+            })
+            ->first();
+
+        if (!$user || !Hash::check(data_get($credentials, 'password'), $user->password)) {
+            abort(401, 'Não autorizado');
         }
+
+        $token = auth()->login($user);
 
         return response()->json([
             'data' => [
