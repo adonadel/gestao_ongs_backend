@@ -2,8 +2,10 @@
 
 namespace App\Providers;
 
-// use Illuminate\Support\Facades\Gate;
+use App\Policies\UserPolicy;
 use Illuminate\Foundation\Support\Providers\AuthServiceProvider as ServiceProvider;
+use Illuminate\Support\Facades\Auth;
+use Laravel\Sanctum\Guard;
 
 class AuthServiceProvider extends ServiceProvider
 {
@@ -13,14 +15,15 @@ class AuthServiceProvider extends ServiceProvider
      * @var array<class-string, class-string>
      */
     protected $policies = [
-        //
+        UserPolicy::class
     ];
 
-    /**
-     * Register any authentication / authorization services.
-     */
     public function boot(): void
     {
-        //
+        $this->registerPolicies();
+
+        Auth::extend('api', function ($app, $name, array $config) {
+            return new Guard($app, $name, $config['provider']);
+        });
     }
 }

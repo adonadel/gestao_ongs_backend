@@ -2,13 +2,20 @@
 
 namespace App\Models;
 
-// use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
 use Tymon\JWTAuth\Contracts\JWTSubject;
 
+
+/**
+ *
+ * @property Role $role
+ * @property People $person
+ */
 class User extends Authenticatable implements JWTSubject
 {
     use HasApiTokens, HasFactory, Notifiable;
@@ -19,8 +26,6 @@ class User extends Authenticatable implements JWTSubject
      * @var array<int, string>
      */
     protected $fillable = [
-        'name',
-        'email',
         'password',
     ];
 
@@ -31,7 +36,6 @@ class User extends Authenticatable implements JWTSubject
      */
     protected $hidden = [
         'password',
-        'remember_token',
     ];
 
     /**
@@ -40,8 +44,11 @@ class User extends Authenticatable implements JWTSubject
      * @var array<string, string>
      */
     protected $casts = [
-        'email_verified_at' => 'datetime',
         'password' => 'hashed',
+    ];
+
+    protected $with = [
+        'person'
     ];
 
     public function getJWTIdentifier()
@@ -52,5 +59,25 @@ class User extends Authenticatable implements JWTSubject
     public function getJWTCustomClaims()
     {
         return [];
+    }
+
+    public function person(): BelongsTo
+    {
+        return $this->belongsTo(People::class, 'people_id');
+    }
+
+    public function role(): BelongsTo
+    {
+        return $this->belongsTo(Role::class);
+    }
+
+    public function permissions(): HasMany
+    {
+        return $this->role->permissions();
+    }
+
+    public function hasPermission(string $permission): bool
+    {
+        return $this->role->hasPermission($permission);
     }
 }
