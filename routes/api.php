@@ -28,6 +28,13 @@ Route::prefix('users')->group( function() {
 
             //put
             Route::put('/{id}', 'update');
+
+            //patch
+            Route::patch('/{id}/enable', 'enable');
+            Route::patch('/{id}/disable', 'disable');
+
+            //delete
+            Route::delete('/{id}/delete', 'delete');
         });
 
         Route::middleware('api')->group(function () {

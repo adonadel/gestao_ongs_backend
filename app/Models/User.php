@@ -52,7 +52,9 @@ class User extends Authenticatable implements JWTSubject
     ];
 
     protected $with = [
-        'person'
+        'person',
+        'person.address',
+        'role',
     ];
 
     public function getJWTIdentifier()

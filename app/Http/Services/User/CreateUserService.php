@@ -17,6 +17,6 @@ class CreateUserService
 
         $data['people_id'] = $person->id;
 
-        return $userRepository->create($data)->fresh('person', 'person.address', 'role');
+        return $userRepository->create($data);
     }
 }
