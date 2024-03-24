@@ -8,6 +8,7 @@ use App\Models\User;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Validation\Rules\Password;
 
 class UserController extends Controller
 {
@@ -69,7 +70,9 @@ class UserController extends Controller
         $validated = $request->validate([
             'name' => 'required|string',
             'email' => 'required|string',
-            'password' => 'required|string|min:6|max:255',
+            'password' => [
+                'required', Password::min(6)->mixedCase()->letters()->numbers()->symbols()->uncompromised()
+            ],
         ]);
 
         return $service->create($validated);

@@ -15,7 +15,7 @@ use App\Http\Controllers\UserController;
 |
 */
 
-Route::prefix('user')->group( function() {
+Route::prefix('users')->group( function() {
     Route::controller(UserController::class)->group( function() {
         Route::middleware('auth:api')->group(function () {
             //get
