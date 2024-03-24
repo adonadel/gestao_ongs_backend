@@ -14,11 +14,9 @@ class Event extends Model
 
     protected $fillable = [
         'name',
-        'gender',
-        'size',
-        'age_type',
         'description',
-        'tags',
+        'event_date',
+        'location',
     ];
 
     public function address(): BelongsTo

@@ -12,7 +12,7 @@ class Nrg extends Model
     use HasFactory;
 
     protected $fillable = [
-        'addresses_id',
+        'address_id',
         'name',
         'cnpj',
         'description',

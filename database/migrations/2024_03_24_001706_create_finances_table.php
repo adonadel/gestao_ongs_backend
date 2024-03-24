@@ -1,11 +1,11 @@
 <?php
 
+use App\Enums\FinancesTypeEnum;
+use App\Models\Animal;
+use App\Models\User;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
-use App\Enums\FinancesTypeEnum;
-use App\Models\User;
-use App\Models\Animal;
 
 return new class extends Migration
 {
@@ -21,7 +21,7 @@ return new class extends Migration
             $table->text('description');
             $table->date('date');
             $table->double('value');
-            $table->enum('type', FinancesTypeEnum::cases());
+            $table->enum('type', FinancesTypeEnum::toArrayWithString());
             $table->timestamps();
         });
     }
