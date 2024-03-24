@@ -13,8 +13,8 @@ class Adoption extends Model
 
     protected $fillable = [
         'description',
-        'animals_id',
-        'users_id',
+        'animal_id',
+        'user_id',
         'adoption_date',
     ];
 

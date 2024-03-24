@@ -2,7 +2,7 @@
 
 namespace App\Enums;
 
-enum FinancesTypeEnum: string
+enum FinanceTypeEnum: string
 {
     case INCOME = 'INCOME';
     case EXPENSE = 'EXPENSE';

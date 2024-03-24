@@ -12,8 +12,8 @@ class EventMedia extends Pivot
     use HasFactory;
 
     protected $fillable = [
-        'events_id',
-        'medias_id',
+        'event_id',
+        'media_id',
         'order',
     ];
 

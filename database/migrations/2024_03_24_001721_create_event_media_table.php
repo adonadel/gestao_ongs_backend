@@ -1,10 +1,10 @@
 <?php
 
+use App\Models\Event;
+use App\Models\Media;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
-use App\Models\Event;
-use App\Models\Media;
 
 return new class extends Migration
 {
@@ -17,7 +17,7 @@ return new class extends Migration
             $table->id();
             $table->foreignIdFor(Media::class)->nullable();
             $table->foreignIdFor(Event::class)->nullable();
-            $table->integer('order');
+            $table->integer('order')->unique();
             $table->timestamps();
         });
     }

@@ -3,18 +3,18 @@
 namespace App\Models;
 
 
-use App\Enums\FinancesTypeEnum;
+use App\Enums\FinanceTypeEnum;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
-class Finances extends Model
+class Finance extends Model
 {
     use HasFactory;
 
     protected $fillable = [
-        'users_id',
-        'animals_id',
+        'user_id',
+        'animal_id',
         'description',
         'date',
         'value',
@@ -22,7 +22,7 @@ class Finances extends Model
     ];
 
     protected $casts = [
-        'type' => FinancesTypeEnum::class,
+        'type' => FinanceTypeEnum::class,
     ];
 
     public function person(): HasMany

@@ -12,8 +12,8 @@ class AnimalMedia extends Pivot
     use HasFactory;
 
     protected $fillable = [
-        'animals_id',
-        'medias_id',
+        'animal_id',
+        'media_id',
         'order',
     ];
 
