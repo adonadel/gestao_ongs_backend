@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Extensions\CustomPassword;
 use App\Http\Services\User\CreateUserService;
 use App\Http\Services\User\DeleteUserService;
 use App\Http\Services\User\DisableUserService;
@@ -12,10 +13,12 @@ use App\Models\Role;
 use App\Repositories\UserRepository;
 use App\Rules\UniqueCpfCnpj;
 use App\Rules\UniqueEmail;
-use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Auth\Events\PasswordReset;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Password as PasswordForReset;
+use Illuminate\Support\Str;
 use Illuminate\Validation\Rule;
 use Illuminate\Validation\Rules\Password;
 
@@ -23,21 +26,19 @@ class UserController extends Controller
 {
     function login(Request $request)
     {
-        $credentials = $request->only(['email', 'password']);
+        $credentials = $request->only(['email', 'password', 'remember']);
+
+        $remember = (bool) data_get($credentials, 'remember');
 
         $repository = new UserRepository();
 
-        $user = $repository->newQuery()
-            ->whereHas('person', function (Builder $query) use ($credentials) {
-                $query->where('email', data_get($credentials, 'email'));
-            })
-            ->first();
+        $user = $repository->getByEmail(data_get($credentials, 'email'));
 
         if (!$user || !Hash::check(data_get($credentials, 'password'), $user->password)) {
             abort(401, 'Não autorizado');
         }
 
-        $token = auth()->login($user);
+        $token = auth()->login($user, $remember);
 
         return response()->json([
             'data' => [
@@ -47,13 +48,17 @@ class UserController extends Controller
         ]);
     }
 
-    function logout()
+    function logout(Request $request)
     {
         if (! auth()->user()) {
             throw new \Exception('Nenhum usuário logado');
         }
 
         auth()->logout();
+
+        $request->session()->invalidate();
+
+        $request->session()->regenerateToken();
 
         return response()->json([
             'message' => 'Desconectado do sistema'
@@ -72,6 +77,15 @@ class UserController extends Controller
         $service = new QueryUserService();
 
         return $service->getUserById($id);
+    }
+
+    function getLoggedUser()
+    {
+        if (! auth()->user()) {
+            throw new \Exception('Nenhum usuário logado');
+        }else {
+            return auth()->user();
+        }
     }
 
     function create(Request $request)
@@ -143,9 +157,10 @@ class UserController extends Controller
             $service->delete($id);
 
             DB::commit();
-            return [
-                'Usuário excluído com sucesso!'
-            ];
+
+            return response()->json([
+                'message' => 'Usuário excluído com sucesso!'
+            ]);
         }catch(\Exception $e) {
             DB::rollBack();
             throw new \Exception($e->getMessage());
@@ -162,9 +177,10 @@ class UserController extends Controller
             $service->enable($id);
 
             DB::commit();
-            return [
-                'Usuário ativado com sucesso!'
-            ];
+
+            return response()->json([
+                'message' => 'Usuário ativado com sucesso!'
+            ]);
         }catch(\Exception $e) {
             DB::rollBack();
             throw new \Exception($e->getMessage());
@@ -181,13 +197,80 @@ class UserController extends Controller
             $service->disable($id);
 
             DB::commit();
-            return [
-                'Usuário desativado com sucesso!'
-            ];
+
+            return response()->json([
+                'message' => 'Usuário desativado com sucesso!'
+            ]);
         }catch(\Exception $e) {
             DB::rollBack();
             throw new \Exception($e->getMessage());
         }
     }
 
+    function forgotPassword(Request $request)
+    {
+        $request->validate([
+           'email' => 'required|email'
+        ]);
+
+        $userRepository = new UserRepository();
+
+        $user = $userRepository->getByEmail($request->email);
+
+        if (!$user) {
+            return response()->json([
+                'message' => 'Erro ao enviar email de recuperação!'
+            ]);
+        }
+        $customPassword = new CustomPassword();
+
+        $status = $customPassword->sendResetLink([
+            'email' => $user->getEmailForPasswordReset(),
+        ]);
+        
+        if ($status === PasswordForReset::RESET_LINK_SENT) {
+            return response()->json([
+                'message' => 'Link para recuperar senha enviado!'
+            ]);
+        }else {
+            return response()->json([
+                'message' => 'Erro ao enviar email de recuperação!'
+            ]);
+        }
+    }
+
+    function resetPassword(Request $request)
+    {
+        $request->validate([
+            'token' => 'required',
+            'person.email' => 'required|email',
+            'password' => [
+                'required', Password::min(6)->mixedCase()->letters()->numbers()
+            ],
+        ]);
+
+        $status = PasswordForReset::reset(
+            $request->only('person.email', 'password', 'password_confirmation', 'token'),
+            function (User $user, string $password) {
+                $user->forceFill([
+                    'pasword' => Hash::make($password)
+                ])->setRememberToken(Str::random(60));
+
+                $user->save();
+
+                event(new PasswordReset($user));
+            }
+        );
+
+
+        if ($status === PasswordForReset::PASSWORD_RESET) {
+            return response()->json([
+                'message' => 'Senha resetada com sucesso!'
+            ]);
+        }else {
+            return response()->json([
+                'message' => 'Erro ao resetar senha!'
+            ]);
+        }
+    }
 }

@@ -3,6 +3,8 @@
 namespace App\Models;
 
 use App\Enums\UserStatusEnum;
+use App\Traits\HasPersonEmail;
+use Illuminate\Contracts\Auth\CanResetPassword as CanResetPasswordContract;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Foundation\Auth\User as Authenticatable;
@@ -16,9 +18,9 @@ use Tymon\JWTAuth\Contracts\JWTSubject;
  * @property Role $role
  * @property People $person
  */
-class User extends Authenticatable implements JWTSubject
+class User extends Authenticatable implements JWTSubject, CanResetPasswordContract
 {
-    use HasApiTokens, HasFactory, Notifiable;
+    use HasApiTokens, HasFactory, Notifiable, HasPersonEmail;
 
     /**
      * The attributes that are mass assignable.

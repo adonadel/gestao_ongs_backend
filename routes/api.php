@@ -1,8 +1,7 @@
 <?php
 
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\UserController;
+use Illuminate\Support\Facades\Route;
 
 /*
 |--------------------------------------------------------------------------
@@ -21,6 +20,7 @@ Route::prefix('users')->group( function() {
             //get
             Route::get('/', 'getUsers');
             Route::get('/{id}', 'getUserById');
+            Route::get('/logged-user', 'getLoggedUser');
 
             //post
             Route::post('/', 'create');
@@ -40,6 +40,8 @@ Route::prefix('users')->group( function() {
         Route::middleware('api')->group(function () {
             //post
             Route::post('/login', 'login');
+            Route::post('/forgot-password', 'forgotPassword');
+            Route::post('/reset-password/{token}', 'resetPassword');
         });
     });
 });
