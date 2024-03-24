@@ -11,8 +11,9 @@
             Recuperar senha
         </div>
         <div class="header_message">
-            Olá <strong>{{ $user->person->name }}</strong><br />
-            Para redefinir sua senha, clique no link <a href="{{ $recoveryLink }}">{{ $recoveryLink }}</a> e siga os passos na nova página. Caso desconheça esta solicitação, ignore o email.
+            Olá <strong>{{ $user->person->name }}</strong>,<br />
+            Para redefinir sua senha, clique no link <a href="{{ $recoveryLink }}" target="_blank">{{ $recoveryLink }}</a> e siga os passos na nova página.<br />
+            Caso desconheça esta solicitação, ignore o email.
         </div>
         <div class="footer">
             Patinhas love &copy;

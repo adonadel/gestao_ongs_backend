@@ -13,12 +13,10 @@ use App\Models\Role;
 use App\Repositories\UserRepository;
 use App\Rules\UniqueCpfCnpj;
 use App\Rules\UniqueEmail;
-use Illuminate\Auth\Events\PasswordReset;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Password as PasswordForReset;
-use Illuminate\Support\Str;
 use Illuminate\Validation\Rule;
 use Illuminate\Validation\Rules\Password;
 
@@ -227,7 +225,7 @@ class UserController extends Controller
         $status = $customPassword->sendResetLink([
             'email' => $user->getEmailForPasswordReset(),
         ]);
-        
+
         if ($status === PasswordForReset::RESET_LINK_SENT) {
             return response()->json([
                 'message' => 'Link para recuperar senha enviado!'
@@ -243,24 +241,14 @@ class UserController extends Controller
     {
         $request->validate([
             'token' => 'required',
-            'person.email' => 'required|email',
+            'email' => 'required|email',
             'password' => [
                 'required', Password::min(6)->mixedCase()->letters()->numbers()
             ],
         ]);
+        $customPassword = new CustomPassword();
 
-        $status = PasswordForReset::reset(
-            $request->only('person.email', 'password', 'password_confirmation', 'token'),
-            function (User $user, string $password) {
-                $user->forceFill([
-                    'pasword' => Hash::make($password)
-                ])->setRememberToken(Str::random(60));
-
-                $user->save();
-
-                event(new PasswordReset($user));
-            }
-        );
+        $status = $customPassword->reset($request->only('email', 'password', 'token'));
 
 
         if ($status === PasswordForReset::PASSWORD_RESET) {

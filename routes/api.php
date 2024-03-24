@@ -41,7 +41,7 @@ Route::prefix('users')->group( function() {
             //post
             Route::post('/login', 'login');
             Route::post('/forgot-password', 'forgotPassword');
-            Route::post('/reset-password/{token}', 'resetPassword');
+            Route::post('/reset-password', 'resetPassword');
         });
     });
 });

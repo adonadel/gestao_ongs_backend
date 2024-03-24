@@ -20,7 +20,7 @@ class PasswordReset extends Mailable
     {
         return $this->view('emails.passwordReset', [
             'user' => $this->user,
-            'recoveryLink' => env('APP_FRONTEND_URL') . $this->token,
+            'recoveryLink' => env('APP_FRONTEND_URL') . "?token={$this->token}",
         ]);
     }
 }
