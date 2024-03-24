@@ -1,9 +1,9 @@
 <?php
 
+use App\Models\Address;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
-use App\Models\Address;
 
 return new class extends Migration
 {
@@ -14,7 +14,7 @@ return new class extends Migration
     {
         Schema::create('ngrs', function (Blueprint $table) {
             $table->id();
-            $table->foreignIdFor(Address::class);
+            $table->foreignIdFor(Address::class)->nullable();
             $table->string('name');
             $table->string('cnpj')->unique();
             $table->text('description');

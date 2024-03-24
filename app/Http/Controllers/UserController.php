@@ -4,10 +4,15 @@ namespace App\Http\Controllers;
 
 use App\Http\Services\User\CreateUserService;
 use App\Http\Services\User\QueryUserService;
-use App\Models\User;
+use App\Http\Services\User\UpdateUserService;
+use App\Models\Role;
+use App\Repositories\UserRepository;
+use App\Rules\UniqueCpfCnpj;
+use App\Rules\UniqueEmail;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Validation\Rule;
 use Illuminate\Validation\Rules\Password;
 
 class UserController extends Controller
@@ -16,7 +21,9 @@ class UserController extends Controller
     {
         $credentials = $request->only(['email', 'password']);
 
-        $user = User::query()
+        $repository = new UserRepository();
+
+        $user = $repository->newQuery()
             ->whereHas('person', function (Builder $query) use ($credentials) {
                 $query->where('email', data_get($credentials, 'email'));
             })
@@ -68,11 +75,14 @@ class UserController extends Controller
         $service = new CreateUserService();
 
         $validated = $request->validate([
-            'name' => 'required|string',
-            'email' => 'required|string',
             'password' => [
-                'required', Password::min(6)->mixedCase()->letters()->numbers()->symbols()->uncompromised()
+                'required', Password::min(6)->mixedCase()->letters()->numbers()
             ],
+            'role_id' => ['required', 'int', Rule::exists(Role::class, 'id')],
+            'person' => 'array|required',
+            'person.name' => 'required|string',
+            'person.email' => ['required', 'email', new UniqueEmail(new UserRepository())],
+            'person.cpf_cnpj' => ['required', 'string', new UniqueCpfCnpj(new UserRepository())],
         ]);
 
         return $service->create($validated);
@@ -85,7 +95,9 @@ class UserController extends Controller
         $validated = $request->validate([
             'name' => 'required|string',
             'email' => 'required|string',
-            'password' => 'required|string|min:6|max:255',
+            'password' => [
+                'required', Password::min(6)->mixedCase()->letters()->numbers()
+            ],
         ]);
 
         return $service->update($validated, $id);

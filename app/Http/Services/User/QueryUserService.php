@@ -2,21 +2,39 @@
 
 namespace App\Http\Services\User;
 
-use App\Models\User;
+use App\Repositories\UserRepository;
+use App\Utils\CPFUtils;
+use App\Utils\StringUtils;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Support\Facades\DB;
 
 class QueryUserService
 {
     function getUsers(array $filters)
     {
         $noPaginate = data_get($filters, 'no-paginate', false);
-        $name = data_get($filters, 'name');
+        $search = data_get($filters, 'name');
 
-        $query = User::query();
+        $query = (new UserRepository())->newQuery();
 
         $query
-            ->when($name, function(Builder $query, $name){
-                $query->where('name', 'ilike', "%{$name}%");
+            ->with(['person.address', 'role', 'role.permissions'])
+            ->when($search, function(Builder $query, $search){
+                $query->whereHas('person', function (Builder $query) use ($search){
+                   $check = StringUtils::checkIfStringStartWithNumber($search);
+                   return $query
+
+                       ->where('name', 'ilike', "%{$search}%")
+                       ->orWhere('email', 'ilike', "%{$search}%")
+                       ->when($check, function ($query) use ($search){
+                           $cleanedString = CPFUtils::removeNonAlphaNumericFromString($search);
+                           $query->orWhere(
+                                DB::raw("regexp_replace(\"cpf_cnpj\" , '[^0-9]*', '', 'g')"),
+                                'ilike',
+                                "{$cleanedString}%"
+                            );
+                    });
+                });
             });
 
         if ($noPaginate) {
@@ -28,6 +46,6 @@ class QueryUserService
 
     public function getUserById(int $id)
     {
-        return User::query()->find($id);
+        return (new UserRepository())->getById($id);
     }
 }

@@ -6,7 +6,7 @@ use App\Models\Permission;
 use App\Models\Role;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
-class RolePermissionFactory extends Factory
+class PermissionRoleFactory extends Factory
 {
 
     public function definition(): array

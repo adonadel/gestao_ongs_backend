@@ -5,13 +5,16 @@ namespace App\Http\Services\User;
 
 use App\Repositories\UserRepository;
 
-class UpdateUserService
+class DeleteUserService
 {
-    function update(array $data, int $id)
+    public function delete(int $id)
     {
         $repository = new UserRepository();
+
         $user = $repository->getById($id);
 
-        return $repository->update($user, $data);
+        $repository->delete($user);
+
+        return true;
     }
 }

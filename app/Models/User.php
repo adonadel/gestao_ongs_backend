@@ -2,9 +2,9 @@
 
 namespace App\Models;
 
+use App\Enums\UserStatusEnum;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
@@ -27,6 +27,9 @@ class User extends Authenticatable implements JWTSubject
      */
     protected $fillable = [
         'password',
+        'status',
+        'role_id',
+        'people_id',
     ];
 
     /**
@@ -45,6 +48,7 @@ class User extends Authenticatable implements JWTSubject
      */
     protected $casts = [
         'password' => 'hashed',
+        'status' => UserStatusEnum::class,
     ];
 
     protected $with = [
@@ -71,7 +75,7 @@ class User extends Authenticatable implements JWTSubject
         return $this->belongsTo(Role::class);
     }
 
-    public function permissions(): HasMany
+    public function permissions()
     {
         return $this->role->permissions();
     }

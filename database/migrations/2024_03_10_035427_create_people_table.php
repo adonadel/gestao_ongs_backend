@@ -1,9 +1,10 @@
 <?php
 
+use App\Models\Address;
+use App\Models\Media;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
-use App\Models\Address;
 
 return new class extends Migration
 {
@@ -14,7 +15,8 @@ return new class extends Migration
     {
         Schema::create('people', function (Blueprint $table) {
             $table->id();
-            $table->foreignIdFor(Address::class);
+            $table->foreignIdFor(Address::class)->nullable();
+            $table->foreignIdFor(Media::class, 'profile_picture_id')->nullable();
             $table->string('name', 100);
             $table->string('email', 100)->unique();
             $table->string('cpf_cnpj', 20);
