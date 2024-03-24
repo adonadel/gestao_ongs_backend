@@ -1,0 +1,57 @@
+<?php
+
+namespace App\Repositories;
+
+use App\Models\User;
+use App\Utils\CPFUtils;
+use App\Utils\StringUtils;
+use Illuminate\Database\Eloquent\Builder;
+
+class UserRepository extends Repository
+{
+    public function getUsers(array $filters)
+    {
+        $noPaginate = data_get($filters, 'no-paginate', false);
+        $search = data_get($filters, 'name');
+
+        $query = $this->newQuery();
+
+        $query
+            ->with(['person.address', 'role', 'role.permissions'])
+            ->when($search, function(Builder $query, $search){
+                $query->whereHas('person', function (Builder $query) use ($search){
+                   $check = StringUtils::checkIfStringStartWithNumber($search);
+                   return $query
+
+                       ->where('name', 'ilike', "%{$search}%")
+                       ->orWhere('email', 'ilike', "%{$search}%")
+                       ->when($check, function ($query) use ($search){
+                           $cleanedString = CPFUtils::removeNonAlphaNumericFromString($search);
+                           $query->orWhere(
+                                DB::raw("regexp_replace(\"cpf_cnpj\" , '[^0-9]*', '', 'g')"),
+                                'ilike',
+                                "{$cleanedString}%"
+                            );
+                    });
+                });
+            });
+
+        if ($noPaginate) {
+            return $query->get();
+        }
+
+        return $query->paginate();
+    }
+
+    protected function getModelClass(): string
+    {
+        return User::class;
+    }
+    public function getByEmail(string $email)
+    {
+        return $this->newQuery()
+            ->whereHas('person', function (Builder $query) use ($email) {
+                return $query->where('email', $email);
+            })->first();
+    }
+}

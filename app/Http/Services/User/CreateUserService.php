@@ -2,14 +2,21 @@
 
 namespace App\Http\Services\User;
 
-use App\Models\User;
+
+use App\Repositories\PeopleRepository;
+use App\Repositories\UserRepository;
 
 class CreateUserService
 {
     function create(array $data)
     {
-        $user = User::query()->create($data);
+        $userRepository = new UserRepository();
+        $personRepository = new PeopleRepository();
 
-        return $user;
+        $person = $personRepository->create(data_get($data, 'person'));
+
+        $data['people_id'] = $person->id;
+
+        return $userRepository->create($data);
     }
 }

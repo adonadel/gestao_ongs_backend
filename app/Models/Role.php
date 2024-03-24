@@ -5,7 +5,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 
 /**
  *
@@ -19,9 +19,14 @@ class Role extends Model
         'name',
     ];
 
-    public function permissions(): HasMany
+    protected $hidden = [
+      'pivot'
+    ];
+
+    public function permissions(): BelongsToMany
     {
-        return $this->hasMany(Permission::class);
+        return $this->belongsToMany(Permission::class)
+            ->withPivot('role_id');
     }
 
     public function hasPermission(string $permission): bool

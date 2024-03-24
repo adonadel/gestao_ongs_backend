@@ -2,9 +2,11 @@
 
 namespace App\Models;
 
+use App\Enums\UserStatusEnum;
+use App\Traits\HasPersonEmail;
+use Illuminate\Contracts\Auth\CanResetPassword as CanResetPasswordContract;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
@@ -16,9 +18,9 @@ use Tymon\JWTAuth\Contracts\JWTSubject;
  * @property Role $role
  * @property People $person
  */
-class User extends Authenticatable implements JWTSubject
+class User extends Authenticatable implements JWTSubject, CanResetPasswordContract
 {
-    use HasApiTokens, HasFactory, Notifiable;
+    use HasApiTokens, HasFactory, Notifiable, HasPersonEmail;
 
     /**
      * The attributes that are mass assignable.
@@ -27,6 +29,9 @@ class User extends Authenticatable implements JWTSubject
      */
     protected $fillable = [
         'password',
+        'status',
+        'role_id',
+        'people_id',
     ];
 
     /**
@@ -45,10 +50,13 @@ class User extends Authenticatable implements JWTSubject
      */
     protected $casts = [
         'password' => 'hashed',
+        'status' => UserStatusEnum::class,
     ];
 
     protected $with = [
-        'person'
+        'person',
+        'person.address',
+        'role',
     ];
 
     public function getJWTIdentifier()
@@ -71,7 +79,7 @@ class User extends Authenticatable implements JWTSubject
         return $this->belongsTo(Role::class);
     }
 
-    public function permissions(): HasMany
+    public function permissions()
     {
         return $this->role->permissions();
     }

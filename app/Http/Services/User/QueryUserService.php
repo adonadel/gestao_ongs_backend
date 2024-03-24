@@ -2,32 +2,19 @@
 
 namespace App\Http\Services\User;
 
-use App\Models\User;
-use Illuminate\Database\Eloquent\Builder;
+use App\Repositories\UserRepository;
 
 class QueryUserService
 {
     function getUsers(array $filters)
     {
-        $noPaginate = data_get($filters, 'no-paginate', false);
-        $name = data_get($filters, 'name');
+        $repository = new UserRepository();
 
-        $query = User::query();
-
-        $query
-            ->when($name, function(Builder $query, $name){
-                $query->where('name', 'ilike', "%{$name}%");
-            });
-
-        if ($noPaginate) {
-            return $query->get();
-        }
-
-        return $query->paginate();
+        return $repository->getUsers($filters);
     }
 
     public function getUserById(int $id)
     {
-        return User::query()->find($id);
+        return (new UserRepository())->getById($id);
     }
 }

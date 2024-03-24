@@ -23,7 +23,7 @@ class UserPolicy
 
     public function update(User $user)
     {
-        $permission = Permission::query()->where('name', 'user-create')->first();
+        $permission = Permission::query()->where('name', 'user-update')->first();
 
         return $user->hasPermission($permission->name);
     }
