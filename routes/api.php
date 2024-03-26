@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\MediaController;
 use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Route;
 
@@ -42,6 +43,15 @@ Route::prefix('users')->group( function() {
             Route::post('/login', 'login');
             Route::post('/forgot-password', 'forgotPassword');
             Route::post('/reset-password', 'resetPassword');
+        });
+    });
+});
+
+Route::prefix('medias')->group( function() {
+    Route::controller(MediaController::class)->group( function() {
+        Route::middleware('auth:api')->group(function () {
+            //get
+            Route::post('/', 'create');
         });
     });
 });
