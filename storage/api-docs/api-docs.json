@@ -1,0 +1,718 @@
+{
+    "openapi": "3.0.3",
+    "info": {
+        "title": "Documentação da api",
+        "description": "Documentações sobre a api desse projeto",
+        "termsOfService": "http://swagger.io/terms/",
+        "contact": {
+            "email": "teste@teste.com"
+        },
+        "license": {
+            "name": "Apache 2.0",
+            "url": "http://www.apache.org/licenses/LICENSE-2.0.html"
+        },
+        "version": "0.1"
+    },
+    "servers": [
+        {
+            "description": "API",
+            "url": "http://localhost:{port}/api",
+            "variables": {
+                "tenant": {
+                    "default": "local"
+                },
+                "port": {
+                    "default": "80"
+                }
+            }
+        }
+    ],
+    "security": [
+        {
+            "BearerAuth": []
+        }
+    ],
+    "tags": [
+        {
+            "name" : "Usuários",
+            "description": "Api que envolve o cadastro dos usuários do sistema",
+            "externalDocs": {
+                "description": "Descubra mais",
+                "url": "#"
+            }
+        }
+    ],
+    "paths": {
+        "/users/login": {
+            "post": {
+                "tags": [
+                    "Autenticação"
+                ],
+                "summary": "Obtém token de autenticação para consumir as API'S",
+                "description": "",
+                "operationId": "authNativeLogin",
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "type": "object",
+                                "properties": {
+                                    "email": {
+                                        "type": "string",
+                                        "required": true
+                                    },
+                                    "password": {
+                                        "type": "string",
+                                        "required": true
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Caso as informações estejam corretas, o usuário irá receber um token de acesso",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "access_token": {
+                                            "description": "TOken que será usado para acessar as rotas protegidas",
+                                            "type": "string"
+                                        },
+                                        "otp_required": {
+                                            "description": "Define se o usuário precisará informar o código OTP para finalizar o login",
+                                            "type": "boolean"
+                                        },
+                                        "token_type": {
+                                            "description": "Tipo do token",
+                                            "type": "string"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Indica que há algum problema com as credenciais",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "message": {
+                                            "type": "string"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Erro de validação da request",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "message": {
+                                            "type": "string"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/users/logout": {
+            "post": {
+                "security": [
+                    "BearerAuth": []
+                ],
+                "summary": "Através dessa rota, o usuário poderá efetuar o logout da aplicação. O token do usuário será revogado",
+                "tags": [
+                    "Autenticação"
+                ],
+                "requestBody": {
+                    "content": {
+                        "application/json": {}
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "A ação foi realizada com sucesso",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "message": {
+                                            "type": "string"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Erro ao executar ação",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "message": {
+                                            "type": "string"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Erro de validação da request",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "message": {
+                                            "type": "string"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/users": {
+            "post": {
+                "tags": [
+                    "Usuários"
+                ],
+                "summary": "Através dessa rota, o usuário poderá criar novos usuários",
+                "description": "",
+                "operationId": "userCreate",
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#components/schemas/UserModel"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Caso as informações estejam corretas, o usuário será criado",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "name": {
+                                            "description": "Nome do usuário criado",
+                                            "type": "string"
+                                        },
+                                        "cpf_cnpj": {
+                                            "description": "CPF do usuário criado",
+                                            "type": "string"
+                                        },
+                                        "email": {
+                                            "description": "Email do usuário criado",
+                                            "type": "string"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Indica que há algum problema com as credenciais",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "message": {
+                                            "type": "string"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Erro de validação da request",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "message": {
+                                            "type": "string"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "get": {
+                "tags": [
+                    "Usuários"
+                ],
+                "summary": "Através dessa rota, o usuário poderá buscar por todos os usuários cadastrados no sistema",
+                "description": "",
+                "operationId": "userGetAll",
+                "requestBody": {},
+                "parameters": [
+                    {
+                        "name": "search",
+                        "in": "query"
+                    },
+                    {
+                        "name": "email",
+                        "in": "query"
+                    },
+                    {
+                        "name": "cpf",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Se houver usuários e a requisição estiver correta, trará os usuários cadastrados",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#components/schemas/UserModel"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Indica que há algum problema com as credenciais",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "message": {
+                                            "type": "string"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Erro de validação da request",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#components/schemas/DefaultOperationValidationError"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/users/{id}": {
+            "get": {
+                "tags": [
+                    "Usuários"
+                ],
+                "summary": "Através dessa rota, o usuário poderá buscar por um usuário através do id",
+                "description": "",
+                "operationId": "userGetById",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Se houver um usuário com o id informado, trará os dados do mesmo",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#components/schemas/UserModel"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Indica que há algum problema com as credenciais",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "message": {
+                                            "type": "string"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Erro de validação da request",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#components/schemas/DefaultOperationValidationError"
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "put": {
+                "tags": [
+                    "Usuários"
+                ],
+                "summary": "Através dessa rota, o usuário poderá editar um usuário",
+                "description": "",
+                "operationId": "userUpdate",
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#components/schemas/UserModel"
+                            }
+                        }
+                    }
+                },
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path"
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Se houver um usuário com o id informado e as informações estiverem corretas, o usuário será editado",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "name": {
+                                            "description": "Nome do usuário criado",
+                                            "type": "string"
+                                        },
+                                        "birthday": {
+                                            "description": "Data de nascimento do usuário criado",
+                                            "type": "string"
+                                        },
+                                        "gender": {
+                                            "description": "Sexo do usuário criado",
+                                            "type": "string"
+                                        },
+                                        "cpf": {
+                                            "description": "CPF do usuário criado",
+                                            "type": "string"
+                                        },
+                                        "registration_number": {
+                                            "description": "Número de registro do usuário criado",
+                                            "type": "string"
+                                        },
+                                        "textual_signature": {
+                                            "description": "Texto da assinatura do usuário criado",
+                                            "type": "string"
+                                        },
+                                        "email": {
+                                            "description": "Email do usuário criado",
+                                            "type": "string"
+                                        },
+                                        "position_id": {
+                                            "description": "Código do cargo selecionado para do usuário criado",
+                                            "type": "integer"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Indica que há algum problema com as credenciais",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "message": {
+                                            "type": "string"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Erro de validação da request",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#components/schemas/DefaultOperationValidationError"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/users/{id}/enable": {
+            "post": {
+                "tags": [
+                    "Usuários"
+                ],
+                "summary": "Através dessa rota, o usuário poderá habilitar um usuário através do id",
+                "description": "",
+                "operationId": "userEnable",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Se houver um usuário com o id informado, o mesmo será reativado",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "message": {
+                                            "description": "Mensagem de sucesso",
+                                            "type": "string"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Indica que há algum problema com as credenciais",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "message": {
+                                            "type": "string"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Erro de validação da request",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#components/schemas/DefaultOperationValidationError"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/users/{id}/disable": {
+            "post": {
+                "tags": [
+                    "Usuários"
+                ],
+                "summary": "Através dessa rota, o usuário poderá desativar um usuário através do id",
+                "description": "",
+                "operationId": "userDisable",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Se houver um usuário com o id informado, o mesmo será desativado",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "message": {
+                                            "description": "Mensagem de sucesso",
+                                            "type": "string"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Indica que há algum problema com as credenciais",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "message": {
+                                            "type": "string"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Erro de validação da request",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "message": {
+                                            "type": "string"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    },
+    "components": {
+        "schemas": {
+            "UserModel": {
+                "type": "object",
+                "properties": {
+                    "status": {
+                        "description": "Status do usuário criado",
+                        "type": "string"
+                    },
+                    "created_at": {
+                        "description": "Data de criação do usuário criado",
+                        "type": "string"
+                    },
+                    "created_by": {
+                        "description": "Id do usuário que criou o usuário",
+                        "type": "integer"
+                    },
+                    "password": {
+                        "description": "senha do usuário criado",
+                        "type": "string"
+                    },
+                    "role_id": {
+                        "description": "Código do perfil selecionado para do usuário criado",
+                        "type": "integer",
+                        "required": false
+                    },
+                    "person": {
+                        "description": "Pessoa com os dados do usuário criado",
+                        "type": "array",
+                        "items": {
+                            "properties": {
+                                "name": {
+                                    "description": "Nome do usuário criado",
+                                    "type": "string"
+                                },
+                                "email": {
+                                    "description": "Email do usuário criado",
+                                    "type": "string"
+                                },
+                                "cpf_cnpj": {
+                                    "description": "CPF/CNPJ do usuário criado",
+                                    "type": "string"
+                                },
+                                "address_id": {
+                                    "description": "Código do endereço selecionado para do usuário criado",
+                                    "type": "integer",
+                                    "required": false
+                                },
+                                "address": {
+                                    "description": "Dados de endereço",
+                                    "type": "object",
+                                    "required": false,
+                                    "properties": {
+                                        "id": {
+                                            "description": "Id do endereço criada",
+                                            "type": "integer"
+                                        },
+                                        "street": {
+                                            "description": "Rua do endereço criada",
+                                            "type": "string"
+                                        },
+                                        "number": {
+                                            "description": "Número do endereço criada",
+                                            "type": "string"
+                                        },
+                                        "neighborhood": {
+                                            "description": "Bairro do endereço criada",
+                                            "type": "string"
+                                        },
+                                        "city": {
+                                            "description": "Cidade do endereço criada",
+                                            "type": "string"
+                                        },
+                                        "state": {
+                                            "description": "Estado do endereço criada",
+                                            "type": "string"
+                                        },
+                                        "zip": {
+                                            "description": "CEP do endereço criada",
+                                            "type": "string"
+                                        }
+                                    }
+                                },
+                                "profile_picture_id": {
+                                    "description": "Id da foto de perfil",
+                                    "type": "integer"
+                                }
+                            }
+                        }
+                    },
+                    "role": {
+                        "description": "Perfil do usuário criado",
+                        "type": "array",
+                        "items": {
+                            "properties": {
+                                "id" : {
+                                    "description": "Id do perfil",
+                                    "type": "integer"
+                                },
+                                "name" : {
+                                    "description": "Nome do perfil",
+                                    "type": "string"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "requestBodies": {},
+        "securitySchemes": {
+            "BearerAuth": {
+                "type": "http",
+                "scheme": "bearer",
+                "bearerFormat": "JWT"
+            }
+        }
+    }
+}
