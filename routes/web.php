@@ -21,7 +21,7 @@ Route::get('/', function () {
 
 Route::get("/medias/{filename}", function ($filename) {
 
-        $path = storage_path("app/public/images/{$filename}");
+        $path = storage_path("app/public/medias/{$filename}");
 
         if (!file_exists($path)) {
             abort(404);

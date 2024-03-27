@@ -52,6 +52,8 @@ Route::prefix('medias')->group( function() {
         Route::middleware('auth:api')->group(function () {
             //get
             Route::post('/', 'create');
+            Route::post('/{id}', 'update');
+            Route::delete('/{id}', 'delete');
         });
     });
 });
