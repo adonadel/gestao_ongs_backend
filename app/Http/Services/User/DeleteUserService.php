@@ -13,8 +13,6 @@ class DeleteUserService
 
         $user = $repository->getById($id);
 
-        $repository->delete($user);
-
-        return true;
+        return $repository->delete($user);
     }
 }

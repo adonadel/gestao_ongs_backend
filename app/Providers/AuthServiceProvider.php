@@ -2,6 +2,7 @@
 
 namespace App\Providers;
 
+use App\Policies\MediaPolicy;
 use App\Policies\UserPolicy;
 use Illuminate\Foundation\Support\Providers\AuthServiceProvider as ServiceProvider;
 use Illuminate\Support\Facades\Auth;
@@ -15,7 +16,8 @@ class AuthServiceProvider extends ServiceProvider
      * @var array<class-string, class-string>
      */
     protected $policies = [
-        UserPolicy::class
+        UserPolicy::class,
+        MediaPolicy::class,
     ];
 
     public function boot(): void

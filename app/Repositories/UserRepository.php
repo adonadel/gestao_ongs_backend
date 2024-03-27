@@ -9,6 +9,11 @@ use Illuminate\Database\Eloquent\Builder;
 
 class UserRepository extends Repository
 {
+    protected function getModelClass(): string
+    {
+        return User::class;
+    }
+    
     public function getUsers(array $filters)
     {
         $noPaginate = data_get($filters, 'no-paginate', false);
@@ -43,10 +48,6 @@ class UserRepository extends Repository
         return $query->paginate();
     }
 
-    protected function getModelClass(): string
-    {
-        return User::class;
-    }
     public function getByEmail(string $email)
     {
         return $this->newQuery()
