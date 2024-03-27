@@ -25,4 +25,15 @@ class CreateMediaService
 
         return $repository->create($data);
     }
+
+    public function bulkCreate(array $medias)
+    {
+        $allMedias = [];
+
+        foreach ($medias as $data) {
+            $allMedias[] = $this->create($data);
+        }
+
+        return $allMedias;
+    }
 }

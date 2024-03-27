@@ -85,4 +85,33 @@ class MediaController extends Controller
             throw new \Exception($e->getMessage());
         }
     }
+
+
+    function bulkCreate(Request $request)
+    {
+        try {
+            DB::beginTransaction();
+
+            $validated = $request->validate([
+                'medias' => 'array|required',
+                'medias.*.media' => [
+                    'required', File::types(['jpg', 'jpeg', 'png'])
+                ],
+                'medias.*.display_name' => 'nullable|string',
+                'medias.*.description' => 'nullable|string',
+            ]);
+
+            $service = new CreateMediaService();
+
+            $medias = $service->bulkCreate($validated);
+
+            DB::commit();
+
+            return $medias;
+        }catch (\Exception $e) {
+            DB::rollBack();
+
+            throw new \Exception($e->getMessage());
+        }
+    }
 }
