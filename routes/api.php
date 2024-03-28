@@ -49,3 +49,16 @@ Route::prefix('medias')->group( function() {
         });
     });
 });
+
+Route::prefix('medias')->group( function() {
+    Route::controller(MediaController::class)->group( function() {
+        Route::middleware('auth:api')->group(function () {
+            //post
+            Route::post('/', 'create');
+            Route::post('/{id}', 'update');
+
+            //delete
+            Route::delete('/{id}', 'delete');
+        });
+    });
+});
