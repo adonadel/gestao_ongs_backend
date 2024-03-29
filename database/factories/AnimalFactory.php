@@ -3,7 +3,7 @@
 namespace Database\Factories;
 
 use App\Enums\AgeTypeEnum;
-use App\Enums\GenderEnum;
+use App\Enums\AnimalGenderEnum;
 use App\Enums\SizeEnum;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
@@ -14,7 +14,7 @@ class AnimalFactory extends Factory
     {
         return [
             'name' => fake()->name,
-            'gender' => fake()->randomElement(GenderEnum::cases()),
+            'gender' => fake()->randomElement(AnimalGenderEnum::cases()),
             'size' => fake()->randomElement(SizeEnum::cases()),
             'age_type' => fake()->randomElement(AgeTypeEnum::cases()),
             'description' => fake()->text(100),

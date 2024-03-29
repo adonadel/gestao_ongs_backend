@@ -3,7 +3,7 @@
 namespace App\Http\Requests;
 
 use App\Enums\AgeTypeEnum;
-use App\Enums\GenderEnum;
+use App\Enums\AnimalGenderEnum;
 use App\Enums\SizeEnum;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
@@ -15,7 +15,7 @@ class AnimalRequest extends FormRequest
     {
         return [
             'name' => 'required|string',
-            'gender' => ['required', Rule::in(GenderEnum::cases())],
+            'gender' => ['required', Rule::in(AnimalGenderEnum::cases())],
             'size' => ['required', Rule::in(SizeEnum::cases())],
             'age_type' => ['required', Rule::in(AgeTypeEnum::cases())],
             'description' => 'nullable|string',
