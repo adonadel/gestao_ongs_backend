@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\AnimalController;
 use App\Http\Controllers\MediaController;
 use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Route;
@@ -43,6 +44,23 @@ Route::prefix('medias')->group( function() {
             Route::post('/', 'create');
             Route::post('/{id}', 'update');
             Route::post('/bulk', 'bulkCreate');
+
+            //delete
+            Route::delete('/{id}', 'delete');
+        });
+    });
+});
+
+Route::prefix('animals')->group( function() {
+    Route::controller(AnimalController::class)->group( function() {
+        Route::middleware('auth:api')->group(function () {
+            //get
+            Route::get('/', 'getAnimals');
+            Route::get('/{id}', 'getAnimalById');
+
+            //post
+            Route::post('/', 'create');
+            Route::post('/{id}', 'update');
 
             //delete
             Route::delete('/{id}', 'delete');

@@ -8,7 +8,7 @@ use App\Repositories\UserRepository;
 
 class CreateUserService
 {
-    function create(array $data)
+    public function create(array $data)
     {
         $userRepository = new UserRepository();
         $personRepository = new PeopleRepository();

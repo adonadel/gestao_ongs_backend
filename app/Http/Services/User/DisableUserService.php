@@ -9,7 +9,7 @@ use App\Repositories\UserRepository;
 
 class DisableUserService
 {
-    function disable(int $id)
+    public function disable(int $id)
     {
         $userRepository = new UserRepository();
 

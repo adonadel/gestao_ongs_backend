@@ -6,7 +6,7 @@ use App\Repositories\UserRepository;
 
 class QueryUserService
 {
-    function getUsers(array $filters)
+    public function getUsers(array $filters)
     {
         $repository = new UserRepository();
 

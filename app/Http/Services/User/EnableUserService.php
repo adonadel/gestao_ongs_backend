@@ -9,7 +9,7 @@ use App\Repositories\UserRepository;
 
 class EnableUserService
 {
-    function enable(int $id)
+    public function enable(int $id)
     {
         $userRepository = new UserRepository();
 

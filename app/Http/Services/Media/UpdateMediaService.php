@@ -8,7 +8,7 @@ use Illuminate\Support\Str;
 
 class UpdateMediaService
 {
-    function update(int $id, array $data)
+    public function update(int $id, array $data)
     {
         $repository = new MediaRepository();
 
