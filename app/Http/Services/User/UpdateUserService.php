@@ -8,7 +8,7 @@ use App\Repositories\UserRepository;
 
 class UpdateUserService
 {
-    function update(array $data, int $id)
+    public function update(array $data, int $id)
     {
         $userRepository = new UserRepository();
         $personRepository = new PeopleRepository();

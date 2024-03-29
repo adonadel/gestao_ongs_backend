@@ -11,7 +11,7 @@ use Illuminate\Validation\Rules\File;
 
 class MediaController extends Controller
 {
-    function create(Request $request)
+    public function create(Request $request)
     {
         try {
             DB::beginTransaction();
@@ -38,7 +38,7 @@ class MediaController extends Controller
         }
     }
 
-    function update(Request $request, int $id)
+    public function update(Request $request, int $id)
     {
         try {
             DB::beginTransaction();
@@ -65,7 +65,7 @@ class MediaController extends Controller
         }
     }
 
-    function delete(int $id)
+    public function delete(int $id)
     {
         try {
             DB::beginTransaction();
@@ -87,7 +87,7 @@ class MediaController extends Controller
     }
 
 
-    function bulkCreate(Request $request)
+    public function bulkCreate(Request $request)
     {
         try {
             DB::beginTransaction();

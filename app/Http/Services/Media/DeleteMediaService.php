@@ -7,7 +7,7 @@ use Illuminate\Support\Facades\Storage;
 
 class DeleteMediaService
 {
-    function delete($id)
+    public function delete($id)
     {
         $repository = new MediaRepository();
 

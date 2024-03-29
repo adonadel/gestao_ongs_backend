@@ -22,7 +22,7 @@ use Illuminate\Validation\Rules\Password;
 
 class UserController extends Controller
 {
-    function login(Request $request)
+    public function login(Request $request)
     {
         $credentials = $request->only(['email', 'password', 'remember']);
 
@@ -46,7 +46,7 @@ class UserController extends Controller
         ]);
     }
 
-    function logout(Request $request)
+    public function logout(Request $request)
     {
         if (! auth()->user()) {
             throw new \Exception('Nenhum usuário logado');
@@ -63,30 +63,30 @@ class UserController extends Controller
         ]);
     }
 
-    function getUsers(Request $request)
+    public function getUsers(Request $request)
     {
         $service = new QueryUserService();
 
         return $service->getUsers($request->all());
     }
 
-    function getUserById(int $id)
+    public function getUserById(int $id)
     {
         $service = new QueryUserService();
 
         return $service->getUserById($id);
     }
 
-    function getLoggedUser()
+    public function getLoggedUser()
     {
         if (! auth()->user()) {
             throw new \Exception('Nenhum usuário logado');
-        }else {
-            return auth()->user();
         }
+
+        return auth()->user();
     }
 
-    function create(Request $request)
+    public function create(Request $request)
     {
         try {
             DB::beginTransaction();
@@ -115,7 +115,7 @@ class UserController extends Controller
         }
     }
 
-    function update(Request $request, int $id)
+    public function update(Request $request, int $id)
     {
         try {
             DB::beginTransaction();
@@ -145,7 +145,7 @@ class UserController extends Controller
         }
     }
 
-    function delete(int $id)
+    public function delete(int $id)
     {
         try {
             DB::beginTransaction();
@@ -165,7 +165,7 @@ class UserController extends Controller
         }
     }
 
-    function enable(int $id)
+    public function enable(int $id)
     {
         try {
             DB::beginTransaction();
@@ -185,7 +185,7 @@ class UserController extends Controller
         }
     }
 
-    function disable(int $id)
+    public function disable(int $id)
     {
         try {
             DB::beginTransaction();
@@ -205,7 +205,7 @@ class UserController extends Controller
         }
     }
 
-    function forgotPassword(Request $request)
+    public function forgotPassword(Request $request)
     {
         $request->validate([
            'email' => 'required|email'
@@ -237,7 +237,7 @@ class UserController extends Controller
         }
     }
 
-    function resetPassword(Request $request)
+    public function resetPassword(Request $request)
     {
         $request->validate([
             'token' => 'required',
