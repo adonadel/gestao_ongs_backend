@@ -3,27 +3,28 @@
 namespace App\Http\Controllers;
 
 
-use App\Http\Services\Animal\CreateAnimalService;
-use App\Http\Services\Animal\DeleteAnimalService;
-use App\Http\Services\Animal\QueryAnimalService;
-use App\Http\Services\Animal\UpdateAnimalService;
+use App\Http\Requests\EventRequest;
+use App\Http\Services\Event\CreateEventService;
+use App\Http\Services\Event\DeleteEventService;
+use App\Http\Services\Event\QueryEventService;
+use App\Http\Services\Event\UpdateEventService;
 use Illuminate\Http\Client\Request;
 use Illuminate\Support\Facades\DB;
 
-class AnimalController extends Controller
+class EventController extends Controller
 {
-    public function create(Request $request)
+    public function create(EventRequest $request)
     {
         try {
             DB::beginTransaction();
 
-            $service = new CreateAnimalService();
+            $service = new CreateEventService();
 
-            $animal = $service->create($request->all());
+            $event = $service->create($request->all());
 
             DB::commit();
 
-            return $animal;
+            return $event;
         }catch (\Exception $e) {
             DB::rollBack();
 
@@ -31,12 +32,12 @@ class AnimalController extends Controller
         }
     }
 
-    public function update(Request $request, int $id)
+    public function update(EventRequest $request, int $id)
     {
         try {
             DB::beginTransaction();
 
-            $service = new UpdateAnimalService();
+            $service = new UpdateEventService();
 
             $updated = $service->update($request->all(), $id);
 
@@ -55,14 +56,14 @@ class AnimalController extends Controller
         try {
             DB::beginTransaction();
 
-            $service = new DeleteAnimalService();
+            $service = new DeleteEventService();
 
             $service->delete($id);
 
             DB::commit();
 
             return response()->json([
-                'message' => 'Animal excluído com sucesso!'
+                'message' => 'Evento excluído com sucesso!'
             ]);
         }catch (\Exception $e) {
             DB::rollBack();
@@ -71,17 +72,17 @@ class AnimalController extends Controller
         }
     }
 
-    public function getAnimals(Request $request)
+    public function getEvents(Request $request)
     {
-        $service = new QueryAnimalService();
+        $service = new QueryEventService();
 
-        return $service->getAnimals($request->all());
+        return $service->getEvents($request->all());
     }
 
-    public function getAnimalById(int $id)
+    public function getEventById(int $id)
     {
-        $service = new QueryAnimalService();
+        $service = new QueryEventService();
 
-        return $service->getAnimalById($id);
+        return $service->getEventById($id);
     }
 }
