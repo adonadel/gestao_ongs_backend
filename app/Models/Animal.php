@@ -4,7 +4,7 @@ namespace App\Models;
 
 
 use App\Enums\AgeTypeEnum;
-use App\Enums\GenderEnum;
+use App\Enums\AnimalGenderEnum;
 use App\Enums\SizeEnum;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -25,7 +25,7 @@ class Animal extends Model
     ];
 
     protected $casts = [
-        'gender' => GenderEnum::class,
+        'gender' => AnimalGenderEnum::class,
         'size' => SizeEnum::class,
         'age_type' => AgeTypeEnum::class,
     ];
