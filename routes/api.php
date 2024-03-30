@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\AnimalController;
+use App\Http\Controllers\EventController;
 use App\Http\Controllers\MediaController;
 use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Route;
@@ -64,6 +65,35 @@ Route::prefix('animals')->group( function() {
 
             //delete
             Route::delete('/{id}', 'delete');
+        });
+    });
+});
+
+Route::prefix('events')->group( function() {
+    Route::controller(EventController::class)->group( function() {
+        Route::middleware('auth:api')->group(function () {
+            //get
+            Route::get('/', 'getEvents');
+            Route::get('/{id}', 'getEventById');
+
+            //post
+            Route::post('/', 'create');
+            Route::post('/{id}', 'update');
+
+            //delete
+            Route::delete('/{id}', 'delete');
+        });
+    });
+});
+
+Route::prefix('nrgs')->group( function() {
+    Route::controller(EventController::class)->group( function() {
+        Route::middleware('auth:api')->group(function () {
+            //get
+            Route::get('/{id}', 'getNrgById');
+
+            //post
+            Route::post('/{id}', 'update');
         });
     });
 });
