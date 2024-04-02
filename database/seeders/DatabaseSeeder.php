@@ -3,7 +3,7 @@
 namespace Database\Seeders;
 
 use App\Models\Address;
-use App\Models\Nrg;
+use App\Models\Ngr;
 use App\Models\People;
 use App\Models\Permission;
 use App\Models\PermissionRole;
@@ -69,7 +69,7 @@ class DatabaseSeeder extends Seeder
             'number' => '1000',
         ]);
 
-        Nrg::factory()->create([
+        Ngr::factory()->create([
             'name' => 'Patinhas Carentes',
             'cnpj' => '84.058.017/0001-90',
             'description' => 'Ong que sonha em fazer a diferença na vida dos animais necessitados na cidade de Criciúma',

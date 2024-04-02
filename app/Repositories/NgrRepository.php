@@ -2,13 +2,13 @@
 
 namespace App\Repositories;
 
-use App\Models\Nrg;
+use App\Models\Ngr;
 
-class NrgRepository extends Repository
+class NgrRepository extends Repository
 {
     protected function getModelClass(): string
     {
-        return Nrg::class;
+        return Ngr::class;
     }
 
 

@@ -86,11 +86,11 @@ Route::prefix('events')->group( function() {
     });
 });
 
-Route::prefix('nrgs')->group( function() {
+Route::prefix('ngrs')->group( function() {
     Route::controller(EventController::class)->group( function() {
         Route::middleware('auth:api')->group(function () {
             //get
-            Route::get('/{id}', 'getNrgById');
+            Route::get('/{id}', 'getNgrById');
 
             //post
             Route::post('/{id}', 'update');

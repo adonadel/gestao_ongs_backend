@@ -2,11 +2,11 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Services\Nrg\UpdateNrgService;
+use App\Http\Services\Ngr\UpdateNgrService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
-class NrgController extends Controller
+class NgrController extends Controller
 {
     public function update(Request $request, int $id)
     {
@@ -29,7 +29,7 @@ class NrgController extends Controller
                 'address.longitude' => 'decimal:9,6|nullable',
             ]);
 
-            $service = new UpdateNrgService();
+            $service = new UpdateNgrService();
 
             $updated = $service->update($validated, $id);
 

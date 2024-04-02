@@ -10,7 +10,7 @@ class MediaFactory extends Factory
     public function definition(): array
     {
         return [
-            'filename' => fake()->file,
+            'filename' => fake()->filePath(),
             'display_name' => fake()->name,
             'size' => fake()->numberBetween(1, 100000),
             'extension' => fake()->fileExtension(),
