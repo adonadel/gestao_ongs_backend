@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 
+use App\Http\Requests\AnimalRequest;
 use App\Http\Services\Animal\CreateAnimalService;
 use App\Http\Services\Animal\DeleteAnimalService;
 use App\Http\Services\Animal\QueryAnimalService;
@@ -12,7 +13,7 @@ use Illuminate\Support\Facades\DB;
 
 class AnimalController extends Controller
 {
-    public function create(Request $request)
+    public function create(AnimalRequest $request)
     {
         try {
             DB::beginTransaction();
@@ -31,7 +32,7 @@ class AnimalController extends Controller
         }
     }
 
-    public function update(Request $request, int $id)
+    public function update(AnimalRequest $request, int $id)
     {
         try {
             DB::beginTransaction();
