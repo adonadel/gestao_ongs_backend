@@ -42,7 +42,8 @@ return [
         ],
         'api' => [
             'driver' => 'jwt',
-            'provider' => 'users'
+            'provider' => 'users',
+            'remember' => 43800,
         ]
     ],
 

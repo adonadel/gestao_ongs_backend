@@ -44,6 +44,7 @@ return [
             'password' => env('MAIL_PASSWORD'),
             'timeout' => null,
             'local_domain' => env('MAIL_EHLO_DOMAIN'),
+            'enable_starttls_auto' => true
         ],
 
         'ses' => [
@@ -129,6 +130,6 @@ return [
         'paths' => [
             resource_path('views/vendor/mail'),
         ],
-    ],
+    ]
 
 ];

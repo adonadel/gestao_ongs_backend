@@ -2,16 +2,24 @@
 
 namespace App\Http\Services\User;
 
-use App\Models\User;
+
+use App\Repositories\PeopleRepository;
+use App\Repositories\UserRepository;
 
 class UpdateUserService
 {
-    function update(array $data, int $id)
+    public function update(array $data, int $id)
     {
-        $user = User::query()->find($id);
+        $userRepository = new UserRepository();
+        $personRepository = new PeopleRepository();
 
-        $updated = $user->update($data);
+        $personData = data_get($data, 'person');
+        $person = $personRepository->getById(data_get($personData, 'id'));
 
-        return $updated;
+        $personRepository->update($person, $personData);
+
+        $user = $userRepository->getById($id);
+
+        return $userRepository->update($user, $data);
     }
 }
