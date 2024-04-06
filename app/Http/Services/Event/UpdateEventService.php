@@ -12,9 +12,9 @@ class UpdateEventService
     {
         $repository = new EventRepository();
 
-        $animal = $repository->getById($id);
+        $event = $repository->getById($id);
 
-        $repository->update($animal, $data);
+        $repository->update($event, $data);
 
         if (data_get($data, 'medias')) {
             foreach (data_get($data, 'medias') as $media){
@@ -24,6 +24,6 @@ class UpdateEventService
             }
         }
 
-        return $animal;
+        return $event;
     }
 }

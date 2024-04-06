@@ -21,11 +21,11 @@ class AdoptionController extends Controller
 
             $service = new CreateAdoptionService();
 
-            $animal = $service->create($request->all());
+            $adoption = $service->create($request->all());
 
             DB::commit();
 
-            return $animal;
+            return $adoption;
         }catch (\Exception $e) {
             DB::rollBack();
 
