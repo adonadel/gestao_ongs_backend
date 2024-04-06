@@ -3,6 +3,7 @@
 use App\Http\Controllers\AdoptionController;
 use App\Http\Controllers\AnimalController;
 use App\Http\Controllers\EventController;
+use App\Http\Controllers\FinancesController;
 use App\Http\Controllers\MediaController;
 use App\Http\Controllers\NgrController;
 use App\Http\Controllers\UserController;
@@ -118,6 +119,23 @@ Route::prefix('adoptions')->group( function() {
             Route::put('/{id}/confirm', 'confirmAdotpion');
             Route::put('/{id}/cancel', 'cancelAdotpion');
             Route::put('/{id}/deny', 'denyAdotpion');
+        });
+    });
+});
+
+Route::prefix('finances')->group( function() {
+    Route::controller(FinancesController::class)->group( function() {
+        Route::middleware('auth:api')->group(function () {
+            //get
+            Route::get('/', 'getFinances');
+            Route::get('/{id}', 'getFinanceById');
+
+            //post
+            Route::post('/', 'create');
+            Route::post('/{id}', 'update');
+
+            //delete
+            Route::delete('/{id}', 'delete');
         });
     });
 });
