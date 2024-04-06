@@ -1,8 +1,10 @@
 <?php
 
+use App\Http\Controllers\AdoptionController;
 use App\Http\Controllers\AnimalController;
 use App\Http\Controllers\EventController;
 use App\Http\Controllers\MediaController;
+use App\Http\Controllers\NgrController;
 use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Route;
 
@@ -87,13 +89,35 @@ Route::prefix('events')->group( function() {
 });
 
 Route::prefix('ngrs')->group( function() {
-    Route::controller(EventController::class)->group( function() {
+    Route::controller(NgrController::class)->group( function() {
         Route::middleware('auth:api')->group(function () {
             //get
             Route::get('/{id}', 'getNgrById');
 
             //post
             Route::post('/{id}', 'update');
+        });
+    });
+});
+
+Route::prefix('adoptions')->group( function() {
+    Route::controller(AdoptionController::class)->group( function() {
+        Route::middleware('auth:api')->group(function () {
+            //get
+            Route::get('/', 'getAdoptions');
+            Route::get('/{id}', 'getAdoptionById');
+
+            //post
+            Route::post('/', 'create');
+            Route::post('/{id}', 'update');
+
+            //delete
+            Route::delete('/{id}', 'delete');
+
+            //put
+            Route::put('/{id}/confirm', 'confirmAdotpion');
+            Route::put('/{id}/cancel', 'cancelAdotpion');
+            Route::put('/{id}/deny', 'denyAdotpion');
         });
     });
 });
