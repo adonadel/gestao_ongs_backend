@@ -15,6 +15,7 @@ return new class extends Migration
             $table->id();
             $table->string('display_name')->nullable();
             $table->string('filename');
+            $table->string('filename_id');
             $table->integer('size');
             $table->string('extension', 25);
             $table->text('description')->nullable();

@@ -3,7 +3,7 @@
 namespace App\Http\Services\Media;
 
 use App\Repositories\MediaRepository;
-use Illuminate\Support\Str;
+use Illuminate\Support\Facades\Storage;
 
 class CreateMediaService
 {
@@ -12,16 +12,7 @@ class CreateMediaService
     {
         $repository = new MediaRepository();
 
-        $file = data_get($data, 'media');
-        $extension = $file->getClientOriginalExtension();
-        $name = Str::uuid()->toString() . ".{$extension}";
-
-        $data['extension'] = $extension;
-        $data['filename'] = $name;
-        $data['size'] = $file->getSize();
-        unset($data['media']);
-
-        $file->storeAs('public/medias', $name);
+        $data = $this->makeUpload($data);
 
         return $repository->create($data);
     }
@@ -35,5 +26,30 @@ class CreateMediaService
         }
 
         return $allMedias;
+    }
+
+    public function makeUpload(array $data): array
+    {
+        $file = data_get($data, 'media');
+        $extension = $file->getClientOriginalExtension();
+        $mimeType = $file->getClientMimeType();
+
+        $data['extension'] = $extension;
+        $data['size'] = $file->getSize();
+        unset($data['media']);
+
+        $filename = Storage::disk('google')->put('', $file, [
+            'visibility' => 'public',
+            'mimeType' => $mimeType,
+        ]);
+
+        $data['filename_id'] = data_get(
+            Storage::disk('google')->getAdapter()->getMetadata($filename)->extraMetadata(),
+            'id'
+        );
+        
+        $data['filename'] = $filename;
+
+        return $data;
     }
 }
