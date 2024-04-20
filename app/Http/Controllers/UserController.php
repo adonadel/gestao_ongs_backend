@@ -15,54 +15,12 @@ use App\Rules\UniqueCpfCnpj;
 use App\Rules\UniqueEmail;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Password as PasswordForReset;
 use Illuminate\Validation\Rule;
 use Illuminate\Validation\Rules\Password;
 
 class UserController extends Controller
 {
-    public function login(Request $request)
-    {
-        $credentials = $request->only(['email', 'password', 'remember']);
-
-        $remember = (bool) data_get($credentials, 'remember');
-
-        $repository = new UserRepository();
-
-        $user = $repository->getByEmail(data_get($credentials, 'email'));
-
-        if (!$user || !Hash::check(data_get($credentials, 'password'), $user->password)) {
-            abort(401, 'Não autorizado');
-        }
-
-        $token = auth()->login($user, $remember);
-
-        return response()->json([
-            'data' => [
-                'token' => $token,
-                'expires_in' => auth()->factory()->getTTL() * 60 * 8
-            ]
-        ]);
-    }
-
-    public function logout(Request $request)
-    {
-        if (! auth()->user()) {
-            throw new \Exception('Nenhum usuário logado');
-        }
-
-        auth()->logout();
-
-        $request->session()->invalidate();
-
-        $request->session()->regenerateToken();
-
-        return response()->json([
-            'message' => 'Desconectado do sistema'
-        ]);
-    }
-
     public function getUsers(Request $request)
     {
         $service = new QueryUserService();
