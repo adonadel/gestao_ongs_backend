@@ -12,14 +12,16 @@ use Illuminate\Support\Facades\Route;
 
 Route::prefix('auth')->group( function() {
     Route::controller(AuthController::class)->group(function () {
-        Route::middleware('api')->group(function () {
+        Route::middleware('auth:api')->group(function () {
             //get
             Route::get('/me', 'me');
 
             //post
             Route::post('/logout', 'logout');
-            Route::post('/login', 'login');
             Route::post('/refresh', 'refreshToken');
+        });
+        Route::middleware('api')->group(function () {
+            Route::post('/login', 'login');
         });
     });
 });

@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Repositories\UserRepository;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Crypt;
 use Illuminate\Support\Facades\Hash;
 use Tymon\JWTAuth\Exceptions\JWTException;
 
@@ -57,9 +58,7 @@ class AuthController extends Controller
             throw new \Exception('Nenhum usuário logado');
         }
 
-        return response()->json([
-            'user' => auth()->user()
-        ]);
+        return auth()->user();
     }
 
     public function refreshToken(Request $request)

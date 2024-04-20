@@ -35,15 +35,6 @@ class UserController extends Controller
         return $service->getUserById($id);
     }
 
-    public function getLoggedUser()
-    {
-        if (! auth()->user()) {
-            throw new \Exception('Nenhum usuário logado');
-        }
-
-        return auth()->user();
-    }
-
     public function create(Request $request)
     {
         try {
