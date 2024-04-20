@@ -2,12 +2,29 @@
 
 use App\Http\Controllers\AdoptionController;
 use App\Http\Controllers\AnimalController;
+use App\Http\Controllers\AuthController;
 use App\Http\Controllers\EventController;
 use App\Http\Controllers\FinancesController;
 use App\Http\Controllers\MediaController;
 use App\Http\Controllers\NgrController;
 use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Route;
+
+Route::prefix('auth')->group( function() {
+    Route::controller(AuthController::class)->group(function () {
+        Route::middleware('auth:api')->group(function () {
+            //get
+            Route::get('/me', 'me');
+
+            //post
+            Route::post('/logout', 'logout');
+            Route::post('/refresh', 'refreshToken');
+        });
+        Route::middleware('api')->group(function () {
+            Route::post('/login', 'login');
+        });
+    });
+});
 
 Route::prefix('users')->group( function() {
     Route::controller(UserController::class)->group( function() {
@@ -19,7 +36,6 @@ Route::prefix('users')->group( function() {
 
             //post
             Route::post('/', 'create');
-            Route::post('/logout', 'logout');
 
             //put
             Route::put('/{id}', 'update');
@@ -34,7 +50,6 @@ Route::prefix('users')->group( function() {
 
         Route::middleware('api')->group(function () {
             //post
-            Route::post('/login', 'login');
             Route::post('/forgot-password', 'forgotPassword');
             Route::post('/reset-password', 'resetPassword');
         });
