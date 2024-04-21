@@ -19,5 +19,7 @@ class Media extends Model
         'size',
         'extension',
         'description',
+        'width',
+        'height',
     ];
 }

@@ -33,9 +33,12 @@ class CreateMediaService
         $file = data_get($data, 'media');
         $extension = $file->getClientOriginalExtension();
         $mimeType = $file->getClientMimeType();
+        $imageDetails = getimagesize($file->getPathname());
 
         $data['extension'] = $extension;
         $data['size'] = $file->getSize();
+        $data['width'] = $imageDetails[0];
+        $data['height'] = $imageDetails[1];
         unset($data['media']);
 
         $filename = Storage::disk('google')->put('', $file, [
