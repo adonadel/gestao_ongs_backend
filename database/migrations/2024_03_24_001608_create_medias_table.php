@@ -17,6 +17,8 @@ return new class extends Migration
             $table->string('filename');
             $table->string('filename_id');
             $table->integer('size');
+            $table->integer('width');
+            $table->integer('height');
             $table->string('extension', 25);
             $table->text('description')->nullable();
             $table->timestamps();
