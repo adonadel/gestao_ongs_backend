@@ -15,7 +15,7 @@ class EnableUserService
 
         $user = $userRepository->getById($id);
 
-        if ($user->status === UserStatusEnum::DISABLED) {
+        if ($user->status === UserStatusEnum::ENABLED) {
             throw new UserAlreadyEnabledOrDisabledException('Usuário já ativado');
         }
 
