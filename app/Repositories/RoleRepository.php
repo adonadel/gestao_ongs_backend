@@ -2,29 +2,28 @@
 
 namespace App\Repositories;
 
-use App\Models\Finance;
+use App\Models\Role;
 use Illuminate\Database\Eloquent\Builder;
 
-class FinanceRepository extends Repository
+class RoleRepository extends Repository
 {
-    protected $table = 'finances';
-
     protected function getModelClass()
     {
-        return Finance::class;
+        return Role::class;
     }
 
-    public function getFinances(array $filters)
+    public function getRoles(array $filters)
     {
         $noPaginate = data_get($filters, 'no-paginate', false);
-        $search = data_get($filters, 'description');
+        $search = data_get($filters, 'name');
 
         $query = $this->newQuery();
 
         $query
+            ->with('permissions')
             ->when($search, function(Builder $query, $search){
                 $query
-                    ->where('description', 'ilike', "%{$search}%");
+                    ->where('name', 'ilike', "%{$search}%");
             });
 
         if ($noPaginate) {
