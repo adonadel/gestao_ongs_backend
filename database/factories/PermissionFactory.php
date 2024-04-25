@@ -11,6 +11,7 @@ class PermissionFactory extends Factory
     {
         return [
             'name' => fake()->name,
+            'display_name' => fake()->name,
         ];
     }
 }

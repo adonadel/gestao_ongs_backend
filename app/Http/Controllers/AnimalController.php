@@ -8,13 +8,17 @@ use App\Http\Services\Animal\CreateAnimalService;
 use App\Http\Services\Animal\DeleteAnimalService;
 use App\Http\Services\Animal\QueryAnimalService;
 use App\Http\Services\Animal\UpdateAnimalService;
-use Illuminate\Http\Client\Request;
+use App\Models\Animal;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Gate;
 
 class AnimalController extends Controller
 {
     public function create(AnimalRequest $request)
     {
+        Gate::authorize('create', Animal::class);
+
         try {
             DB::beginTransaction();
 
@@ -25,15 +29,17 @@ class AnimalController extends Controller
             DB::commit();
 
             return $animal;
-        }catch (\Exception $e) {
+        }catch (\Exception $exception) {
             DB::rollBack();
 
-            throw new \Exception($e->getMessage());
+            throw new \Exception($exception->getMessage());
         }
     }
 
     public function update(AnimalRequest $request, int $id)
     {
+        Gate::authorize('update', Animal::class);
+
         try {
             DB::beginTransaction();
 
@@ -44,15 +50,17 @@ class AnimalController extends Controller
             DB::commit();
 
             return $updated;
-        }catch (\Exception $e) {
+        }catch (\Exception $exception) {
             DB::rollBack();
 
-            throw new \Exception($e->getMessage());
+            throw new \Exception($exception->getMessage());
         }
     }
 
     public function delete(int $id)
     {
+        Gate::authorize('delete', Animal::class);
+
         try {
             DB::beginTransaction();
 
@@ -65,15 +73,17 @@ class AnimalController extends Controller
             return response()->json([
                 'message' => 'Animal excluído com sucesso!'
             ]);
-        }catch (\Exception $e) {
+        }catch (\Exception $exception) {
             DB::rollBack();
 
-            throw new \Exception($e->getMessage());
+            throw new \Exception($exception->getMessage());
         }
     }
 
     public function getAnimals(Request $request)
     {
+        Gate::authorize('view', Animal::class);
+
         $service = new QueryAnimalService();
 
         return $service->getAnimals($request->all());
@@ -81,6 +91,8 @@ class AnimalController extends Controller
 
     public function getAnimalById(int $id)
     {
+        Gate::authorize('view', Animal::class);
+
         $service = new QueryAnimalService();
 
         return $service->getAnimalById($id);

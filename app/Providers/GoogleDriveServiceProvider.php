@@ -30,7 +30,7 @@ class GoogleDriveServiceProvider extends ServiceProvider {
 
                 return new \Illuminate\Filesystem\FilesystemAdapter($driver, $adapter);
             });
-        } catch(\Exception $e) {
+        } catch(\Exception $exception) {
 
         }
     }
