@@ -37,4 +37,11 @@ class AdoptionPolicy
 
         return $user->hasPermission($permission->name);
     }
+
+    public function updateAdoptionStatus(User $user)
+    {
+        $permission = Permission::query()->where('name', 'adoption-update-status')->first();
+
+        return $user->hasPermission($permission->name);
+    }
 }

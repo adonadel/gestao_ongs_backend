@@ -65,9 +65,9 @@ class UserController extends Controller
             DB::commit();
 
             return $user;
-        }catch(\Exception $e) {
+        }catch(\Exception $exception) {
             DB::rollBack();
-            throw new \Exception($e->getMessage());
+            throw new \Exception($exception->getMessage());
         }
     }
 
@@ -97,9 +97,9 @@ class UserController extends Controller
             DB::commit();
 
             return $updated;
-        }catch(\Exception $e) {
+        }catch(\Exception $exception) {
             DB::rollBack();
-            throw new \Exception($e->getMessage());
+            throw new \Exception($exception->getMessage());
         }
     }
 
@@ -119,9 +119,9 @@ class UserController extends Controller
             return response()->json([
                 'message' => 'Usuário excluído com sucesso!'
             ]);
-        }catch(\Exception $e) {
+        }catch(\Exception $exception) {
             DB::rollBack();
-            throw new \Exception($e->getMessage());
+            throw new \Exception($exception->getMessage());
         }
     }
 
@@ -141,9 +141,9 @@ class UserController extends Controller
             return response()->json([
                 'message' => 'Usuário ativado com sucesso!'
             ]);
-        }catch(\Exception $e) {
+        }catch(\Exception $exception) {
             DB::rollBack();
-            throw new \Exception($e->getMessage());
+            throw new \Exception($exception->getMessage());
         }
     }
 
@@ -163,9 +163,9 @@ class UserController extends Controller
             return response()->json([
                 'message' => 'Usuário desativado com sucesso!'
             ]);
-        }catch(\Exception $e) {
+        }catch(\Exception $exception) {
             DB::rollBack();
-            throw new \Exception($e->getMessage());
+            throw new \Exception($exception->getMessage());
         }
     }
 

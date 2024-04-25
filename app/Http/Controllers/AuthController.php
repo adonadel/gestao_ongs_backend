@@ -5,7 +5,6 @@ namespace App\Http\Controllers;
 use App\Repositories\UserRepository;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Crypt;
 use Illuminate\Support\Facades\Hash;
 use Tymon\JWTAuth\Exceptions\JWTException;
 
@@ -77,7 +76,7 @@ class AuthController extends Controller
             ]);
         } catch (JWTException $e) {
             return response()->json([
-                'error' => $e->getMessage()
+                'error' => $exception->getMessage()
             ], 400);
         }
     }

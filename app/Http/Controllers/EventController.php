@@ -8,13 +8,17 @@ use App\Http\Services\Event\CreateEventService;
 use App\Http\Services\Event\DeleteEventService;
 use App\Http\Services\Event\QueryEventService;
 use App\Http\Services\Event\UpdateEventService;
+use App\Models\Event;
 use Illuminate\Http\Client\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Gate;
 
 class EventController extends Controller
 {
     public function create(EventRequest $request)
     {
+        Gate::authorize('create', Event::class);
+
         try {
             DB::beginTransaction();
 
@@ -25,15 +29,17 @@ class EventController extends Controller
             DB::commit();
 
             return $event;
-        }catch (\Exception $e) {
+        }catch (\Exception $exception) {
             DB::rollBack();
 
-            throw new \Exception($e->getMessage());
+            throw new \Exception($exception->getMessage());
         }
     }
 
     public function update(EventRequest $request, int $id)
     {
+        Gate::authorize('update', Event::class);
+
         try {
             DB::beginTransaction();
 
@@ -44,15 +50,17 @@ class EventController extends Controller
             DB::commit();
 
             return $updated;
-        }catch (\Exception $e) {
+        }catch (\Exception $exception) {
             DB::rollBack();
 
-            throw new \Exception($e->getMessage());
+            throw new \Exception($exception->getMessage());
         }
     }
 
     public function delete(int $id)
     {
+        Gate::authorize('delete', Event::class);
+
         try {
             DB::beginTransaction();
 
@@ -65,15 +73,17 @@ class EventController extends Controller
             return response()->json([
                 'message' => 'Evento excluído com sucesso!'
             ]);
-        }catch (\Exception $e) {
+        }catch (\Exception $exception) {
             DB::rollBack();
 
-            throw new \Exception($e->getMessage());
+            throw new \Exception($exception->getMessage());
         }
     }
 
     public function getEvents(Request $request)
     {
+        Gate::authorize('view', Event::class);
+
         $service = new QueryEventService();
 
         return $service->getEvents($request->all());
@@ -81,6 +91,8 @@ class EventController extends Controller
 
     public function getEventById(int $id)
     {
+        Gate::authorize('view', Event::class);
+
         $service = new QueryEventService();
 
         return $service->getEventById($id);

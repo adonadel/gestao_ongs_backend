@@ -28,41 +28,12 @@ class DatabaseSeeder extends Seeder
             'name' => 'admin'
         ]);
 
-        $userCreatePermission = Permission::factory()->create([
-            'name' => 'user-create'
-        ]);
-
-        $userUpdatePermission = Permission::factory()->create([
-            'name' => 'user-update'
-        ]);
-
-        $userViewPermission = Permission::factory()->create([
-            'name' => 'user-view'
-        ]);
-
-        $userDeletePermission = Permission::factory()->create([
-            'name' => 'user-delete'
-        ]);
-
-        PermissionRole::factory()->create([
-            'role_id' => $role->id,
-            'permission_id' => $userCreatePermission->id,
-        ]);
-
-        PermissionRole::factory()->create([
-            'role_id' => $role->id,
-            'permission_id' => $userUpdatePermission->id,
-        ]);
-
-        PermissionRole::factory()->create([
-            'role_id' => $role->id,
-            'permission_id' => $userViewPermission->id,
-        ]);
-
-        PermissionRole::factory()->create([
-            'role_id' => $role->id,
-            'permission_id' => $userDeletePermission->id,
-        ]);
+        foreach (Permission::all() as $permission) {
+            PermissionRole::factory()->create([
+                'role_id' => $role->id,
+                'permission_id' => $permission->id,
+            ]);
+        }
 
         User::factory()->create([
             'password' => Hash::make('123456'),
