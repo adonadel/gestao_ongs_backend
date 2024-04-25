@@ -8,13 +8,16 @@ use App\Http\Services\Animal\CreateAnimalService;
 use App\Http\Services\Animal\DeleteAnimalService;
 use App\Http\Services\Animal\QueryAnimalService;
 use App\Http\Services\Animal\UpdateAnimalService;
-use Illuminate\Http\Client\Request;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Gate;
 
 class AnimalController extends Controller
 {
     public function create(AnimalRequest $request)
     {
+        Gate::authorize('create', auth()->user());
+
         try {
             DB::beginTransaction();
 
@@ -34,6 +37,8 @@ class AnimalController extends Controller
 
     public function update(AnimalRequest $request, int $id)
     {
+        Gate::authorize('update', auth()->user());
+
         try {
             DB::beginTransaction();
 
@@ -53,6 +58,8 @@ class AnimalController extends Controller
 
     public function delete(int $id)
     {
+        Gate::authorize('delete', auth()->user());
+
         try {
             DB::beginTransaction();
 
@@ -74,6 +81,8 @@ class AnimalController extends Controller
 
     public function getAnimals(Request $request)
     {
+        Gate::authorize('view', auth()->user());
+
         $service = new QueryAnimalService();
 
         return $service->getAnimals($request->all());
@@ -81,6 +90,8 @@ class AnimalController extends Controller
 
     public function getAnimalById(int $id)
     {
+        Gate::authorize('view', auth()->user());
+
         $service = new QueryAnimalService();
 
         return $service->getAnimalById($id);

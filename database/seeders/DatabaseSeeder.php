@@ -36,8 +36,12 @@ class DatabaseSeeder extends Seeder
             'name' => 'user-update'
         ]);
 
-        $userListPermission = Permission::factory()->create([
-            'name' => 'user-list'
+        $userViewPermission = Permission::factory()->create([
+            'name' => 'user-view'
+        ]);
+
+        $userDeletePermission = Permission::factory()->create([
+            'name' => 'user-delete'
         ]);
 
         PermissionRole::factory()->create([
@@ -52,7 +56,12 @@ class DatabaseSeeder extends Seeder
 
         PermissionRole::factory()->create([
             'role_id' => $role->id,
-            'permission_id' => $userListPermission->id,
+            'permission_id' => $userViewPermission->id,
+        ]);
+
+        PermissionRole::factory()->create([
+            'role_id' => $role->id,
+            'permission_id' => $userDeletePermission->id,
         ]);
 
         User::factory()->create([

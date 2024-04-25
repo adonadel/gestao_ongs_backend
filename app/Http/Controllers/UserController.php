@@ -15,6 +15,7 @@ use App\Rules\UniqueCpfCnpj;
 use App\Rules\UniqueEmail;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Password as PasswordForReset;
 use Illuminate\Validation\Rule;
 use Illuminate\Validation\Rules\Password;
@@ -23,6 +24,8 @@ class UserController extends Controller
 {
     public function getUsers(Request $request)
     {
+        Gate::authorize('view', auth()->user());
+
         $service = new QueryUserService();
 
         return $service->getUsers($request->all());
@@ -30,6 +33,8 @@ class UserController extends Controller
 
     public function getUserById(int $id)
     {
+        Gate::authorize('view', auth()->user());
+
         $service = new QueryUserService();
 
         return $service->getUserById($id);
@@ -37,6 +42,8 @@ class UserController extends Controller
 
     public function create(Request $request)
     {
+        Gate::authorize('create', auth()->user());
+
         try {
             DB::beginTransaction();
 
@@ -66,6 +73,8 @@ class UserController extends Controller
 
     public function update(Request $request, int $id)
     {
+        Gate::authorize('update', auth()->user());
+
         try {
             DB::beginTransaction();
 
@@ -96,6 +105,8 @@ class UserController extends Controller
 
     public function delete(int $id)
     {
+        Gate::authorize('delete', auth()->user());
+
         try {
             DB::beginTransaction();
 
@@ -116,6 +127,8 @@ class UserController extends Controller
 
     public function enable(int $id)
     {
+        Gate::authorize('update', auth()->user());
+
         try {
             DB::beginTransaction();
 
@@ -136,6 +149,8 @@ class UserController extends Controller
 
     public function disable(int $id)
     {
+        Gate::authorize('update', auth()->user());
+
         try {
             DB::beginTransaction();
 
