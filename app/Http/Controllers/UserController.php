@@ -82,7 +82,7 @@ class UserController extends Controller
 
             $validated = $request->validate([
                 'password' => [
-                    'required', Password::min(6)->mixedCase()->letters()->numbers()
+                    'nullable', Password::min(6)->mixedCase()->letters()->numbers()
                 ],
                 'role_id' => ['required', 'int', Rule::exists(Role::class, 'id')],
                 'person' => 'array|required',
