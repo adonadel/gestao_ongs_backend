@@ -13,6 +13,8 @@ class DeleteRoleService
 
         $role = $repository->getById($id);
 
+        $role->permissions()->detach();
+
         return $repository->delete($role);
     }
 }

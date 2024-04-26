@@ -20,7 +20,7 @@ class AnimalRepository extends Repository
     public function getAnimals(array $filters)
     {
         $noPaginate = data_get($filters, 'no-paginate', false);
-        $search = data_get($filters, 'name');
+        $search = data_get($filters, 'search');
         $ageType = data_get($filters, 'age_type');
         $size = data_get($filters, 'size');
         $gender = data_get($filters, 'gender');

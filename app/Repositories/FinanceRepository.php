@@ -17,7 +17,7 @@ class FinanceRepository extends Repository
     public function getFinances(array $filters)
     {
         $noPaginate = data_get($filters, 'no-paginate', false);
-        $search = data_get($filters, 'description');
+        $search = data_get($filters, 'search');
 
         $query = $this->newQuery();
 

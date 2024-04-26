@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Services\Ngr\QueryNgrService;
 use App\Http\Services\Ngr\UpdateNgrService;
 use App\Models\Ngr;
 use Illuminate\Http\Request;
@@ -44,5 +45,14 @@ class NgrController extends Controller
             DB::rollBack();
             throw new \Exception($exception->getMessage());
         }
+    }
+
+    public function getById(int $id)
+    {
+        Gate::authorize('view', Ngr::class);
+
+        $service = new QueryNgrService();
+
+        return $service->getById($id);
     }
 }

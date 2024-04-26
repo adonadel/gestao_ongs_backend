@@ -6,6 +6,7 @@ use App\Models\User;
 use App\Utils\CPFUtils;
 use App\Utils\StringUtils;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Support\Facades\DB;
 
 class UserRepository extends Repository
 {
@@ -13,7 +14,7 @@ class UserRepository extends Repository
     {
         return User::class;
     }
-    
+
     public function getUsers(array $filters)
     {
         $noPaginate = data_get($filters, 'no-paginate', false);
@@ -51,6 +52,7 @@ class UserRepository extends Repository
     public function getByEmail(string $email)
     {
         return $this->newQuery()
+            ->with('role.permissions')
             ->whereHas('person', function (Builder $query) use ($email) {
                 return $query->where('email', $email);
             })->first();

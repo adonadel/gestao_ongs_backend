@@ -11,10 +11,18 @@ class UpdateRoleService
     {
         $repository = new RoleRepository();
 
+        $permissionsIds = collect($data['permissions'])
+            ->pluck('id')
+            ->toArray();
+
         $role = $repository->getById($id);
+
+        $role->permissions()->detach();
 
         $repository->update($role, $data);
 
-        return $role;
+        $role->permissions()->sync($permissionsIds);
+
+        return $role->load('permissions');
     }
 }

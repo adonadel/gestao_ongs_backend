@@ -11,8 +11,14 @@ class CreateRoleService
     {
         $repository = new RoleRepository();
 
+        $permissionsIds = collect($data['permissions'])
+            ->pluck('id')
+            ->toArray();
+
         $role = $repository->create($data);
 
-        return $role;
+        $role->permissions()->sync($permissionsIds);
+
+        return $role->load('permissions');
     }
 }
