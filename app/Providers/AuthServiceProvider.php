@@ -10,6 +10,8 @@ use App\Policies\FinancePolicy;
 use App\Policies\MediaPolicy;
 use App\Policies\NgrPolicy;
 use App\Policies\PeoplePolicy;
+use App\Policies\PermissionPolicy;
+use App\Policies\RolePolicy;
 use App\Policies\UserPolicy;
 use Illuminate\Foundation\Support\Providers\AuthServiceProvider as ServiceProvider;
 use Illuminate\Support\Facades\Auth;
@@ -29,9 +31,10 @@ class AuthServiceProvider extends ServiceProvider
         AdoptionPolicy::class,
         EventPolicy::class,
         NgrPolicy::class,
-        PeoplePolicy::class,
+        PermissionPolicy::class,
         FinancePolicy::class,
         AnimalPolicy::class,
+        RolePolicy::class,
     ];
 
     public function boot(): void

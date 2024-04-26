@@ -7,6 +7,8 @@ use App\Http\Controllers\EventController;
 use App\Http\Controllers\FinancesController;
 use App\Http\Controllers\MediaController;
 use App\Http\Controllers\NgrController;
+use App\Http\Controllers\PermissionsController;
+use App\Http\Controllers\RoleController;
 use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Route;
 
@@ -151,6 +153,32 @@ Route::prefix('finances')->group( function() {
 
             //delete
             Route::delete('/{id}', 'delete');
+        });
+    });
+});
+
+Route::prefix('roles')->group( function() {
+    Route::controller(RoleController::class)->group( function() {
+        Route::middleware('auth:api')->group(function () {
+            //get
+            Route::get('/', 'getRoles');
+            Route::get('/{id}', 'getRoleById');
+
+            //post
+            Route::post('/', 'create');
+            Route::put('/{id}', 'update');
+
+            //delete
+            Route::delete('/{id}', 'delete');
+        });
+    });
+});
+
+Route::prefix('permissions')->group( function() {
+    Route::controller(PermissionsController::class)->group( function() {
+        Route::middleware('auth:api')->group(function () {
+            //get
+            Route::get('/', 'getPermissions');
         });
     });
 });

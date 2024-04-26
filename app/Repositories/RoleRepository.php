@@ -2,19 +2,17 @@
 
 namespace App\Repositories;
 
-use App\Models\Adoption;
+use App\Models\Role;
 use Illuminate\Database\Eloquent\Builder;
 
-class AdoptionRepository extends Repository
+class RoleRepository extends Repository
 {
-    protected $table = 'adoptions';
-
     protected function getModelClass()
     {
-        return Adoption::class;
+        return Role::class;
     }
 
-    public function getAdoptions(array $filters)
+    public function getRoles(array $filters)
     {
         $noPaginate = data_get($filters, 'no-paginate', false);
         $search = data_get($filters, 'search');
@@ -22,12 +20,10 @@ class AdoptionRepository extends Repository
         $query = $this->newQuery();
 
         $query
-            ->with('medias')
+            ->with('permissions')
             ->when($search, function(Builder $query, $search){
                 $query
-                    ->where('name', 'ilike', "%{$search}%")
-                    ->orWhere('description', 'ilike', "%{$search}%")
-                    ->orWhere('tags', 'ilike', "%{$search}%");
+                    ->where('name', 'ilike', "%{$search}%");
             });
 
         if ($noPaginate) {

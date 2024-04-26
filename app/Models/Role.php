@@ -20,7 +20,7 @@ class Role extends Model
     ];
 
     protected $hidden = [
-      'pivot'
+        'pivot'
     ];
 
     public function permissions(): BelongsToMany
