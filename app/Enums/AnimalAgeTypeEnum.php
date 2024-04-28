@@ -2,12 +2,12 @@
 
 namespace App\Enums;
 
-enum SizeEnum: string
+enum AnimalAgeTypeEnum: string
 {
-    case SMALL = 'SMALL';
-    case MEDIUM = 'MEDIUM';
-    case LARGE = 'LARGE';
-    case VERY_LARGE = 'VERY_LARGE';
+    case CUB = 'CUB';
+    case TEEN = 'TEEN';
+    case ADULT = 'ADULT';
+    case ELDERLY = 'ELDERLY';
 
     public static function toArrayWithString(): array
     {

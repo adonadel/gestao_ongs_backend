@@ -99,7 +99,7 @@ class AdoptionController extends Controller
         return $service->getAdoptionById($id);
     }
 
-    public function confirmAdotpion(int $id)
+    public function confirmAdoption(int $id)
     {
         Gate::authorize('updateAdoptionStatus', Adoption::class);
 
@@ -122,7 +122,7 @@ class AdoptionController extends Controller
         }
     }
 
-    public function denyAdotpion(int $id)
+    public function denyAdoption(int $id)
     {
         Gate::authorize('updateAdoptionStatus', Adoption::class);
 
@@ -145,7 +145,7 @@ class AdoptionController extends Controller
         }
     }
 
-    public function cancelAdotpion(int $id)
+    public function cancelAdoption(int $id)
     {
         Gate::authorize('updateAdoptionStatus', Adoption::class);
 

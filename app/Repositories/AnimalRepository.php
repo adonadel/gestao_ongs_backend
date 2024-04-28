@@ -2,9 +2,9 @@
 
 namespace App\Repositories;
 
-use App\Enums\AgeTypeEnum;
+use App\Enums\AnimalAgeTypeEnum;
 use App\Enums\AnimalGenderEnum;
-use App\Enums\SizeEnum;
+use App\Enums\AnimalSizeEnum;
 use App\Models\Animal;
 use Illuminate\Database\Eloquent\Builder;
 
@@ -25,8 +25,8 @@ class AnimalRepository extends Repository
         $size = data_get($filters, 'size');
         $gender = data_get($filters, 'gender');
 
-        $ageTypeValidated = in_array($ageType, AgeTypeEnum::toArrayWithString(), true);
-        $sizeValidated = in_array($size, SizeEnum::toArrayWithString(), true);
+        $ageTypeValidated = in_array($ageType, AnimalAgeTypeEnum::toArrayWithString(), true);
+        $sizeValidated = in_array($size, AnimalSizeEnum::toArrayWithString(), true);
         $genderValidated = in_array($gender, AnimalGenderEnum::toArrayWithString(), true);
 
         $query = $this->newQuery();

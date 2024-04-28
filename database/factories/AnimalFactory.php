@@ -2,9 +2,9 @@
 
 namespace Database\Factories;
 
-use App\Enums\AgeTypeEnum;
+use App\Enums\AnimalAgeTypeEnum;
 use App\Enums\AnimalGenderEnum;
-use App\Enums\SizeEnum;
+use App\Enums\AnimalSizeEnum;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 class AnimalFactory extends Factory
@@ -15,8 +15,8 @@ class AnimalFactory extends Factory
         return [
             'name' => fake()->name,
             'gender' => fake()->randomElement(AnimalGenderEnum::cases()),
-            'size' => fake()->randomElement(SizeEnum::cases()),
-            'age_type' => fake()->randomElement(AgeTypeEnum::cases()),
+            'size' => fake()->randomElement(AnimalSizeEnum::cases()),
+            'age_type' => fake()->randomElement(AnimalAgeTypeEnum::cases()),
             'description' => fake()->text(100),
             'tags' => str_replace('', ',', fake()->text(50)),
         ];

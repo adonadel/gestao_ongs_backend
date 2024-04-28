@@ -31,6 +31,10 @@ return new class extends Migration
                 'display_name' => 'Criar usuários',
             ],
             [
+                'name' => 'user-delete',
+                'display_name' => 'Excluir usuários',
+            ],
+            [
                 'name' => 'animal-view',
                 'display_name' => 'Visualizar Animais',
             ],
@@ -43,6 +47,10 @@ return new class extends Migration
                 'display_name' => 'Criar Animais',
             ],
             [
+                'name' => 'animal-delete',
+                'display_name' => 'Excluir Animais',
+            ],
+            [
                 'name' => 'adoption-view',
                 'display_name' => 'Visualizar Adoções',
             ],
@@ -53,6 +61,10 @@ return new class extends Migration
             [
                 'name' => 'adoption-create',
                 'display_name' => 'Criar Adoções',
+            ],
+            [
+                'name' => 'adoption-delete',
+                'display_name' => 'Excluir Adoções',
             ],
             [
                 'name' => 'adoption-update-status',
@@ -71,6 +83,10 @@ return new class extends Migration
                 'display_name' => 'Criar Endereços',
             ],
             [
+                'name' => 'address-delete',
+                'display_name' => 'Excluir Endereços',
+            ],
+            [
                 'name' => 'event-view',
                 'display_name' => 'Visualizar Eventos',
             ],
@@ -81,6 +97,10 @@ return new class extends Migration
             [
                 'name' => 'event-create',
                 'display_name' => 'Criar Eventos',
+            ],
+            [
+                'name' => 'event-delete',
+                'display_name' => 'Excluir Eventos',
             ],
             [
                 'name' => 'finance-view',
@@ -95,6 +115,10 @@ return new class extends Migration
                 'display_name' => 'Criar Finanças',
             ],
             [
+                'name' => 'finance-delete',
+                'display_name' => 'Excluir Finanças',
+            ],
+            [
                 'name' => 'media-view',
                 'display_name' => 'Visualizar Imagens',
             ],
@@ -105,6 +129,10 @@ return new class extends Migration
             [
                 'name' => 'media-create',
                 'display_name' => 'Criar Imagens',
+            ],
+            [
+                'name' => 'media-delete',
+                'display_name' => 'Excluir Imagens',
             ],
             [
                 'name' => 'ngr-view',
@@ -119,6 +147,10 @@ return new class extends Migration
                 'display_name' => 'Criar Dados da ong',
             ],
             [
+                'name' => 'ngr-delete',
+                'display_name' => 'Excluir Dados da ong',
+            ],
+            [
                 'name' => 'permission-view',
                 'display_name' => 'Visualizar Permissões',
             ],
@@ -131,6 +163,10 @@ return new class extends Migration
                 'display_name' => 'Criar Permissões',
             ],
             [
+                'name' => 'permission-delete',
+                'display_name' => 'Excluir Permissões',
+            ],
+            [
                 'name' => 'role-view',
                 'display_name' => 'Visualizar Níveis de permissão',
             ],
@@ -141,6 +177,10 @@ return new class extends Migration
             [
                 'name' => 'role-create',
                 'display_name' => 'Criar Níveis de permissão',
+            ],
+            [
+                'name' => 'role-delete',
+                'display_name' => 'Excluir Níveis de permissão',
             ],
         ];
     }

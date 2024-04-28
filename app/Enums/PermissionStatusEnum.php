@@ -2,12 +2,10 @@
 
 namespace App\Enums;
 
-enum AgeTypeEnum: string
+enum PermissionStatusEnum: string
 {
-    case CUB = 'CUB';
-    case TEEN = 'TEEN';
-    case ADULT = 'ADULT';
-    case ELDERLY = 'ELDERLY';
+    case ENABLED = 'ENABLED';
+    case DISABLED = 'DISABLED';
 
     public static function toArrayWithString(): array
     {
