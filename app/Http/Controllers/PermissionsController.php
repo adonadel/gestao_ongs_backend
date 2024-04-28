@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Services\Permission\QueryPermissionService;
 use App\Models\Permission;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Gate;
@@ -14,6 +15,6 @@ class PermissionsController extends Controller
 
         $service = new QueryPermissionService();
 
-        return $service->getRoles($request->all());
+        return $service->getPermissions($request->all());
     }
 }

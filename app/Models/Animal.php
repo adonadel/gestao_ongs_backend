@@ -3,9 +3,9 @@
 namespace App\Models;
 
 
-use App\Enums\AgeTypeEnum;
+use App\Enums\AnimalAgeTypeEnum;
 use App\Enums\AnimalGenderEnum;
-use App\Enums\SizeEnum;
+use App\Enums\AnimalSizeEnum;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
@@ -26,8 +26,8 @@ class Animal extends Model
 
     protected $casts = [
         'gender' => AnimalGenderEnum::class,
-        'size' => SizeEnum::class,
-        'age_type' => AgeTypeEnum::class,
+        'size' => AnimalSizeEnum::class,
+        'age_type' => AnimalAgeTypeEnum::class,
     ];
 
     public function adoption(): HasOne

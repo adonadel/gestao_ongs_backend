@@ -74,7 +74,7 @@ class AuthController extends Controller
             return response()->json([
                 'newToken' => $refreshedToken
             ]);
-        } catch (JWTException $e) {
+        } catch (JWTException $exception) {
             return response()->json([
                 'error' => $exception->getMessage()
             ], 400);
