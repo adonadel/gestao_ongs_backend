@@ -16,7 +16,7 @@ return new class extends Migration
             $table->id();
             $table->string('name');
             $table->string('display_name');
-            $table->string('status', PermissionStatusEnum::toArrayWithString())->default(PermissionStatusEnum::ENABLED);
+            $table->enum('status', PermissionStatusEnum::toArrayWithString())->default(PermissionStatusEnum::ENABLED);
             $table->timestamps();
             $table->softDeletes();
         });
