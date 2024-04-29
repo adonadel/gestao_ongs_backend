@@ -223,7 +223,7 @@
                 ],
                 "summary": "Através dessa rota, o token do usuário será renovado",
                 "description": "",
-                "operationId": "getLoggedUser",
+                "operationId": "refreshToken",
                 "responses": {
                     "200": {
                         "description": "Se houver um token e ele for válido, desvalidará o mesmo e retornará um novo, renovando o tempo de acesso do usuário",
@@ -1282,7 +1282,7 @@
                 ],
                 "summary": "Através dessa rota, o usuário poderá excluir um evento",
                 "description": "",
-                "operationId": "adoptionDelete",
+                "operationId": "eventDelete",
                 "parameters": [
                     {
                         "name": "id",
@@ -1563,7 +1563,7 @@
                 ],
                 "summary": "Através dessa rota, o usuário poderá excluir uma finança",
                 "description": "",
-                "operationId": "adoptionDelete",
+                "operationId": "financeDelete",
                 "parameters": [
                     {
                         "name": "id",
@@ -1742,7 +1742,7 @@
                 ],
                 "summary": "Através dessa rota, o usuário poderá excluir uma imagem",
                 "description": "",
-                "operationId": "adoptionDelete",
+                "operationId": "mediaDelete",
                 "parameters": [
                     {
                         "name": "id",
@@ -2137,7 +2137,7 @@
                 ],
                 "summary": "Através dessa rota, o usuário poderá editar um nível de permissão",
                 "description": "",
-                "operationId": "permissionUpdate",
+                "operationId": "roleUpdate",
                 "requestBody": {
                     "content": {
                         "application/json": {
@@ -2197,7 +2197,7 @@
                 ],
                 "summary": "Através dessa rota, o usuário poderá excluir um nível de permissão",
                 "description": "",
-                "operationId": "adoptionDelete",
+                "operationId": "roleDelete",
                 "parameters": [
                     {
                         "name": "id",
@@ -2579,7 +2579,7 @@
                 ],
                 "summary": "Através dessa rota, o usuário poderá excluir um usuário",
                 "description": "",
-                "operationId": "adoptionDelete",
+                "operationId": "userDelete",
                 "parameters": [
                     {
                         "name": "id",
@@ -3227,10 +3227,6 @@
             "UserCreateModel": {
                 "type": "object",
                 "properties": {
-                    "id": {
-                        "description": "Id do usuário criado",
-                        "type": "integer"
-                    },
                     "password": {
                         "description": "senha do usuário criado",
                         "type": "string"
@@ -3271,10 +3267,6 @@
                                     "type": "object",
                                     "required": false,
                                     "properties": {
-                                        "id": {
-                                            "description": "Id do endereço criada",
-                                            "type": "integer"
-                                        },
                                         "street": {
                                             "description": "Rua do endereço criada",
                                             "type": "string"

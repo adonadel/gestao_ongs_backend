@@ -23,7 +23,7 @@ class RoleRepository extends Repository
             ->with('permissions')
             ->when($search, function(Builder $query, $search){
                 $query
-                    ->where('name', 'ilike', "%{$search}%");
+                    ->whereRaw('unaccent(name) ilike unaccent(?)', ["%{$search}%"]);
             });
 
         if ($noPaginate) {

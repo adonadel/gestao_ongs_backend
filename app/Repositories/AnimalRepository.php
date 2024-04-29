@@ -35,9 +35,9 @@ class AnimalRepository extends Repository
             ->with('medias')
             ->when($search, function(Builder $query, $search){
                 $query
-                    ->where('name', 'ilike', "%{$search}%")
-                    ->orWhere('description', 'ilike', "%{$search}%")
-                    ->orWhere('tags', 'ilike', "%{$search}%");
+                    ->whereRaw('unaccent(name) ilike unaccent(?)', ["%{$search}%"])
+                    ->orWhereRaw('unaccent(description) ilike unaccent(?)', ["%{$search}%"])
+                    ->orWhereRaw('unaccent(tags) ilike unaccent(?)', ["%{$search}%"]);
             })
             ->when($ageTypeValidated, function (Builder $query) use ($ageType){
                 $query
