@@ -24,7 +24,7 @@ class FinanceRepository extends Repository
         $query
             ->when($search, function(Builder $query, $search){
                 $query
-                    ->where('description', 'ilike', "%{$search}%");
+                    ->whereRaw('unaccent(description) ilike unaccent(?)', ["%{$search}%"]);
             });
 
         if ($noPaginate) {

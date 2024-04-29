@@ -25,9 +25,7 @@ class AdoptionRepository extends Repository
             ->with('medias')
             ->when($search, function(Builder $query, $search){
                 $query
-                    ->where('name', 'ilike', "%{$search}%")
-                    ->orWhere('description', 'ilike', "%{$search}%")
-                    ->orWhere('tags', 'ilike', "%{$search}%");
+                    ->whereRaw('unaccent(description) ilike unaccent(?)', ["%{$search}%"]);
             });
 
         if ($noPaginate) {

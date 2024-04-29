@@ -18,7 +18,7 @@ class UserRepository extends Repository
     public function getUsers(array $filters)
     {
         $noPaginate = data_get($filters, 'no-paginate', false);
-        $search = data_get($filters, 'name');
+        $search = data_get($filters, 'search');
 
         $query = $this->newQuery();
 
@@ -28,8 +28,7 @@ class UserRepository extends Repository
                 $query->whereHas('person', function (Builder $query) use ($search){
                    $check = StringUtils::checkIfStringStartWithNumber($search);
                    return $query
-
-                       ->where('name', 'ilike', "%{$search}%")
+                       ->whereRaw('unaccent(name) ilike unaccent(?)', ["%{$search}%"])
                        ->orWhere('email', 'ilike', "%{$search}%")
                        ->when($check, function ($query) use ($search){
                            $cleanedString = CPFUtils::removeNonAlphaNumericFromString($search);

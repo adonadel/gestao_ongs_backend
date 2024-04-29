@@ -3,6 +3,7 @@
 namespace App\Repositories;
 
 use App\Models\Permission;
+use Illuminate\Database\Eloquent\Builder;
 
 class PermissionRepository extends Repository
 {
@@ -21,8 +22,8 @@ class PermissionRepository extends Repository
         $query
             ->when($search, function(Builder $query, $search){
                 $query
-                    ->where('name', 'ilike', "%{$search}%")
-                    ->orWhere('display_name', 'ilike', "%{$search}%");
+                    ->whereRaw('unaccent(name) ilike unaccent(?)', ["%{$search}%"])
+                    ->orWhereRaw('unaccent(display_name) ilike unaccent(?)', ["%{$search}%"]);
             });
 
         if ($noPaginate) {
