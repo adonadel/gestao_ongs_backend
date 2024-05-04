@@ -2,9 +2,9 @@
 
 namespace App\Repositories;
 
-use App\Enums\AgeTypeEnum;
+use App\Enums\AnimalAgeTypeEnum;
 use App\Enums\AnimalGenderEnum;
-use App\Enums\SizeEnum;
+use App\Enums\AnimalSizeEnum;
 use App\Models\Animal;
 use Illuminate\Database\Eloquent\Builder;
 
@@ -20,13 +20,13 @@ class AnimalRepository extends Repository
     public function getAnimals(array $filters)
     {
         $noPaginate = data_get($filters, 'no-paginate', false);
-        $search = data_get($filters, 'name');
+        $search = data_get($filters, 'search');
         $ageType = data_get($filters, 'age_type');
         $size = data_get($filters, 'size');
         $gender = data_get($filters, 'gender');
 
-        $ageTypeValidated = in_array($ageType, AgeTypeEnum::toArrayWithString(), true);
-        $sizeValidated = in_array($size, SizeEnum::toArrayWithString(), true);
+        $ageTypeValidated = in_array($ageType, AnimalAgeTypeEnum::toArrayWithString(), true);
+        $sizeValidated = in_array($size, AnimalSizeEnum::toArrayWithString(), true);
         $genderValidated = in_array($gender, AnimalGenderEnum::toArrayWithString(), true);
 
         $query = $this->newQuery();
@@ -35,9 +35,9 @@ class AnimalRepository extends Repository
             ->with('medias')
             ->when($search, function(Builder $query, $search){
                 $query
-                    ->where('name', 'ilike', "%{$search}%")
-                    ->orWhere('description', 'ilike', "%{$search}%")
-                    ->orWhere('tags', 'ilike', "%{$search}%");
+                    ->whereRaw('unaccent(name) ilike unaccent(?)', ["%{$search}%"])
+                    ->orWhereRaw('unaccent(description) ilike unaccent(?)', ["%{$search}%"])
+                    ->orWhereRaw('unaccent(tags) ilike unaccent(?)', ["%{$search}%"]);
             })
             ->when($ageTypeValidated, function (Builder $query) use ($ageType){
                 $query

@@ -2,7 +2,7 @@
     "openapi": "3.0.3",
     "info": {
         "title": "Documentação da api",
-        "description": "Documentações sobre a api desse projeto",
+        "description": "Documentações sobre a api do projeto de gestão de ongs",
         "termsOfService": "http://swagger.io/terms/",
         "contact": {
             "email": "teste@teste.com"
@@ -18,9 +18,6 @@
             "description": "API",
             "url": "http://localhost:{port}/api",
             "variables": {
-                "tenant": {
-                    "default": "local"
-                },
                 "port": {
                     "default": "80"
                 }
@@ -34,19 +31,51 @@
     ],
     "tags": [
         {
-            "name" : "Usuários",
-            "description": "Api que envolve o cadastro dos usuários do sistema",
-            "externalDocs": {
-                "description": "Descubra mais",
-                "url": "#"
-            }
+            "name" : "Auth",
+            "description": "Rotas que envolvem a parte de autenticação no sistema "
+        },
+        {
+            "name" : "Animals",
+            "description": "Rotas que envolvem o cadastro e configuração dos animais do sistema"
+        },
+        {
+            "name" : "Adoptions",
+            "description": "Rotas que envolvem o cadastro e configuração das adoções do sistema"
+        },
+        {
+            "name" : "Events",
+            "description": "Rotas que envolvem o cadastro e configuração dos eventos do sistema"
+        },
+        {
+            "name" : "Finances",
+            "description": "Rotas que envolvem as movimentações financeiras do sistema"
+        },
+        {
+            "name" : "Medias",
+            "description": "Rotas que envolvem o cadastro e configuração das imagens do sistema"
+        },
+        {
+            "name" : "Ngrs",
+            "description": "Rotas para configurar os dados da ong"
+        },
+        {
+            "name" : "Permissions",
+            "description": "Rotas que envolvem a configuração das permissões do sistema"
+        },
+        {
+            "name" : "Roles",
+            "description": "Rotas que envolvem o cadastro e configuração dos níveis de permissão do sistema"
+        },
+        {
+            "name" : "Users",
+            "description": "Rotas que envolvem o cadastro e configuração dos usuários do sistema"
         }
     ],
     "paths": {
-        "/users/login": {
+        "/auth/login": {
             "post": {
                 "tags": [
-                    "Autenticação"
+                    "Auth"
                 ],
                 "summary": "Obtém token de autenticação para consumir as API'S",
                 "description": "",
@@ -78,17 +107,13 @@
                                 "schema": {
                                     "type": "object",
                                     "properties": {
-                                        "access_token": {
-                                            "description": "TOken que será usado para acessar as rotas protegidas",
+                                        "token": {
+                                            "description": "Token que será usado para acessar as rotas protegidas",
                                             "type": "string"
                                         },
-                                        "otp_required": {
-                                            "description": "Define se o usuário precisará informar o código OTP para finalizar o login",
-                                            "type": "boolean"
-                                        },
-                                        "token_type": {
-                                            "description": "Tipo do token",
-                                            "type": "string"
+                                        "expires_in": {
+                                            "description": "Tempo até a sessão se encerrar",
+                                            "type": "integer"
                                         }
                                     }
                                 }
@@ -128,14 +153,14 @@
                 }
             }
         },
-        "/users/logout": {
+        "/auth/logout": {
             "post": {
                 "security": [
                     "BearerAuth": []
                 ],
                 "summary": "Através dessa rota, o usuário poderá efetuar o logout da aplicação. O token do usuário será revogado",
                 "tags": [
-                    "Autenticação"
+                    "Auth"
                 ],
                 "requestBody": {
                     "content": {
@@ -191,10 +216,2095 @@
                 }
             }
         },
+        "/auth/refresh": {
+            "post": {
+                "tags": [
+                    "Auth"
+                ],
+                "summary": "Através dessa rota, o token do usuário será renovado",
+                "description": "",
+                "operationId": "refreshToken",
+                "responses": {
+                    "200": {
+                        "description": "Se houver um token e ele for válido, desvalidará o mesmo e retornará um novo, renovando o tempo de acesso do usuário",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "newToken": {
+                                            "description": "Token atualizado que será usado para acessar as rotas protegidas",
+                                            "type": "string"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Indica que há algum problema com as credenciais",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "message": {
+                                            "type": "string"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Erro de validação da request",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#components/schemas/ValidationError"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/auth/me": {
+            "get": {
+                "tags": [
+                    "Auth"
+                ],
+                "summary": "Através dessa rota, será retornado os dados do usuário logado",
+                "description": "",
+                "operationId": "getLoggedUser",
+                "responses": {
+                    "200": {
+                        "description": "Se houver um token e ele for válido, retornará os dados do usuário correspondente",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#components/schemas/UserModel"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Indica que há algum problema com as credenciais",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "message": {
+                                            "type": "string"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Erro de validação da request",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#components/schemas/ValidationError"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/animals": {
+            "post": {
+                "tags": [
+                    "Animals"
+                ],
+                "summary": "Através dessa rota, o usuário poderá criar novos animais",
+                "description": "",
+                "operationId": "animalCreate",
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#components/schemas/AnimalModel"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Caso as informações estejam corretas, o animal será criado",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#components/schemas/AnimalModel"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Indica que há algum problema com as credenciais",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "message": {
+                                            "type": "string"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Erro de validação da request",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "message": {
+                                            "type": "string"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "get": {
+                "tags": [
+                    "Animals"
+                ],
+                "summary": "Através dessa rota, o usuário poderá buscar por todos os animais cadastrados no sistema",
+                "description": "",
+                "operationId": "animalGetAll",
+                "parameters": [
+                    {
+                        "name": "search",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Se houver animais e a requisição estiver correta, trará os animais cadastrados",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#components/schemas/AnimalModel"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Indica que há algum problema com as credenciais",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "message": {
+                                            "type": "string"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Erro de validação da request",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#components/schemas/ValidationError"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/animals/{id}": {
+            "get": {
+                "tags": [
+                    "Animals"
+                ],
+                "summary": "Através dessa rota, o usuário poderá buscar por um animal através do id",
+                "description": "",
+                "operationId": "animalGetById",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Se houver um animal com o id informado, trará os dados do mesmo",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#components/schemas/AnimalModel"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Indica que há algum problema com as credenciais",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "message": {
+                                            "type": "string"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Erro de validação da request",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#components/schemas/ValidationError"
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "put": {
+                "tags": [
+                    "Animals"
+                ],
+                "summary": "Através dessa rota, o usuário poderá editar um animal",
+                "description": "",
+                "operationId": "animalUpdate",
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#components/schemas/AnimalModel"
+                            }
+                        }
+                    }
+                },
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path"
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Se houver um animal com o id informado e as informações estiverem corretas, o animal será editado",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#components/schemas/AnimalModel"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Indica que há algum problema com as credenciais",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "message": {
+                                            "type": "string"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Erro de validação da request",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#components/schemas/ValidationError"
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "tags": [
+                    "Animals"
+                ],
+                "summary": "Através dessa rota, o usuário poderá excluir um animal",
+                "description": "",
+                "operationId": "animalDelete",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path"
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Se houver um animal com o id informado, a mesma será excluída do sistema",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "message": {
+                                            "type": "string"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Indica que há algum problema com as credenciais",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "message": {
+                                            "type": "string"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Erro de validação da request",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#components/schemas/ValidationError"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/adoptions": {
+            "post": {
+                "tags": [
+                    "Adoptions"
+                ],
+                "summary": "Através dessa rota, o usuário poderá criar novas adoções",
+                "description": "",
+                "operationId": "adoptionCreate",
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#components/schemas/AdoptionCreateModel"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Caso as informações estejam corretas, a adoção será criada",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#components/schemas/AdoptionModel"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Indica que há algum problema com as credenciais",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "message": {
+                                            "type": "string"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Erro de validação da request",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "message": {
+                                            "type": "string"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "get": {
+                "tags": [
+                    "Adoptions"
+                ],
+                "summary": "Através dessa rota, o usuário poderá buscar por todos as adoções cadastradas no sistema",
+                "description": "",
+                "operationId": "adoptiongetAll",
+                "parameters": [
+                    {
+                        "name": "search",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Se houver adoções e a requisição estiver correta, trará as adoções cadastradas",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#components/schemas/AdoptionModel"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Indica que há algum problema com as credenciais",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "message": {
+                                            "type": "string"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Erro de validação da request",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#components/schemas/ValidationError"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/adoptions/{id}": {
+            "get": {
+                "tags": [
+                    "Adoptions"
+                ],
+                "summary": "Através dessa rota, o usuário poderá buscar por uma adoção através do id",
+                "description": "",
+                "operationId": "adoptionGetById",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Se houver uma adoção com o id informado, trará os dados do mesmo",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#components/schemas/AdoptionModel"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Indica que há algum problema com as credenciais",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "message": {
+                                            "type": "string"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Erro de validação da request",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#components/schemas/ValidationError"
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "put": {
+                "tags": [
+                    "Adoptions"
+                ],
+                "summary": "Através dessa rota, o usuário poderá editar uma adoção",
+                "description": "",
+                "operationId": "adoptionUpdate",
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#components/schemas/AdoptionCreateModel"
+                            }
+                        }
+                    }
+                },
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path"
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Se houver uma adoção com o id informado e as informações estiverem corretas, a adoção será editada",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#components/schemas/AdoptionModel"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Indica que há algum problema com as credenciais",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "message": {
+                                            "type": "string"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Erro de validação da request",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#components/schemas/ValidationError"
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "tags": [
+                    "Adoptions"
+                ],
+                "summary": "Através dessa rota, o usuário poderá excluir uma adoção",
+                "description": "",
+                "operationId": "adoptionDelete",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path"
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Se houver uma adoção com o id informado, a mesma será excluída do sistema",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "message": {
+                                            "type": "string"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Indica que há algum problema com as credenciais",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "message": {
+                                            "type": "string"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Erro de validação da request",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#components/schemas/ValidationError"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/adoptions/{id}/confirm": {
+            "put": {
+                "tags": [
+                    "Adoptions"
+                ],
+                "summary": "Através dessa rota, o usuário poderá confirmar a adoção",
+                "description": "",
+                "operationId": "adoptionConfirm",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path"
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Se houver uma adoção com o id informado, a mesma será confirmada e registrada como concluída",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "message": {
+                                            "type": "string"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Indica que há algum problema com as credenciais",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "message": {
+                                            "type": "string"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Erro de validação da request",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#components/schemas/ValidationError"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/adoptions/{id}/cancel": {
+            "put": {
+                "tags": [
+                    "Adoptions"
+                ],
+                "summary": "Através dessa rota, o usuário poderá cancelar uma adoção",
+                "description": "",
+                "operationId": "adoptionCancel",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path"
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Se houver uma adoção com o id informado, a mesma será negada e registrada como cancelada",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "message": {
+                                            "type": "string"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Indica que há algum problema com as credenciais",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "message": {
+                                            "type": "string"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Erro de validação da request",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#components/schemas/ValidationError"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/adoptions/{id}/deny": {
+            "put": {
+                "tags": [
+                    "Adoptions"
+                ],
+                "summary": "Através dessa rota, o usuário poderá negar uma adoção",
+                "description": "",
+                "operationId": "adoptionDeny",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path"
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Se houver uma adoção com o id informado, a mesma será negada",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "message": {
+                                            "type": "string"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Indica que há algum problema com as credenciais",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "message": {
+                                            "type": "string"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Erro de validação da request",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#components/schemas/ValidationError"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/events": {
+            "post": {
+                "tags": [
+                    "Events"
+                ],
+                "summary": "Através dessa rota, o usuário poderá criar novos eventos",
+                "description": "",
+                "operationId": "eventCreate",
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#components/schemas/EventModel"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Caso as informações estejam corretas, o evento será criado",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#components/schemas/EventModel"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Indica que há algum problema com as credenciais",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "message": {
+                                            "type": "string"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Erro de validação da request",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "message": {
+                                            "type": "string"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "get": {
+                "tags": [
+                    "Events"
+                ],
+                "summary": "Através dessa rota, o usuário poderá buscar por todos os eventos cadastrados no sistema",
+                "description": "",
+                "operationId": "eventGetAll",
+                "parameters": [
+                    {
+                        "name": "search",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Se houver eventos e a requisição estiver correta, trará os eventos cadastrados",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#components/schemas/EventModel"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Indica que há algum problema com as credenciais",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "message": {
+                                            "type": "string"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Erro de validação da request",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#components/schemas/ValidationError"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/events/{id}": {
+            "get": {
+                "tags": [
+                    "Events"
+                ],
+                "summary": "Através dessa rota, o usuário poderá buscar por um evento através do id",
+                "description": "",
+                "operationId": "eventGetById",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Se houver um evento com o id informado, trará os dados do mesmo",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#components/schemas/EventModel"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Indica que há algum problema com as credenciais",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "message": {
+                                            "type": "string"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Erro de validação da request",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#components/schemas/ValidationError"
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "put": {
+                "tags": [
+                    "Events"
+                ],
+                "summary": "Através dessa rota, o usuário poderá editar um evento",
+                "description": "",
+                "operationId": "eventUpdate",
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#components/schemas/EventModel"
+                            }
+                        }
+                    }
+                },
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path"
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Se houver um evento com o id informado e as informações estiverem corretas, o evento será editado",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#components/schemas/EventModel"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Indica que há algum problema com as credenciais",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "message": {
+                                            "type": "string"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Erro de validação da request",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#components/schemas/ValidationError"
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "tags": [
+                    "Events"
+                ],
+                "summary": "Através dessa rota, o usuário poderá excluir um evento",
+                "description": "",
+                "operationId": "eventDelete",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path"
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Se houver um evento com o id informado, o mesmo será excluído do sistema",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "message": {
+                                            "type": "string"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Indica que há algum problema com as credenciais",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "message": {
+                                            "type": "string"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Erro de validação da request",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#components/schemas/ValidationError"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/finances": {
+            "post": {
+                "tags": [
+                    "Finances"
+                ],
+                "summary": "Através dessa rota, o usuário poderá criar novas finanças",
+                "description": "",
+                "operationId": "financeCreate",
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#components/schemas/FinanceModel"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Caso as informações estejam corretas, a finança será criada",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#components/schemas/FinanceModel"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Indica que há algum problema com as credenciais",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "message": {
+                                            "type": "string"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Erro de validação da request",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "message": {
+                                            "type": "string"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "get": {
+                "tags": [
+                    "Finances"
+                ],
+                "summary": "Através dessa rota, o usuário poderá buscar por as finanças cadastrados no sistema",
+                "description": "",
+                "operationId": "financeGetAll",
+                "parameters": [
+                    {
+                        "name": "search",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Se houver finanças e a requisição estiver correta, trará as finanças cadastradas",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#components/schemas/FinanceModel"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Indica que há algum problema com as credenciais",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "message": {
+                                            "type": "string"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Erro de validação da request",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#components/schemas/ValidationError"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/finances/{id}": {
+            "get": {
+                "tags": [
+                    "Finances"
+                ],
+                "summary": "Através dessa rota, o usuário poderá buscar por uma finança através do id",
+                "description": "",
+                "operationId": "financeGetById",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Se houver uma finança com o id informado, trará os dados do mesmo",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#components/schemas/FinanceModel"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Indica que há algum problema com as credenciais",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "message": {
+                                            "type": "string"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Erro de validação da request",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#components/schemas/ValidationError"
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "put": {
+                "tags": [
+                    "Finances"
+                ],
+                "summary": "Através dessa rota, o usuário poderá editar uma finança",
+                "description": "",
+                "operationId": "financeUpdate",
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#components/schemas/FinanceModel"
+                            }
+                        }
+                    }
+                },
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path"
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Se houver uma finança com o id informado e as informações estiverem corretas, a finança será editada",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#components/schemas/FinanceModel"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Indica que há algum problema com as credenciais",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "message": {
+                                            "type": "string"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Erro de validação da request",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#components/schemas/ValidationError"
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "tags": [
+                    "Finances"
+                ],
+                "summary": "Através dessa rota, o usuário poderá excluir uma finança",
+                "description": "",
+                "operationId": "financeDelete",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path"
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Se houver uma finança com o id informado, a mesma será excluída do sistema",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "message": {
+                                            "type": "string"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Indica que há algum problema com as credenciais",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "message": {
+                                            "type": "string"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Erro de validação da request",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#components/schemas/ValidationError"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/medias": {
+            "post": {
+                "tags": [
+                    "Medias"
+                ],
+                "summary": "Através dessa rota, o usuário poderá criar novas imagens",
+                "description": "",
+                "operationId": "mediaCreate",
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#components/schemas/MediaCreateModel"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Caso as informações estejam corretas, a imagem será criada",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#components/schemas/MediaModel"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Indica que há algum problema com as credenciais",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "message": {
+                                            "type": "string"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Erro de validação da request",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "message": {
+                                            "type": "string"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/medias/{id}": {
+            "put": {
+                "tags": [
+                    "Medias"
+                ],
+                "summary": "Através dessa rota, o usuário poderá editar uma imagem",
+                "description": "",
+                "operationId": "mediaUpdate",
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#components/schemas/MediaCreateModel"
+                            }
+                        }
+                    }
+                },
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path"
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Se houver uma imagem com o id informado e as informações estiverem corretas, a imagem será editada",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#components/schemas/MediaModel"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Indica que há algum problema com as credenciais",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "message": {
+                                            "type": "string"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Erro de validação da request",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#components/schemas/ValidationError"
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "tags": [
+                    "Medias"
+                ],
+                "summary": "Através dessa rota, o usuário poderá excluir uma imagem",
+                "description": "",
+                "operationId": "mediaDelete",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path"
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Se houver uma imagem com o id informado, a mesma será excluída do sistema",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "message": {
+                                            "type": "string"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Indica que há algum problema com as credenciais",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "message": {
+                                            "type": "string"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Erro de validação da request",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#components/schemas/ValidationError"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/medias/bulk": {
+            "post": {
+                "tags": [
+                    "Medias"
+                ],
+                "summary": "Através dessa rota, o usuário poderá criar novas imagens em massa",
+                "description": "",
+                "operationId": "mediaBulkCreate",
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#components/schemas/MediaCreateModel"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Caso as informações estejam corretas, as imagens serão criadas",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#components/schemas/MediaModel"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Indica que há algum problema com as credenciais",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "message": {
+                                            "type": "string"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Erro de validação da request",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "message": {
+                                            "type": "string"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/ngrs/{id}": {
+            "get": {
+                "tags": [
+                    "Ngrs"
+                ],
+                "summary": "Através dessa rota, o usuário poderá buscar os dados da ong",
+                "description": "",
+                "operationId": "ngrGetById",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Retornará os dados da ong",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#components/schemas/NgrModel"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Indica que há algum problema com as credenciais",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "message": {
+                                            "type": "string"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Erro de validação da request",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#components/schemas/ValidationError"
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "put": {
+                "tags": [
+                    "Ngrs"
+                ],
+                "summary": "Através dessa rota, o usuário poderá editar os dados da ong",
+                "description": "",
+                "operationId": "ngrUpdate",
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#components/schemas/NgrModel"
+                            }
+                        }
+                    }
+                },
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path"
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Retornará os dados atualizados da ong",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#components/schemas/NgrModel"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Indica que há algum problema com as credenciais",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "message": {
+                                            "type": "string"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Erro de validação da request",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#components/schemas/ValidationError"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/roles": {
+            "post": {
+                "tags": [
+                    "Roles"
+                ],
+                "summary": "Através dessa rota, o usuário poderá criar novos níveis de permissão",
+                "description": "",
+                "operationId": "roleCreate",
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#components/schemas/RoleModel"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Caso as informações estejam corretas, o nível de permissão será criado",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#components/schemas/RoleModel"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Indica que há algum problema com as credenciais",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "message": {
+                                            "type": "string"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Erro de validação da request",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "message": {
+                                            "type": "string"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "get": {
+                "tags": [
+                    "Roles"
+                ],
+                "summary": "Através dessa rota, o usuário poderá buscar pelos níveis de permissão cadastrados no sistema",
+                "description": "",
+                "operationId": "roleGetAll",
+                "parameters": [
+                    {
+                        "name": "search",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Se houver níveis de permissão e a requisição estiver correta, trará os níveis de permissão cadastrados",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#components/schemas/RoleModel"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Indica que há algum problema com as credenciais",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "message": {
+                                            "type": "string"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Erro de validação da request",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#components/schemas/ValidationError"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/roles/{id}": {
+            "get": {
+                "tags": [
+                    "Roles"
+                ],
+                "summary": "Através dessa rota, o usuário poderá buscar por um nível de permissão através do id",
+                "description": "",
+                "operationId": "roleGetById",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Se houver um nível de permissão com o id informado, trará os dados do mesmo",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#components/schemas/RoleModel"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Indica que há algum problema com as credenciais",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "message": {
+                                            "type": "string"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Erro de validação da request",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#components/schemas/ValidationError"
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "put": {
+                "tags": [
+                    "Roles"
+                ],
+                "summary": "Através dessa rota, o usuário poderá editar um nível de permissão",
+                "description": "",
+                "operationId": "roleUpdate",
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#components/schemas/RoleModel"
+                            }
+                        }
+                    }
+                },
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path"
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Se houver um nível de permissão com o id informado e as informações estiverem corretas, o nível de permissão será editada",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#components/schemas/RoleModel"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Indica que há algum problema com as credenciais",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "message": {
+                                            "type": "string"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Erro de validação da request",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#components/schemas/ValidationError"
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "tags": [
+                    "Roles"
+                ],
+                "summary": "Através dessa rota, o usuário poderá excluir um nível de permissão",
+                "description": "",
+                "operationId": "roleDelete",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path"
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Se houver um nível de permissão com o id informado, o mesmo será excluído do sistema",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "message": {
+                                            "type": "string"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Indica que há algum problema com as credenciais",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "message": {
+                                            "type": "string"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Erro de validação da request",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#components/schemas/ValidationError"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/permissions": {
+            "get": {
+                "tags": [
+                    "Permissions"
+                ],
+                "summary": "Através dessa rota, o usuário poderá buscar pelas permissões cadastrados no sistema",
+                "description": "",
+                "operationId": "permissionGetAll",
+                "parameters": [
+                    {
+                        "name": "search",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Se houver permissões e a requisição estiver correta, trará as permissões cadastradas",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#components/schemas/PermissionModel"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Indica que há algum problema com as credenciais",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "message": {
+                                            "type": "string"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Erro de validação da request",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#components/schemas/ValidationError"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
         "/users": {
             "post": {
                 "tags": [
-                    "Usuários"
+                    "Users"
                 ],
                 "summary": "Através dessa rota, o usuário poderá criar novos usuários",
                 "description": "",
@@ -203,7 +2313,7 @@
                     "content": {
                         "application/json": {
                             "schema": {
-                                "$ref": "#components/schemas/UserModel"
+                                "$ref": "#components/schemas/UserCreateModel"
                             }
                         }
                     }
@@ -267,23 +2377,14 @@
             },
             "get": {
                 "tags": [
-                    "Usuários"
+                    "Users"
                 ],
                 "summary": "Através dessa rota, o usuário poderá buscar por todos os usuários cadastrados no sistema",
                 "description": "",
                 "operationId": "userGetAll",
-                "requestBody": {},
                 "parameters": [
                     {
                         "name": "search",
-                        "in": "query"
-                    },
-                    {
-                        "name": "email",
-                        "in": "query"
-                    },
-                    {
-                        "name": "cpf",
                         "in": "query"
                     }
                 ],
@@ -318,7 +2419,7 @@
                         "content": {
                             "application/json": {
                                 "schema": {
-                                    "$ref": "#components/schemas/DefaultOperationValidationError"
+                                    "$ref": "#components/schemas/ValidationError"
                                 }
                             }
                         }
@@ -329,7 +2430,7 @@
         "/users/{id}": {
             "get": {
                 "tags": [
-                    "Usuários"
+                    "Users"
                 ],
                 "summary": "Através dessa rota, o usuário poderá buscar por um usuário através do id",
                 "description": "",
@@ -371,7 +2472,7 @@
                         "content": {
                             "application/json": {
                                 "schema": {
-                                    "$ref": "#components/schemas/DefaultOperationValidationError"
+                                    "$ref": "#components/schemas/ValidationError"
                                 }
                             }
                         }
@@ -380,7 +2481,7 @@
             },
             "put": {
                 "tags": [
-                    "Usuários"
+                    "Users"
                 ],
                 "summary": "Através dessa rota, o usuário poderá editar um usuário",
                 "description": "",
@@ -389,7 +2490,7 @@
                     "content": {
                         "application/json": {
                             "schema": {
-                                "$ref": "#components/schemas/UserModel"
+                                "$ref": "#components/schemas/UserCreateModel"
                             }
                         }
                     }
@@ -465,7 +2566,63 @@
                         "content": {
                             "application/json": {
                                 "schema": {
-                                    "$ref": "#components/schemas/DefaultOperationValidationError"
+                                    "$ref": "#components/schemas/ValidationError"
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "tags": [
+                    "Users"
+                ],
+                "summary": "Através dessa rota, o usuário poderá excluir um usuário",
+                "description": "",
+                "operationId": "userDelete",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path"
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Se houver um usuário com o id informado, o mesmo será excluído do sistema",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "message": {
+                                            "type": "string"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Indica que há algum problema com as credenciais",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "message": {
+                                            "type": "string"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Erro de validação da request",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#components/schemas/ValidationError"
                                 }
                             }
                         }
@@ -476,7 +2633,7 @@
         "/users/{id}/enable": {
             "post": {
                 "tags": [
-                    "Usuários"
+                    "Users"
                 ],
                 "summary": "Através dessa rota, o usuário poderá habilitar um usuário através do id",
                 "description": "",
@@ -524,7 +2681,7 @@
                         "content": {
                             "application/json": {
                                 "schema": {
-                                    "$ref": "#components/schemas/DefaultOperationValidationError"
+                                    "$ref": "#components/schemas/ValidationError"
                                 }
                             }
                         }
@@ -535,7 +2692,7 @@
         "/users/{id}/disable": {
             "post": {
                 "tags": [
-                    "Usuários"
+                    "Users"
                 ],
                 "summary": "Através dessa rota, o usuário poderá desativar um usuário através do id",
                 "description": "",
@@ -599,9 +2756,375 @@
     },
     "components": {
         "schemas": {
+            "AnimalModel": {
+                "type": "object",
+                "properties": {
+                    "id": {
+                        "description": "Id do animal criado",
+                        "type": "integer"
+                    },
+                    "name": {
+                        "description": "Nome do animal criado",
+                        "type": "string"
+                    },
+                    "gender": {
+                        "description": "Gênero do animal criado",
+                        "type": "string"
+                    },
+                    "size": {
+                        "description": "Porte do animal criado",
+                        "type": "string"
+                    },
+                    "age_type": {
+                        "description": "Nível de idade do animal criado",
+                        "type": "string"
+                    },
+                    "description": {
+                        "description": "Descrição do animal criado",
+                        "type": "string"
+                    },
+                    "tags": {
+                        "description": "Palavras chaves/características do animal criado",
+                        "type": "string"
+                    },
+                    "created_at": {
+                        "description": "Data de criação do animal criado",
+                        "type": "string"
+                    }
+                }
+            },
+            "AdoptionModel": {
+                "type": "object",
+                "properties": {
+                    "id": {
+                        "description": "Id da adoção criada",
+                        "type": "integer"
+                    },
+                    "description": {
+                        "description": "Descrição da adoção criada",
+                        "type": "string"
+                    },
+                    "status": {
+                        "description": "Status da adoção criada",
+                        "type": "string"
+                    },
+                    "user_id": {
+                        "description": "Id do usuário que fará a adoção",
+                        "type": "integer"
+                    },
+                    "animal_id": {
+                        "description": "Id do animal a ser adotado",
+                        "type": "integer"
+                    },
+                    "created_at": {
+                        "description": "Data de criação do animal criado",
+                        "type": "string"
+                    }
+                }
+            },
+            "AdoptionCreateModel": {
+                "type": "object",
+                "properties": {
+                    "id": {
+                        "description": "Id da adoção criada",
+                        "type": "integer"
+                    },
+                    "description": {
+                        "description": "Descrição da adoção criada",
+                        "type": "string"
+                    },
+                    "user_id": {
+                        "description": "Id do usuário que fará a adoção",
+                        "type": "integer"
+                    },
+                    "animal_id": {
+                        "description": "Id do animal a ser adotado",
+                        "type": "integer"
+                    },
+                    "created_at": {
+                        "description": "Data de criação do animal criado",
+                        "type": "string"
+                    }
+                }
+            },
+            "EventModel": {
+                "type": "object",
+                "properties": {
+                    "id": {
+                        "description": "Id do evento criado",
+                        "type": "integer"
+                    },
+                    "name": {
+                        "description": "Nome do evento criado",
+                        "type": "string"
+                    },
+                    "description": {
+                        "description": "Descrição do evento criado",
+                        "type": "string"
+                    },
+                    "event_date": {
+                        "description": "Data do evento criado",
+                        "type": "string"
+                    },
+                    "location": {
+                        "description": "Local do evento criado",
+                        "type": "string"
+                    },
+                    "created_at": {
+                        "description": "Data de criação do evento criado",
+                        "type": "string"
+                    },
+                    "address": {
+                        "description": "Dados de endereço",
+                        "type": "object",
+                        "required": false,
+                        "properties": {
+                            "id": {
+                                "description": "Id do endereço criado",
+                                "type": "integer"
+                            },
+                            "street": {
+                                "description": "Rua do endereço criado",
+                                "type": "string"
+                            },
+                            "number": {
+                                "description": "Número do endereço criado",
+                                "type": "string"
+                            },
+                            "neighborhood": {
+                                "description": "Bairro do endereço criado",
+                                "type": "string"
+                            },
+                            "city": {
+                                "description": "Cidade do endereço criado",
+                                "type": "string"
+                            },
+                            "state": {
+                                "description": "Estado do endereço criado",
+                                "type": "string"
+                            },
+                            "zip": {
+                                "description": "CEP do endereço criado",
+                                "type": "string"
+                            }
+                        }
+                    }
+                }
+            },
+            "FinancesModel": {
+                "type": "object",
+                "properties": {
+                    "id": {
+                        "description": "Id da finança criada",
+                        "type": "integer"
+                    },
+                    "value": {
+                        "description": "Valor da finança criada",
+                        "type": "string"
+                    },
+                    "description": {
+                        "description": "Descrição da finança criada",
+                        "type": "string"
+                    },
+                    "date": {
+                        "description": "Data da finança criada",
+                        "type": "string"
+                    },
+                    "type": {
+                        "description": "Descrição se é entrada ou saída de dinheiro",
+                        "type": "string"
+                    },
+                    "created_at": {
+                        "description": "Data de criação da finança criada",
+                        "type": "string"
+                    },
+                    "user_id": {
+                        "description": "Id do usuário que doou um valor",
+                        "type": "string",
+                        "required": false
+                    },
+                    "animal_id": {
+                        "description": "Id do animal que precisou de um gasto",
+                        "type": "string",
+                        "required": false
+                    }
+                }
+            },
+            "MediaModel": {
+                "type": "object",
+                "properties": {
+                    "id": {
+                        "description": "Id da imagem criada",
+                        "type": "integer"
+                    },
+                    "display_name": {
+                        "description": "Nome de exibição da imagem criada",
+                        "type": "string"
+                    },
+                    "filename": {
+                        "description": "Nome da imagem criada",
+                        "type": "string"
+                    },
+                    "filename_id": {
+                        "description": "Id do Google Drive da imagem criada",
+                        "type": "string"
+                    },
+                    "size": {
+                        "description": "Peso da imagem criada",
+                        "type": "integer"
+                    },
+                    "extension": {
+                        "description": "Extenção da imagem criada",
+                        "type": "string"
+                    },
+                    "description": {
+                        "description": "Descrição da imagem criada",
+                        "type": "string"
+                    },
+                    "width": {
+                        "description": "Largura da imagem criada",
+                        "type": "integer"
+                    },
+                    "height": {
+                        "description": "Altura da imagem criada",
+                        "type": "integer"
+                    },
+                    "created_at": {
+                        "description": "Data de criação da imagem criada",
+                        "type": "string"
+                    }
+                }
+            },
+            "MediaCreateModel": {
+                "type": "object",
+                "properties": {
+                    "id": {
+                        "description": "Id da imagem criada",
+                        "type": "integer"
+                    },
+                    "display_name": {
+                        "description": "Nome de exibição da imagem criada",
+                        "type": "string"
+                    },
+                    "filename": {
+                        "description": "Nome da imagem criada",
+                        "type": "string"
+                    },
+                    "description": {
+                        "description": "Descrição da imagem criada",
+                        "type": "string"
+                    },
+                    "created_at": {
+                        "description": "Data de criação da imagem criada",
+                        "type": "string"
+                    }
+                }
+            },
+            "NgrModel": {
+                "type": "object",
+                "properties": {
+                    "id": {
+                        "description": "Id da ong criada",
+                        "type": "integer"
+                    },
+                    "name": {
+                        "description": "Nome da ong criada",
+                        "type": "string"
+                    },
+                    "description": {
+                        "description": "Descrição da ong criada",
+                        "type": "string"
+                    },
+                    "cnpj": {
+                        "description": "CNPJ da ong criada",
+                        "type": "string"
+                    },
+                    "created_at": {
+                        "description": "Data de criação da ong criada",
+                        "type": "string"
+                    },
+                    "address": {
+                        "description": "Dados de endereço",
+                        "type": "object",
+                        "required": false,
+                        "properties": {
+                            "id": {
+                                "description": "Id do endereço criado",
+                                "type": "integer"
+                            },
+                            "street": {
+                                "description": "Rua do endereço criado",
+                                "type": "string"
+                            },
+                            "number": {
+                                "description": "Número do endereço criado",
+                                "type": "string"
+                            },
+                            "neighborhood": {
+                                "description": "Bairro do endereço criado",
+                                "type": "string"
+                            },
+                            "city": {
+                                "description": "Cidade do endereço criado",
+                                "type": "string"
+                            },
+                            "state": {
+                                "description": "Estado do endereço criado",
+                                "type": "string"
+                            },
+                            "zip": {
+                                "description": "CEP do endereço criado",
+                                "type": "string"
+                            }
+                        }
+                    }
+                }
+            },
+            "PermissionModel": {
+                "type": "object",
+                "properties": {
+                    "id": {
+                        "description": "Id da permissão criada",
+                        "type": "integer"
+                    },
+                    "name": {
+                        "description": "Nome da permissão criada",
+                        "type": "string"
+                    },
+                    "display_name": {
+                        "description": "Nome de exibição da permissão criada",
+                        "type": "string"
+                    },
+                    "created_at": {
+                        "description": "Data de criação da permissão criada",
+                        "type": "string"
+                    }
+                }
+            },
+            "RoleModel": {
+                "type": "object",
+                "properties": {
+                    "id": {
+                        "description": "Id do nível permissão criada",
+                        "type": "integer"
+                    },
+                    "name": {
+                        "description": "Nome do nível permissão criada",
+                        "type": "string"
+                    },
+                    "created_at": {
+                        "description": "Data de criação do nível permissão criada",
+                        "type": "string"
+                    }
+                }
+            },
             "UserModel": {
                 "type": "object",
                 "properties": {
+                    "id": {
+                        "description": "Id do usuário criado",
+                        "type": "integer"
+                    },
                     "status": {
                         "description": "Status do usuário criado",
                         "type": "string"
@@ -609,10 +3132,6 @@
                     "created_at": {
                         "description": "Data de criação do usuário criado",
                         "type": "string"
-                    },
-                    "created_by": {
-                        "description": "Id do usuário que criou o usuário",
-                        "type": "integer"
                     },
                     "password": {
                         "description": "senha do usuário criado",
@@ -699,6 +3218,109 @@
                                 "name" : {
                                     "description": "Nome do perfil",
                                     "type": "string"
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "UserCreateModel": {
+                "type": "object",
+                "properties": {
+                    "password": {
+                        "description": "senha do usuário criado",
+                        "type": "string"
+                    },
+                    "role_id": {
+                        "description": "Código do perfil selecionado para do usuário criado",
+                        "type": "integer",
+                        "required": false
+                    },
+                    "created_at": {
+                        "description": "Data de criação do usuário criado",
+                        "type": "string"
+                    },
+                    "person": {
+                        "description": "Pessoa com os dados do usuário criado",
+                        "type": "array",
+                        "items": {
+                            "properties": {
+                                "name": {
+                                    "description": "Nome do usuário criado",
+                                    "type": "string"
+                                },
+                                "email": {
+                                    "description": "Email do usuário criado",
+                                    "type": "string"
+                                },
+                                "cpf_cnpj": {
+                                    "description": "CPF/CNPJ do usuário criado",
+                                    "type": "string"
+                                },
+                                "address_id": {
+                                    "description": "Código do endereço selecionado para do usuário criado",
+                                    "type": "integer",
+                                    "required": false
+                                },
+                                "address": {
+                                    "description": "Dados de endereço",
+                                    "type": "object",
+                                    "required": false,
+                                    "properties": {
+                                        "street": {
+                                            "description": "Rua do endereço criada",
+                                            "type": "string"
+                                        },
+                                        "number": {
+                                            "description": "Número do endereço criada",
+                                            "type": "string"
+                                        },
+                                        "neighborhood": {
+                                            "description": "Bairro do endereço criada",
+                                            "type": "string"
+                                        },
+                                        "city": {
+                                            "description": "Cidade do endereço criada",
+                                            "type": "string"
+                                        },
+                                        "state": {
+                                            "description": "Estado do endereço criada",
+                                            "type": "string"
+                                        },
+                                        "zip": {
+                                            "description": "CEP do endereço criada",
+                                            "type": "string"
+                                        }
+                                    }
+                                },
+                                "profile_picture_id": {
+                                    "description": "Id da foto de perfil",
+                                    "type": "integer"
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "ValidationError": {
+                "type": "object",
+                "properties": {
+                    "message": {
+                        "type": "string"
+                    },
+                    "errors": {
+                        "description": "Array contento cada campo que está com erro de validação",
+                        "type": "array",
+                        "items": {
+                            "type": "object",
+                            "properties": {
+                                "campo": {
+                                    "type": "array",
+                                    "items": [
+                                        {
+                                            "type": "string"
+                                        }
+                                    ]
                                 }
                             }
                         }

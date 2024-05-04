@@ -9,13 +9,17 @@ use App\Http\Services\Adoption\CreateAdoptionService;
 use App\Http\Services\Adoption\DeleteAdoptionService;
 use App\Http\Services\Adoption\QueryAdoptionService;
 use App\Http\Services\Adoption\UpdateAdoptionService;
+use App\Models\Adoption;
 use Illuminate\Http\Client\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Gate;
 
 class AdoptionController extends Controller
 {
     public function create(AdoptionRequest $request)
     {
+        Gate::authorize('create', Adoption::class);
+
         try {
             DB::beginTransaction();
 
@@ -26,15 +30,17 @@ class AdoptionController extends Controller
             DB::commit();
 
             return $adoption;
-        }catch (\Exception $e) {
+        }catch (\Exception $exception) {
             DB::rollBack();
 
-            throw new \Exception($e->getMessage());
+            throw new \Exception($exception->getMessage());
         }
     }
 
     public function update(Request $request, int $id)
     {
+        Gate::authorize('update', Adoption::class);
+
         try {
             DB::beginTransaction();
 
@@ -45,15 +51,17 @@ class AdoptionController extends Controller
             DB::commit();
 
             return $updated;
-        }catch (\Exception $e) {
+        }catch (\Exception $exception) {
             DB::rollBack();
 
-            throw new \Exception($e->getMessage());
+            throw new \Exception($exception->getMessage());
         }
     }
 
     public function delete(int $id)
     {
+        Gate::authorize('delete', Adoption::class);
+
         try {
             DB::beginTransaction();
 
@@ -66,15 +74,17 @@ class AdoptionController extends Controller
             return response()->json([
                 'message' => 'Adoção excluída com sucesso!'
             ]);
-        }catch (\Exception $e) {
+        }catch (\Exception $exception) {
             DB::rollBack();
 
-            throw new \Exception($e->getMessage());
+            throw new \Exception($exception->getMessage());
         }
     }
 
     public function getAdoptions(Request $request)
     {
+        Gate::authorize('view', Adoption::class);
+
         $service = new QueryAdoptionService();
 
         return $service->getAdoptions($request->all());
@@ -82,13 +92,17 @@ class AdoptionController extends Controller
 
     public function getAdoptionById(int $id)
     {
+        Gate::authorize('view', Adoption::class);
+
         $service = new QueryAdoptionService();
 
         return $service->getAdoptionById($id);
     }
 
-    public function confirmAdotpion(int $id)
+    public function confirmAdoption(int $id)
     {
+        Gate::authorize('updateAdoptionStatus', Adoption::class);
+
         try {
             DB::beginTransaction();
 
@@ -101,15 +115,17 @@ class AdoptionController extends Controller
             return response()->json([
                 'message' => 'Adoção confirmada com sucesso!'
             ]);
-        }catch (\Exception $e) {
+        }catch (\Exception $exception) {
             DB::rollBack();
 
-            throw new \Exception($e->getMessage());
+            throw new \Exception($exception->getMessage());
         }
     }
 
-    public function denyAdotpion(int $id)
+    public function denyAdoption(int $id)
     {
+        Gate::authorize('updateAdoptionStatus', Adoption::class);
+
         try {
             DB::beginTransaction();
 
@@ -122,15 +138,17 @@ class AdoptionController extends Controller
             return response()->json([
                 'message' => 'Adoção negada com sucesso!'
             ]);
-        }catch (\Exception $e) {
+        }catch (\Exception $exception) {
             DB::rollBack();
 
-            throw new \Exception($e->getMessage());
+            throw new \Exception($exception->getMessage());
         }
     }
 
-    public function cancelAdotpion(int $id)
+    public function cancelAdoption(int $id)
     {
+        Gate::authorize('updateAdoptionStatus', Adoption::class);
+
         try {
             DB::beginTransaction();
 
@@ -143,10 +161,10 @@ class AdoptionController extends Controller
             return response()->json([
                 'message' => 'Adoção cancelada com sucesso!'
             ]);
-        }catch (\Exception $e) {
+        }catch (\Exception $exception) {
             DB::rollBack();
 
-            throw new \Exception($e->getMessage());
+            throw new \Exception($exception->getMessage());
         }
     }
 }

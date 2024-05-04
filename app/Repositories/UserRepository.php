@@ -6,6 +6,7 @@ use App\Models\User;
 use App\Utils\CPFUtils;
 use App\Utils\StringUtils;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Support\Facades\DB;
 
 class UserRepository extends Repository
 {
@@ -13,11 +14,11 @@ class UserRepository extends Repository
     {
         return User::class;
     }
-    
+
     public function getUsers(array $filters)
     {
         $noPaginate = data_get($filters, 'no-paginate', false);
-        $search = data_get($filters, 'name');
+        $search = data_get($filters, 'search');
 
         $query = $this->newQuery();
 
@@ -27,8 +28,7 @@ class UserRepository extends Repository
                 $query->whereHas('person', function (Builder $query) use ($search){
                    $check = StringUtils::checkIfStringStartWithNumber($search);
                    return $query
-
-                       ->where('name', 'ilike', "%{$search}%")
+                       ->whereRaw('unaccent(name) ilike unaccent(?)', ["%{$search}%"])
                        ->orWhere('email', 'ilike', "%{$search}%")
                        ->when($check, function ($query) use ($search){
                            $cleanedString = CPFUtils::removeNonAlphaNumericFromString($search);
@@ -51,6 +51,7 @@ class UserRepository extends Repository
     public function getByEmail(string $email)
     {
         return $this->newQuery()
+            ->with('role.permissions')
             ->whereHas('person', function (Builder $query) use ($email) {
                 return $query->where('email', $email);
             })->first();

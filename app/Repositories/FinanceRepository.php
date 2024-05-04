@@ -17,14 +17,14 @@ class FinanceRepository extends Repository
     public function getFinances(array $filters)
     {
         $noPaginate = data_get($filters, 'no-paginate', false);
-        $search = data_get($filters, 'name');
+        $search = data_get($filters, 'search');
 
         $query = $this->newQuery();
 
         $query
             ->when($search, function(Builder $query, $search){
                 $query
-                    ->where('description', 'ilike', "%{$search}%");
+                    ->whereRaw('unaccent(description) ilike unaccent(?)', ["%{$search}%"]);
             });
 
         if ($noPaginate) {
