@@ -47,6 +47,8 @@ Route::prefix('users')->group( function() {
         Route::middleware('api')->group(function () {
             Route::post('/forgot-password', 'forgotPassword');
             Route::post('/reset-password', 'resetPassword');
+
+            Route::post('/external', 'createExternal');
         });
     });
 });

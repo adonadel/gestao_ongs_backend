@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Extensions\CustomPassword;
+use App\Http\Requests\UserRequest;
 use App\Http\Services\User\CreateUserService;
 use App\Http\Services\User\DeleteUserService;
 use App\Http\Services\User\DisableUserService;
@@ -40,7 +41,7 @@ class UserController extends Controller
         return $service->getUserById($id);
     }
 
-    public function create(Request $request)
+    public function create(UserRequest $request)
     {
         Gate::authorize('create', auth()->user());
 
@@ -49,25 +50,14 @@ class UserController extends Controller
 
             $service = new CreateUserService();
 
-            $validated = $request->validate([
-                'password' => [
-                    'required', Password::min(6)->mixedCase()->letters()->numbers()
-                ],
-                'role_id' => ['required', 'int', Rule::exists(Role::class, 'id')],
-                'person' => 'array|required',
-                'person.name' => 'required|string',
-                'person.email' => ['required', 'email', new UniqueEmail(new UserRepository())],
-                'person.cpf_cnpj' => ['required', 'string', new UniqueCpfCnpj(new UserRepository())],
-            ]);
-
-            $user = $service->create($validated);
+            $user = $service->create($request->all(), false);
 
             DB::commit();
 
             return $user;
         }catch(\Exception $exception) {
             DB::rollBack();
-            throw new \Exception($exception->getMessage());
+            throw new \Exception('Ocorreu um erro ao criar usuário: ' . $exception->getMessage());
         }
     }
 
@@ -223,6 +213,24 @@ class UserController extends Controller
             return response()->json([
                 'message' => 'Erro ao resetar senha!'
             ]);
+        }
+    }
+
+    public function createExternal(UserRequest $request)
+    {
+        try {
+            DB::beginTransaction();
+
+            $service = new CreateUserService();
+
+            $user = $service->create($request->all(), true);
+
+            DB::commit();
+
+            return $user;
+        }catch(\Exception $exception) {
+            DB::rollBack();
+            throw new \Exception($exception->getMessage());
         }
     }
 }
