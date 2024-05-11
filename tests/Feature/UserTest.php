@@ -108,4 +108,36 @@ class UserTest extends TestCase
         $response->assertStatus(200);
         $this->assertEquals('Usuário excluído com sucesso!', $response->json('message'));
     }
+
+    public function testGetUsers(): void
+    {
+        $actor = User::factory()->create([
+            'role_id' => 1
+        ]);
+
+        $this->actingAs($actor);
+
+        User::factory(10)->create();
+
+        $response = $this->get('api/users');
+
+        $response->assertStatus(200);
+        $this->assertGreaterThanOrEqual(10, $response->getOriginalContent()->count());
+    }
+
+    public function testGetUserById(): void
+    {
+        $actor = User::factory()->create([
+            'role_id' => 1
+        ]);
+
+        $this->actingAs($actor);
+
+        $user = User::factory()->create();
+
+        $response = $this->get("api/users/{$user->id}/");
+
+        $response->assertStatus(200);
+        $this->assertEquals($user->id, $response->getOriginalContent()->id);
+    }
 }
