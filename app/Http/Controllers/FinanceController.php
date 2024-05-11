@@ -15,8 +15,6 @@ class FinanceController extends Controller
 {
     public function create(FinanceRequest $request)
     {
-        Gate::authorize('create', Finance::class);
-
         try {
             DB::beginTransaction();
 

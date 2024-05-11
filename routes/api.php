@@ -127,11 +127,12 @@ Route::prefix('finances')->group( function() {
         Route::middleware('auth:api')->group(function () {
             Route::get('/', 'getFinances');
             Route::get('/{id}', 'getFinanceById');
-
-            Route::post('/', 'create');
             Route::put('/{id}', 'update');
 
             Route::delete('/{id}', 'delete');
+        });
+        Route::middleware('api')->group(function () {
+            Route::post('/', 'create');
         });
     });
 });
