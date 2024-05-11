@@ -14,7 +14,7 @@ class FinanceRequest extends FormRequest
             'user_id' => 'nullable|integer|exists:users,id',
             'animal_id' => 'nullable|integer|exists:animals,id',
             'description' => 'nullable|string',
-            'value' => 'required|double',
+            'value' => 'required',
             'type' => ['required', Rule::in(FinanceTypeEnum::cases())],
         ];
     }

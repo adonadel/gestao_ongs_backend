@@ -11,7 +11,7 @@ use App\Models\Finance;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Gate;
 
-class FinancesController extends Controller
+class FinanceController extends Controller
 {
     public function create(FinanceRequest $request)
     {

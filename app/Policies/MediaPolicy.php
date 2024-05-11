@@ -2,33 +2,33 @@
 
 namespace App\Policies;
 
-use App\Models\Media;
 use App\Models\Permission;
+use App\Models\User;
 use Illuminate\Auth\Access\HandlesAuthorization;
 
 class MediaPolicy
 {
     use HandlesAuthorization;
 
-    public function view(Media $media)
+    public function view(User $user)
     {
         $permission = Permission::query()->where('name', 'media-view')->first();
 
-        return $media->hasPermission($permission->name);
+        return $user->hasPermission($permission->name);
     }
 
-    public function create(Media $media)
+    public function create(User $user)
     {
         $permission = Permission::query()->where('name', 'media-create')->first();
 
-        return $media->hasPermission($permission->name);
+        return $user->hasPermission($permission->name);
     }
 
-    public function update(Media $media)
+    public function update(User $user)
     {
         $permission = Permission::query()->where('name', 'media-update')->first();
 
-        return $media->hasPermission($permission->name);
+        return $user->hasPermission($permission->name);
     }
 
     public function delete(User $user)
