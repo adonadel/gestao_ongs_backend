@@ -44,6 +44,8 @@ class CreateFinanceService
             throw new \Exception('Ocorreu um erro no pagamento!');
         }
 
+        $finance->session = $checkOut;
+        
         return $finance;
     }
 }
