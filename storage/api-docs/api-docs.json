@@ -1979,7 +1979,7 @@
                     "content": {
                         "application/json": {
                             "schema": {
-                                "$ref": "#components/schemas/RoleModel"
+                                "$ref": "#components/schemas/RoleCreateModel"
                             }
                         }
                     }
@@ -2142,7 +2142,7 @@
                     "content": {
                         "application/json": {
                             "schema": {
-                                "$ref": "#components/schemas/RoleModel"
+                                "$ref": "#components/schemas/RoleCreateModel"
                             }
                         }
                     }
@@ -3115,6 +3115,26 @@
                     "created_at": {
                         "description": "Data de criação do nível permissão criada",
                         "type": "string"
+                    },
+                    "permissions": {
+                        "description": "Array com as permissões a serem ligadas ao nível de permissão"
+                        "type": "array",
+                        "items": {
+                            "properties": {
+                                "id": {
+                                    "description": "Id da permissão criada",
+                                    "type": "integer"
+                                },
+                                "name": {
+                                    "description": "Nome da permissão criada",
+                                    "type": "string"
+                                },
+                                "display_name": {
+                                    "description": "Nome de exibição da permissão criada",
+                                    "type": "string"
+                                }
+                            }
+                        }
                     }
                 }
             },
@@ -3236,10 +3256,6 @@
                         "type": "integer",
                         "required": false
                     },
-                    "created_at": {
-                        "description": "Data de criação do usuário criado",
-                        "type": "string"
-                    },
                     "person": {
                         "description": "Pessoa com os dados do usuário criado",
                         "type": "array",
@@ -3296,6 +3312,39 @@
                                 "profile_picture_id": {
                                     "description": "Id da foto de perfil",
                                     "type": "integer"
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "RoleCreateModel": {
+                "type": "object",
+                "properties": {
+                    "id": {
+                        "description": "Id do nível permissão criada",
+                        "type": "integer"
+                    },
+                    "name": {
+                        "description": "Nome do nível permissão criada",
+                        "type": "string"
+                    },
+                    "permissions": {
+                        "description": "Array com as permissões a serem ligadas ao nível de permissão"
+                        "type": "array",
+                        "items": {
+                            "properties": {
+                                "id": {
+                                    "description": "Id da permissão criada",
+                                    "type": "integer"
+                                },
+                                "name": {
+                                    "description": "Nome da permissão criada",
+                                    "type": "string"
+                                },
+                                "display_name": {
+                                    "description": "Nome de exibição da permissão criada",
+                                    "type": "string"
                                 }
                             }
                         }
