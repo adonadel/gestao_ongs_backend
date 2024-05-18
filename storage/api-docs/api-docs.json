@@ -3117,7 +3117,7 @@
                         "type": "string"
                     },
                     "permissions": {
-                        "description": "Array com as permissões a serem ligadas ao nível de permissão"
+                        "description": "Array com as permissões a serem ligadas ao nível de permissão",
                         "type": "array",
                         "items": {
                             "properties": {
@@ -3330,7 +3330,7 @@
                         "type": "string"
                     },
                     "permissions": {
-                        "description": "Array com as permissões a serem ligadas ao nível de permissão"
+                        "description": "Array com as permissões a serem ligadas ao nível de permissão",
                         "type": "array",
                         "items": {
                             "properties": {
