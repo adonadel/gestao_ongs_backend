@@ -41,7 +41,6 @@ class AnimalTest extends TestCase
         ];
 
         $response = $this->postJson('api/animals', $data);
-        dd($response);
 
         $response->assertCreated();
     }
