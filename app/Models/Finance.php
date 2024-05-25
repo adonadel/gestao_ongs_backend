@@ -19,6 +19,8 @@ class Finance extends Model
         'date',
         'value',
         'type',
+        'session_id',
+        'status',
     ];
 
     protected $casts = [

@@ -4,7 +4,7 @@ use App\Http\Controllers\AdoptionController;
 use App\Http\Controllers\AnimalController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\EventController;
-use App\Http\Controllers\FinancesController;
+use App\Http\Controllers\FinanceController;
 use App\Http\Controllers\MediaController;
 use App\Http\Controllers\NgrController;
 use App\Http\Controllers\PermissionsController;
@@ -123,15 +123,16 @@ Route::prefix('adoptions')->group( function() {
 });
 
 Route::prefix('finances')->group( function() {
-    Route::controller(FinancesController::class)->group( function() {
+    Route::controller(FinanceController::class)->group( function() {
         Route::middleware('auth:api')->group(function () {
             Route::get('/', 'getFinances');
             Route::get('/{id}', 'getFinanceById');
-
-            Route::post('/', 'create');
             Route::put('/{id}', 'update');
 
             Route::delete('/{id}', 'delete');
+        });
+        Route::middleware('api')->group(function () {
+            Route::post('/', 'create');
         });
     });
 });
