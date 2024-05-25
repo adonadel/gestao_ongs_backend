@@ -22,6 +22,6 @@ class CancelFinanceService
             'status' => FinancePaymentStatusEnum::CANCELED
         ]);
 
-        return 'Pamento cancelado com sucesso!';
+        return true;
     }
 }

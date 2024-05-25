@@ -25,6 +25,6 @@ class CompleteFinanceService
             'status' => FinancePaymentStatusEnum::PAID
         ]);
 
-        return 'Pamento realizado com sucesso!';
+        return true;
     }
 }

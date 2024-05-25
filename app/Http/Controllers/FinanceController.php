@@ -101,17 +101,25 @@ class FinanceController extends Controller
     {
         Gate::authorize('create', Finance::class);
 
-        $service = new CompleteFinanceService($id);
+        $service = new CompleteFinanceService();
 
-        return $service->complete();
+        $service->complete($id);
+
+        return [
+            'message' => 'Pagamento realizado com sucesso!'
+        ];
     }
 
     public function cancel(int $id)
     {
         Gate::authorize('create', Finance::class);
 
-        $service = new CancelFinanceService($id);
+        $service = new CancelFinanceService();
 
-        return $service->cancel();
+        $service->cancel($id);
+
+        return [
+            'message' => 'Pagamento cancelado com sucesso!'
+        ];
     }
 }
