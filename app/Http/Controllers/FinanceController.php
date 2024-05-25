@@ -3,11 +3,14 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\FinanceRequest;
+use App\Http\Services\Finance\CancelFinanceService;
+use App\Http\Services\Finance\CompleteFinanceService;
 use App\Http\Services\Finance\CreateFinanceService;
 use App\Http\Services\Finance\DeleteFinanceService;
 use App\Http\Services\Finance\QueryFinanceService;
 use App\Http\Services\Finance\UpdateFinanceService;
 use App\Models\Finance;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Gate;
 
@@ -92,5 +95,23 @@ class FinanceController extends Controller
         $service = new QueryFinanceService();
 
         return $service->getFinanceById($id);
+    }
+
+    public function success(int $id)
+    {
+        Gate::authorize('create', Finance::class);
+
+        $service = new CompleteFinanceService($id);
+
+        return $service->complete();
+    }
+
+    public function cancel(int $id)
+    {
+        Gate::authorize('create', Finance::class);
+
+        $service = new CancelFinanceService($id);
+
+        return $service->cancel();
     }
 }

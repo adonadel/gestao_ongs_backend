@@ -21,13 +21,16 @@ class CreateFinanceService
 
         $price = $stripeClient->prices->create([
             'currency' => 'brl',
-            'unit_amount' => data_get($data, 'price') * 100,
+            'unit_amount' => data_get($data, 'value') * 100,
             'product' => $product->id,
         ]);
 
+        $data['date'] = Carbon::now()->timezone('America/Sao_Paulo');
+        $finance = $repository->create($data);
+
         $checkOut = $stripeClient->checkout->sessions->create([
-            'success_url' => env('APP_URL') . 'payment/success',
-            'payment_method_types' => ['card'],
+            "success_url" => env("APP_URL") . "/payment/success/{$finance->id}",
+            "cancel_url" => env("APP_URL") . "/payment/cancel/{$finance->id}",
             'line_items' => [
                 [
                     'price' => $price->id,
@@ -38,14 +41,15 @@ class CreateFinanceService
         ]);
 
         if ($checkOut && $checkOut->id) {
-            $data['date'] = Carbon::now()->timezone('America/Sao_Paulo');
-            $finance = $repository->create($data);
+            $finance->update([
+                'session_id' => $checkOut->id,
+            ]);
         }else {
             throw new \Exception('Ocorreu um erro no pagamento!');
         }
 
         $finance->session = $checkOut;
-        
+
         return $finance;
     }
 }
