@@ -22,4 +22,9 @@ class People extends Model
     {
         return $this->belongsTo(Address::class);
     }
+
+    public function profilePicture(): BelongsTo
+    {
+        return $this->belongsTo(Media::class);
+    }
 }
