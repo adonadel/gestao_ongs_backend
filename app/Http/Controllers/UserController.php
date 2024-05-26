@@ -58,6 +58,7 @@ class UserController extends Controller
                 'person.name' => 'required|string',
                 'person.email' => ['required', 'email', new UniqueEmail(new UserRepository())],
                 'person.cpf_cnpj' => ['required', 'string', new UniqueCpfCnpj(new UserRepository())],
+                'person.profile_picture_id' => 'nullable|string',
             ]);
 
             $user = $service->create($validated);
@@ -90,6 +91,7 @@ class UserController extends Controller
                 'person.name' => 'required|string',
                 'person.email' => ['required', 'email', new UniqueEmail(new UserRepository())],
                 'person.cpf_cnpj' => ['required', 'string', new UniqueCpfCnpj(new UserRepository())],
+                'person.profile_picture_id' => 'nullable|string',
             ]);
 
             $updated = $service->update($validated, $id);
