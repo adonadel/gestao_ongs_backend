@@ -15,6 +15,11 @@ class QueryUserService
 
     public function getUserById(int $id)
     {
-        return (new UserRepository())->getById($id);
+        return (new UserRepository())->getById($id)->load([
+            'person.address',
+            'role',
+            'role.permissions',
+            'person.profilePicture'
+        ]);
     }
 }
