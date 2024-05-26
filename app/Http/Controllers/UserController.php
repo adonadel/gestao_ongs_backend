@@ -59,6 +59,16 @@ class UserController extends Controller
                 'person.email' => ['required', 'email', new UniqueEmail(new UserRepository())],
                 'person.cpf_cnpj' => ['required', 'string', new UniqueCpfCnpj(new UserRepository())],
                 'person.profile_picture_id' => 'nullable|int',
+                'address' => 'nullable|required',
+                'address.zip' => 'required|string',
+                'address.street' => 'required|string',
+                'address.number' => 'nullable|string',
+                'address.neighborhood' => 'nullable|string',
+                'address.city' => 'nullable|string',
+                'address.state' => 'nullable|string',
+                'address.complement' => 'nullable|string',
+                'address.longitude' => 'nullable|string',
+                'address.latitude' => 'nullable|string',
             ]);
 
             $user = $service->create($validated);
@@ -92,6 +102,16 @@ class UserController extends Controller
                 'person.email' => ['required', 'email', new UniqueEmail(new UserRepository())],
                 'person.cpf_cnpj' => ['required', 'string', new UniqueCpfCnpj(new UserRepository())],
                 'person.profile_picture_id' => 'nullable|int',
+                'address' => 'nullable|required',
+                'address.zip' => 'required|string',
+                'address.street' => 'required|string',
+                'address.number' => 'nullable|string',
+                'address.neighborhood' => 'nullable|string',
+                'address.city' => 'nullable|string',
+                'address.state' => 'nullable|string',
+                'address.complement' => 'nullable|string',
+                'address.longitude' => 'nullable|string',
+                'address.latitude' => 'nullable|string',
             ]);
 
             $updated = $service->update($validated, $id);
