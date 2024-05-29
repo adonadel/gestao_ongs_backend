@@ -1614,6 +1614,122 @@
                 }
             }
         },
+        "/finances/{id}/success": {
+            "post": {
+                "tags": [
+                    "Finances"
+                ],
+                "summary": "Através dessa rota, o usuário poderá atualizar o status da finança para pago",
+                "description": "",
+                "operationId": "financeUpdateStatusToSuccess",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path"
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Se houver uma finança com o id informado e as informações estiverem corretas, o status da finança será editada",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "message": {
+                                            "type": "string"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Indica que há algum problema com as credenciais",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "message": {
+                                            "type": "string"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Erro de validação da request",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#components/schemas/ValidationError"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/finances/{id}/cancel": {
+            "post": {
+                "tags": [
+                    "Finances"
+                ],
+                "summary": "Através dessa rota, o usuário poderá atualizar o status da finança para cancelado",
+                "description": "",
+                "operationId": "financeUpdateStatusToCancel",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path"
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Se houver uma finança com o id informado e as informações estiverem corretas, o status da finança será editada",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "message": {
+                                            "type": "string"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Indica que há algum problema com as credenciais",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "message": {
+                                            "type": "string"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Erro de validação da request",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#components/schemas/ValidationError"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
         "/medias": {
             "post": {
                 "tags": [
