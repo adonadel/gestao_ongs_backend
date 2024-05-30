@@ -58,6 +58,19 @@ class UserController extends Controller
                 'person.name' => 'required|string',
                 'person.email' => ['required', 'email', new UniqueEmail(new UserRepository())],
                 'person.cpf_cnpj' => ['required', 'string', new UniqueCpfCnpj(new UserRepository())],
+                'person.profile_picture_id' => 'nullable|int',
+                'person.address_id' => 'nullable|int',
+                'person.address' => 'nullable|array',
+                'person.address.id' => 'nullable|int',
+                'person.address.zip' => 'required|string',
+                'person.address.street' => 'required|string',
+                'person.address.number' => 'nullable|string',
+                'person.address.neighborhood' => 'nullable|string',
+                'person.address.city' => 'nullable|string',
+                'person.address.state' => 'nullable|string',
+                'person.address.complement' => 'nullable|string',
+                'person.address.longitude' => 'nullable|string',
+                'person.address.latitude' => 'nullable|string',
             ]);
 
             $user = $service->create($validated);
@@ -90,6 +103,19 @@ class UserController extends Controller
                 'person.name' => 'required|string',
                 'person.email' => ['required', 'email', new UniqueEmail(new UserRepository())],
                 'person.cpf_cnpj' => ['required', 'string', new UniqueCpfCnpj(new UserRepository())],
+                'person.profile_picture_id' => 'nullable|int',
+                'person.address_id' => 'nullable|int',
+                'person.address' => 'nullable|array',
+                'person.address.id' => 'nullable|int',
+                'person.address.zip' => 'required|string',
+                'person.address.street' => 'required|string',
+                'person.address.number' => 'nullable|string',
+                'person.address.neighborhood' => 'nullable|string',
+                'person.address.city' => 'nullable|string',
+                'person.address.state' => 'nullable|string',
+                'person.address.complement' => 'nullable|string',
+                'person.address.longitude' => 'nullable|string',
+                'person.address.latitude' => 'nullable|string',
             ]);
 
             $updated = $service->update($validated, $id);

@@ -133,6 +133,8 @@ Route::prefix('finances')->group( function() {
         });
         Route::middleware('api')->group(function () {
             Route::post('/', 'create');
+            Route::put('/{id}/success', 'success');
+            Route::put('/{id}/cancel', 'cancel');
         });
     });
 });

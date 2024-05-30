@@ -57,7 +57,7 @@ class AuthController extends Controller
             throw new \Exception('Nenhum usuário logado');
         }
 
-        return auth()->user();
+        return auth()->user()->load(['person.address', 'role', 'role.permissions', 'person.profilePicture']);
     }
 
     public function refreshToken(Request $request)
