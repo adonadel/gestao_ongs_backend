@@ -2895,8 +2895,16 @@
                         "description": "Nível de idade do animal criado",
                         "type": "string"
                     },
+                    "castrate_type": {
+                        "description": "Estado de castraçcão do animal criado",
+                        "type": "string"
+                    },
                     "description": {
                         "description": "Descrição do animal criado",
+                        "type": "string"
+                    },
+                    "location": {
+                        "description": "Localização atual do animal criado",
                         "type": "string"
                     },
                     "tags": {
@@ -3159,6 +3167,10 @@
                         "description": "Data de criação da ong criada",
                         "type": "string"
                     },
+                    "phone": {
+                        "description": "Telefone da ong criada",
+                        "type": "string"
+                    },
                     "address": {
                         "description": "Dados de endereço",
                         "type": "object",
@@ -3293,6 +3305,10 @@
                                 },
                                 "cpf_cnpj": {
                                     "description": "CPF/CNPJ do usuário criado",
+                                    "type": "string"
+                                },
+                                "phone": {
+                                    "description": "Telefone do usuário criado",
                                     "type": "string"
                                 },
                                 "address_id": {

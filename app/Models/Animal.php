@@ -20,14 +20,17 @@ class Animal extends Model
         'gender',
         'size',
         'age_type',
+        'castrate_type',
         'description',
         'tags',
+        'location',
     ];
 
     protected $casts = [
         'gender' => AnimalGenderEnum::class,
         'size' => AnimalSizeEnum::class,
         'age_type' => AnimalAgeTypeEnum::class,
+        'castrate_type' => AnimalAgeTypeEnum::class,
     ];
 
     public function adoption(): HasOne
