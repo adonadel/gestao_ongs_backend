@@ -16,6 +16,7 @@ class People extends Model
         'cpf_cnpj',
         'address_id',
         'profile_picture_id',
+        'phone',
     ];
 
     public function address(): BelongsTo
