@@ -3159,6 +3159,10 @@
                         "description": "Data de criação da ong criada",
                         "type": "string"
                     },
+                    "phone": {
+                        "description": "Telefone da ong criada",
+                        "type": "string"
+                    },
                     "address": {
                         "description": "Dados de endereço",
                         "type": "object",

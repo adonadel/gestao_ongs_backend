@@ -17,6 +17,7 @@ return new class extends Migration
             $table->foreignIdFor(Address::class)->nullable();
             $table->string('name');
             $table->string('cnpj')->unique();
+            $table->string('phone')->nullable();
             $table->text('description');
             $table->timestamps();
         });
