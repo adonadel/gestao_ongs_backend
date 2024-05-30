@@ -2899,6 +2899,10 @@
                         "description": "Descrição do animal criado",
                         "type": "string"
                     },
+                    "location": {
+                        "description": "Localização atual do animal criado",
+                        "type": "string"
+                    },
                     "tags": {
                         "description": "Palavras chaves/características do animal criado",
                         "type": "string"
