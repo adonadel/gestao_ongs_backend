@@ -3295,6 +3295,10 @@
                                     "description": "CPF/CNPJ do usuário criado",
                                     "type": "string"
                                 },
+                                "phone": {
+                                    "description": "Telefone do usuário criado",
+                                    "type": "string"
+                                },
                                 "address_id": {
                                     "description": "Código do endereço selecionado para do usuário criado",
                                     "type": "integer",
