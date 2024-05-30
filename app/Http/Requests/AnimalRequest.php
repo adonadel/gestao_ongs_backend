@@ -19,6 +19,7 @@ class AnimalRequest extends FormRequest
             'size' => ['required', Rule::in(AnimalSizeEnum::cases())],
             'age_type' => ['required', Rule::in(AnimalAgeTypeEnum::cases())],
             'description' => 'nullable|string',
+            'location' => 'nullable|string',
             'tags' => 'nullable|string',
             'medias' => 'array|required',
             'medias.*.media' => [

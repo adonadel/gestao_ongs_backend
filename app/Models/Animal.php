@@ -22,6 +22,7 @@ class Animal extends Model
         'age_type',
         'description',
         'tags',
+        'location',
     ];
 
     protected $casts = [
