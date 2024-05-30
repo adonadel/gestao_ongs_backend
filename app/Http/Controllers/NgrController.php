@@ -20,6 +20,7 @@ class NgrController extends Controller
 
             $validated = $request->validate([
                 'name' => 'required|string',
+                'phone' => 'nullable|string',
                 'cnpj' => 'required|string',
                 'description' => 'nullable|string',
                 'address' => 'array|nullable',

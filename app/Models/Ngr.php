@@ -16,6 +16,7 @@ class Ngr extends Model
         'name',
         'cnpj',
         'description',
+        'phone',
     ];
 
     public function address(): BelongsTo
