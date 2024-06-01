@@ -26,6 +26,7 @@ class MediaController extends Controller
                 ],
                 'display_name' => 'nullable|string',
                 'description' => 'nullable|string',
+                'order' => 'nullable|integer',
             ]);
 
             $service = new CreateMediaService();
@@ -55,6 +56,7 @@ class MediaController extends Controller
                 ],
                 'display_name' => 'nullable|string',
                 'description' => 'nullable|string',
+                'order' => 'nullable|integer',
             ]);
 
             $service = new UpdateMediaService();

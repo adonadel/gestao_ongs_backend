@@ -21,7 +21,7 @@ return new class extends Migration
             $table->integer('height');
             $table->string('extension', 25);
             $table->text('description')->nullable();
-            $table->integer('order')->nullable()->unique();
+            $table->integer('order')->nullable();
             $table->timestamps();
         });
     }

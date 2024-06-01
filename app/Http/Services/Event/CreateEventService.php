@@ -12,6 +12,23 @@ class CreateEventService
     {
         $repository = new EventRepository();
 
+        $mediasIds = collect($data['medias'])
+            ->pluck('id')
+            ->toArray();
+
+        $event = $repository->create($data);
+
+        if ($mediasIds) {
+            $event->medias()->sync($mediasIds);
+        }
+
+        return $event;
+    }
+
+    public function createWithMedias(array $data)
+    {
+        $repository = new EventRepository();
+
         $event = $repository->create($data);
 
         if (data_get($data, 'medias')) {

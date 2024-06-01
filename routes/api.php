@@ -71,6 +71,7 @@ Route::prefix('animals')->group( function() {
             Route::get('/{id}', 'getAnimalById');
 
             Route::post('/', 'create');
+            Route::post('/with-medias', 'createWithMedias');
 
             Route::put('/{id}', 'update');
 
@@ -86,6 +87,7 @@ Route::prefix('events')->group( function() {
             Route::get('/{id}', 'getEventById');
 
             Route::post('/', 'create');
+            Route::post('/with-medias', 'createWithMedias');
 
             Route::put('/{id}', 'update');
 
