@@ -29,6 +29,7 @@ class AnimalRequest extends FormRequest
             ],
             'medias.*.display_name' => 'nullable|string',
             'medias.*.description' => 'nullable|string',
+            'medias.*.order' => 'nullable|integer',
         ];
     }
 }

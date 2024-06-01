@@ -26,6 +26,6 @@ class Event extends Model
 
     public function medias(): HasMany
     {
-        return $this->hasMany(Media::class);
+        return $this->hasMany(Media::class)->orderBy('order');
     }
 }
