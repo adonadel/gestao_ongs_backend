@@ -109,6 +109,7 @@ class MediaController extends Controller
                 ],
                 'medias.*.display_name' => 'nullable|string',
                 'medias.*.description' => 'nullable|string',
+                'medias.*.order' => 'nullable|integer',
             ]);
 
             $service = new CreateMediaService();
