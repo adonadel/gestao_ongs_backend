@@ -12,6 +12,7 @@ class EventRequest extends FormRequest
         return [
             'name' => 'required|string',
             'description' => 'nullable|string',
+            'location' => 'nullable|string',
             'medias' => 'array|required',
             'medias.*.media' => [
                 'required', File::types(['jpg', 'jpeg', 'png'])

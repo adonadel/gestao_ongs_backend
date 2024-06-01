@@ -8,6 +8,13 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
+
+/**
+ *
+ * @property Address $address
+ * @property Media $medias
+ */
+
 class Event extends Model
 {
     use HasFactory;

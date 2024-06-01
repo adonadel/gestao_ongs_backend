@@ -3,21 +3,18 @@
 namespace App\Http\Controllers;
 
 use App\Extensions\CustomPassword;
+use App\Http\Requests\UserRequest;
 use App\Http\Services\User\CreateUserService;
 use App\Http\Services\User\DeleteUserService;
 use App\Http\Services\User\DisableUserService;
 use App\Http\Services\User\EnableUserService;
 use App\Http\Services\User\QueryUserService;
 use App\Http\Services\User\UpdateUserService;
-use App\Models\Role;
 use App\Repositories\UserRepository;
-use App\Rules\UniqueCpfCnpj;
-use App\Rules\UniqueEmail;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Password as PasswordForReset;
-use Illuminate\Validation\Rule;
 use Illuminate\Validation\Rules\Password;
 
 class UserController extends Controller
@@ -40,7 +37,7 @@ class UserController extends Controller
         return $service->getUserById($id);
     }
 
-    public function create(Request $request)
+    public function create(UserRequest $request)
     {
         Gate::authorize('create', auth()->user());
 
@@ -49,32 +46,7 @@ class UserController extends Controller
 
             $service = new CreateUserService();
 
-            $validated = $request->validate([
-                'password' => [
-                    'required', Password::min(6)->mixedCase()->letters()->numbers()
-                ],
-                'role_id' => ['required', 'int', Rule::exists(Role::class, 'id')],
-                'person' => 'array|required',
-                'person.name' => 'required|string',
-                'person.email' => ['required', 'email', new UniqueEmail(new UserRepository())],
-                'person.cpf_cnpj' => ['required', 'string', new UniqueCpfCnpj(new UserRepository())],
-                'person.phone' => 'nullable|string',
-                'person.profile_picture_id' => 'nullable|int',
-                'person.address_id' => 'nullable|int',
-                'person.address' => 'nullable|array',
-                'person.address.id' => 'nullable|int',
-                'person.address.zip' => 'required|string',
-                'person.address.street' => 'required|string',
-                'person.address.number' => 'nullable|string',
-                'person.address.neighborhood' => 'nullable|string',
-                'person.address.city' => 'nullable|string',
-                'person.address.state' => 'nullable|string',
-                'person.address.complement' => 'nullable|string',
-                'person.address.longitude' => 'nullable|string',
-                'person.address.latitude' => 'nullable|string',
-            ]);
-
-            $user = $service->create($validated);
+            $user = $service->create($request->all());
 
             DB::commit();
 
@@ -94,33 +66,7 @@ class UserController extends Controller
 
             $service = new UpdateUserService();
 
-            $validated = $request->validate([
-                'password' => [
-                    'nullable', Password::min(6)->mixedCase()->letters()->numbers()
-                ],
-                'role_id' => ['required', 'int', Rule::exists(Role::class, 'id')],
-                'person' => 'array|required',
-                'person.id' => 'required|int',
-                'person.name' => 'required|string',
-                'person.email' => ['required', 'email', new UniqueEmail(new UserRepository())],
-                'person.cpf_cnpj' => ['required', 'string', new UniqueCpfCnpj(new UserRepository())],
-                'person.phone' => 'nullable|string',
-                'person.profile_picture_id' => 'nullable|int',
-                'person.address_id' => 'nullable|int',
-                'person.address' => 'nullable|array',
-                'person.address.id' => 'nullable|int',
-                'person.address.zip' => 'required|string',
-                'person.address.street' => 'required|string',
-                'person.address.number' => 'nullable|string',
-                'person.address.neighborhood' => 'nullable|string',
-                'person.address.city' => 'nullable|string',
-                'person.address.state' => 'nullable|string',
-                'person.address.complement' => 'nullable|string',
-                'person.address.longitude' => 'nullable|string',
-                'person.address.latitude' => 'nullable|string',
-            ]);
-
-            $updated = $service->update($validated, $id);
+            $updated = $service->update($request->all(), $id);
 
             DB::commit();
 

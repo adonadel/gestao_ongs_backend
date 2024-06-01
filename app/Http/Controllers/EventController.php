@@ -9,13 +9,42 @@ use App\Http\Services\Event\DeleteEventService;
 use App\Http\Services\Event\QueryEventService;
 use App\Http\Services\Event\UpdateEventService;
 use App\Models\Event;
-use Illuminate\Http\Client\Request;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Gate;
 
 class EventController extends Controller
 {
-    public function create(EventRequest $request)
+    public function create(Request $request)
+    {
+        Gate::authorize('create', Event::class);
+
+        try {
+            $validated = $request->validate([
+                'name' => 'required|string',
+                'description' => 'nullable|string',
+                'location' => 'nullable|string',
+                'medias' => 'array|required',
+                'medias.*.id' => 'required|exists:medias,id',
+            ]);
+
+            DB::beginTransaction();
+
+            $service = new CreateEventService();
+
+            $event = $service->create($request->all());
+
+            DB::commit();
+
+            return $event;
+        }catch (\Exception $exception) {
+            DB::rollBack();
+
+            throw new \Exception($exception->getMessage());
+        }
+    }
+
+    public function createWithMedias(EventRequest $request)
     {
         Gate::authorize('create', Event::class);
 
@@ -24,7 +53,7 @@ class EventController extends Controller
 
             $service = new CreateEventService();
 
-            $event = $service->create($request->all());
+            $event = $service->createWithMedias($request->all());
 
             DB::commit();
 

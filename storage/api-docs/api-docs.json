@@ -3113,6 +3113,10 @@
                         "description": "Altura da imagem criada",
                         "type": "integer"
                     },
+                    "order": {
+                        "description": "Ordem da imagem",
+                        "type": "integer"
+                    },
                     "created_at": {
                         "description": "Data de criação da imagem criada",
                         "type": "string"

@@ -12,6 +12,23 @@ class CreateAnimalService
     {
         $repository = new AnimalRepository();
 
+        $mediasIds = collect($data['medias'])
+            ->pluck('id')
+            ->toArray();
+
+        $animal = $repository->create($data);
+        
+        if ($mediasIds) {
+            $animal->medias()->sync($mediasIds);
+        }
+
+        return $animal;
+    }
+
+    public function createWithMedias(array $data)
+    {
+        $repository = new AnimalRepository();
+
         $animal = $repository->create($data);
 
         if (data_get($data, 'medias')) {
