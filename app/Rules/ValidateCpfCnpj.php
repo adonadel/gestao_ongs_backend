@@ -9,27 +9,23 @@ use Illuminate\Contracts\Validation\ValidationRule;
 
 class ValidateCpfCnpj implements ValidationRule
 {
-    protected $cpfCnpj;
-
-    public function __construct(String $cpfCnpj)
-    {
-        $this->cpfCnpj = $cpfCnpj;
-    }
 
     public function validate(string $attribute, mixed $value, Closure $fail): void
     {
         $validate = false;
-        
-        if (strlen($this->cpfCnpj) === 11) {
-            $validate = CPFUtils::validateCpf($this->cpfCnpj);
-        }elseif (strlen($this->cpfCnpj) === 14) {
-            $validate = CNPJUtils::validateCnpj($this->cpfCnpj);
+
+        if (strlen($value) === 14) {
+            $validate = CPFUtils::validateCpf($value);
+            $type = 'CPF';
+        }elseif (strlen($value) === 18) {
+            $validate = CNPJUtils::validateCnpj($value);
+            $type = 'CNPJ';
         }else {
             $fail('Tamanho incorreto para o campo :attribute');
         }
 
         if (!$validate) {
-            $fail(':attribute inválido');
+            $fail("{$type} inválido");
         }
     }
 }

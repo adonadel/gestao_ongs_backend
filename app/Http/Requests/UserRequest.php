@@ -2,6 +2,7 @@
 
 namespace App\Http\Requests;
 
+use App\Models\Role;
 use App\Repositories\UserRepository;
 use App\Rules\UniqueCpfCnpj;
 use App\Rules\UniqueEmail;
@@ -31,7 +32,7 @@ class UserRequest extends FormRequest
                 'required',
                 'string',
                 new UniqueCpfCnpj(new UserRepository()),
-                new ValidateCpfCnpj($this->request->get('cpf_cnpj'))
+                new ValidateCpfCnpj()
 
             ],
             'person.phone' => 'nullable|string',
