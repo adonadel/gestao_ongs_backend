@@ -17,12 +17,12 @@ class CreateMediaService
         return $repository->create($data);
     }
 
-    public function bulkCreate(array $medias)
+    public function bulkCreate(array $data)
     {
         $allMedias = [];
 
-        foreach ($medias as $data) {
-            $allMedias[] = $this->create($data);
+        foreach ($data['medias'] as $media) {
+            $allMedias[] = $this->create($media);
         }
 
         return $allMedias;
@@ -50,7 +50,7 @@ class CreateMediaService
             Storage::disk('google')->getAdapter()->getMetadata($filename)->extraMetadata(),
             'id'
         );
-        
+
         $data['filename'] = $filename;
 
         return $data;
