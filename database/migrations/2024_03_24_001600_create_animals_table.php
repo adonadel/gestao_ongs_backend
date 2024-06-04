@@ -4,6 +4,7 @@ use App\Enums\AnimalAgeTypeEnum;
 use App\Enums\AnimalCastrateEnum;
 use App\Enums\AnimalGenderEnum;
 use App\Enums\AnimalSizeEnum;
+use App\Enums\AnimalTypeEnum;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
@@ -22,6 +23,7 @@ return new class extends Migration
             $table->enum('size', AnimalSizeEnum::toArrayWithString());
             $table->enum('age_type', AnimalAgeTypeEnum::toArrayWithString());
             $table->enum('castrate_type', AnimalCastrateEnum::toArrayWithString());
+            $table->enum('animal_type', AnimalTypeEnum::toArrayWithString());
             $table->text('description')->nullable();
             $table->text('location')->nullable();
             $table->text('tags');

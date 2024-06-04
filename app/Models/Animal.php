@@ -6,6 +6,7 @@ namespace App\Models;
 use App\Enums\AnimalAgeTypeEnum;
 use App\Enums\AnimalGenderEnum;
 use App\Enums\AnimalSizeEnum;
+use App\Enums\AnimalTypeEnum;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
@@ -28,6 +29,7 @@ class Animal extends Model
         'size',
         'age_type',
         'castrate_type',
+        'animal_type',
         'description',
         'tags',
         'location',
@@ -38,6 +40,7 @@ class Animal extends Model
         'size' => AnimalSizeEnum::class,
         'age_type' => AnimalAgeTypeEnum::class,
         'castrate_type' => AnimalAgeTypeEnum::class,
+        'animal_type' => AnimalTypeEnum::class,
     ];
 
     public function adoption(): HasOne
