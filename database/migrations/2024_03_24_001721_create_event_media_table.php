@@ -17,7 +17,7 @@ return new class extends Migration
             $table->id();
             $table->foreignIdFor(Media::class)->nullable();
             $table->foreignIdFor(Event::class)->nullable();
-            $table->integer('order')->unique();
+            $table->boolean('is_cover')->default(false);
             $table->timestamps();
         });
     }

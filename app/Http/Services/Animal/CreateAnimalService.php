@@ -12,13 +12,11 @@ class CreateAnimalService
     {
         $repository = new AnimalRepository();
 
-        $mediasIds = collect($data['medias'])
-            ->pluck('id')
-            ->toArray();
+        $mediasIds = data_get($data, 'medias');
 
         $animal = $repository->create($data);
-        
-        if ($mediasIds) {
+
+        if ($mediasIds && explode(",", trim($mediasIds))) {
             $animal->medias()->sync($mediasIds);
         }
 

@@ -23,13 +23,13 @@ class AnimalRequest extends FormRequest
             'description' => 'nullable|string',
             'location' => 'nullable|string',
             'tags' => 'nullable|string',
-            'medias' => 'array|required',
+            'medias' => 'nullable|required',
             'medias.*.media' => [
                 'required', File::types(['jpg', 'jpeg', 'png'])
             ],
             'medias.*.display_name' => 'nullable|string',
             'medias.*.description' => 'nullable|string',
-            'medias.*.order' => 'nullable|integer',
+            'medias.*.is_cover' => 'nullable|boolean',
         ];
     }
 }

@@ -21,6 +21,5 @@ class Media extends Model
         'description',
         'width',
         'height',
-        'order',
     ];
 }

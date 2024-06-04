@@ -47,6 +47,6 @@ class Animal extends Model
 
     public function medias(): HasMany
     {
-        return $this->hasMany(Media::class)->orderBy('order');
+        return $this->hasMany(Media::class)->orderBy('is_cover');
     }
 }

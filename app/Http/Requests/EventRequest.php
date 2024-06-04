@@ -19,7 +19,7 @@ class EventRequest extends FormRequest
             ],
             'medias.*.display_name' => 'nullable|string',
             'medias.*.description' => 'nullable|string',
-            'medias.*.order' => 'nullable|integer',
+            'medias.*.is_cover' => 'nullable|boolean',
         ];
     }
 }
