@@ -34,8 +34,7 @@ class AnimalController extends Controller
                 'description' => 'nullable|string',
                 'location' => 'nullable|string',
                 'tags' => 'nullable|string',
-                'medias' => 'array|required',
-                'medias.*.id' => 'required|exists:medias,id',
+                'medias' => 'string|required',
             ]);
 
             DB::beginTransaction();
@@ -53,7 +52,7 @@ class AnimalController extends Controller
             throw new \Exception($exception->getMessage());
         }
     }
-    
+
     public function createWithMedias(AnimalRequest $request)
     {
         Gate::authorize('create', Animal::class);

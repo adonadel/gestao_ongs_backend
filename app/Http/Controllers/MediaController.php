@@ -9,6 +9,7 @@ use App\Models\Media;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Gate;
+use Illuminate\Validation\Rule;
 use Illuminate\Validation\Rules\File;
 
 class MediaController extends Controller
@@ -26,7 +27,8 @@ class MediaController extends Controller
                 ],
                 'display_name' => 'nullable|string',
                 'description' => 'nullable|string',
-                'order' => 'nullable|integer',
+                'is_cover' => 'nullable|boolean',
+                'origin' => ['required', 'string', Rule::in(['user', 'animal', 'event'])]
             ]);
 
             $service = new CreateMediaService();
@@ -56,7 +58,7 @@ class MediaController extends Controller
                 ],
                 'display_name' => 'nullable|string',
                 'description' => 'nullable|string',
-                'order' => 'nullable|integer',
+                'is_cover' => 'nullable|boolean',
             ]);
 
             $service = new UpdateMediaService();
@@ -111,7 +113,7 @@ class MediaController extends Controller
                 ],
                 'medias.*.display_name' => 'nullable|string',
                 'medias.*.description' => 'nullable|string',
-                'medias.*.order' => 'nullable|integer',
+                'medias.*.is_cover' => 'nullable|boolean',
             ]);
 
             $service = new CreateMediaService();

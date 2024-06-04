@@ -2,7 +2,10 @@
 
 namespace App\Http\Services\Media;
 
+use App\Repositories\AnimalMediaRepository;
+use App\Repositories\EventMediaRepository;
 use App\Repositories\MediaRepository;
+use App\Repositories\UserRepository;
 use Illuminate\Support\Facades\Storage;
 
 class CreateMediaService
@@ -14,7 +17,17 @@ class CreateMediaService
 
         $data = $this->makeUpload($data);
 
-        return $repository->create($data);
+        $media = $repository->create($data);
+
+        if (data_get($media, 'is_cover') && data_get($media, 'is_cover') ===true) {
+            $normalized = $this->normalize(data_get($media, 'origin'));
+
+            if ($normalized !== UserRepository::class) {
+                $normalized->where('media_id', $media->id)->update(['is_cover' => true]);
+            }
+        }
+
+        return $media;
     }
 
     public function bulkCreate(array $data)
@@ -54,5 +67,16 @@ class CreateMediaService
         $data['filename'] = $filename;
 
         return $data;
+    }
+
+    private function normalize(string $origin)
+    {
+        $normalized =  [
+            'event' => new EventMediaRepository(),
+            'animal' => new AnimalMediaRepository(),
+            'user' => new UserRepository(),
+        ];
+
+        return $normalized[$origin];
     }
 }
