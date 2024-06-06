@@ -99,8 +99,6 @@ class FinanceController extends Controller
 
     public function success(int $id)
     {
-        Gate::authorize('create', Finance::class);
-
         $service = new CompleteFinanceService();
 
         $service->complete($id);
@@ -112,8 +110,6 @@ class FinanceController extends Controller
 
     public function cancel(int $id)
     {
-        Gate::authorize('create', Finance::class);
-
         $service = new CancelFinanceService();
 
         $service->cancel($id);

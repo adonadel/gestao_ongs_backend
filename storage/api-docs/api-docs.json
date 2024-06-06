@@ -1615,7 +1615,7 @@
             }
         },
         "/finances/{id}/success": {
-            "post": {
+            "put": {
                 "tags": [
                     "Finances"
                 ],
@@ -1673,7 +1673,7 @@
             }
         },
         "/finances/{id}/cancel": {
-            "post": {
+            "put": {
                 "tags": [
                     "Finances"
                 ],
