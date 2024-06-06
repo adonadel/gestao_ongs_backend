@@ -4,6 +4,7 @@ namespace App\Models;
 
 
 use App\Enums\AnimalAgeTypeEnum;
+use App\Enums\AnimalCastrateEnum;
 use App\Enums\AnimalGenderEnum;
 use App\Enums\AnimalSizeEnum;
 use App\Enums\AnimalTypeEnum;
@@ -39,7 +40,7 @@ class Animal extends Model
         'gender' => AnimalGenderEnum::class,
         'size' => AnimalSizeEnum::class,
         'age_type' => AnimalAgeTypeEnum::class,
-        'castrate_type' => AnimalAgeTypeEnum::class,
+        'castrate_type' => AnimalCastrateEnum::class,
         'animal_type' => AnimalTypeEnum::class,
     ];
 
