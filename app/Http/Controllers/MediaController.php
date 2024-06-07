@@ -28,7 +28,7 @@ class MediaController extends Controller
                 'display_name' => 'nullable|string',
                 'description' => 'nullable|string',
                 'is_cover' => 'nullable|boolean',
-                'origin' => ['required', 'string', Rule::in(['user', 'animal', 'event'])]
+                'origin' => ['required', 'string', Rule::in(['media', 'user', 'animal', 'event'])]
             ]);
 
             $service = new CreateMediaService();
