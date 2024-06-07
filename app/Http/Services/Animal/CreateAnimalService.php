@@ -16,8 +16,8 @@ class CreateAnimalService
 
         $animal = $repository->create($data);
 
-        if ($mediasIds && explode(",", trim($mediasIds))) {
-            $animal->medias()->sync($mediasIds);
+        if ($mediasIds && $exploded = explode(",", trim($mediasIds))) {
+            $animal->medias()->sync($exploded);
         }
 
         return $animal;

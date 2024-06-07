@@ -10,7 +10,7 @@ use App\Enums\AnimalSizeEnum;
 use App\Enums\AnimalTypeEnum;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 
 
@@ -49,8 +49,8 @@ class Animal extends Model
         return $this->hasOne(Adoption::class);
     }
 
-    public function medias(): HasMany
+    public function medias(): BelongsToMany
     {
-        return $this->hasMany(Media::class)->orderBy('is_cover');
+        return $this->belongsToMany(Media::class)->orderBy('is_cover');
     }
 }
