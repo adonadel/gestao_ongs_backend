@@ -54,7 +54,7 @@ class MediaController extends Controller
 
             $validated = $request->validate([
                 'media' => [
-                    'required', File::types(['jpg', 'jpeg', 'png'])
+                    'nullable', File::types(['jpg', 'jpeg', 'png'])
                 ],
                 'display_name' => 'nullable|string',
                 'description' => 'nullable|string',

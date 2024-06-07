@@ -13,13 +13,15 @@ class UpdateMediaService
 
         $media = $repository->getById($id);
 
-        $oldFileName = $media->filename;
+        if (data_get($data, 'media')) {
+            $oldFileName = $media->filename;
 
-        $data = (new CreateMediaService())->makeUpload($data);
+            $data = (new CreateMediaService())->makeUpload($data);
 
+            Storage::disk('google')->delete($oldFileName);
+        }
+        
         $updated = $repository->update($media, $data);
-
-        Storage::disk('google')->delete($oldFileName);
 
         return $updated;
     }
