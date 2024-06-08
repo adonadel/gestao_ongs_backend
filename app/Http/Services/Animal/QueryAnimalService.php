@@ -13,6 +13,6 @@ class QueryAnimalService
 
     public function getAnimalById(int $id)
     {
-        return (new AnimalRepository())->getById($id);
+        return (new AnimalRepository())->getById($id)->load('medias');
     }
 }
