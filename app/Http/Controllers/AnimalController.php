@@ -76,16 +76,29 @@ class AnimalController extends Controller
         }
     }
 
-    public function update(AnimalRequest $request, int $id)
+    public function update(Request $request, int $id)
     {
         Gate::authorize('update', Animal::class);
 
         try {
+            $validated = $request->validate([
+                'name' => 'required|string',
+                'gender' => ['required', Rule::in(AnimalGenderEnum::cases())],
+                'size' => ['required', Rule::in(AnimalSizeEnum::cases())],
+                'age_type' => ['required', Rule::in(AnimalAgeTypeEnum::cases())],
+                'castrate_type' => ['required', Rule::in(AnimalCastrateEnum::cases())],
+                'animal_type' => ['required', Rule::in(AnimalTypeEnum::cases())],
+                'description' => 'nullable|string',
+                'location' => 'nullable|string',
+                'tags' => 'nullable|string',
+                'medias' => 'string|required',
+            ]);
+
             DB::beginTransaction();
 
             $service = new UpdateAnimalService();
 
-            $updated = $service->update($request->all(), $id);
+            $updated = $service->update($validated, $id);
 
             DB::commit();
 
