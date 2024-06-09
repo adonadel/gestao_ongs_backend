@@ -27,7 +27,7 @@ class MediaController extends Controller
                 ],
                 'display_name' => 'nullable|string',
                 'description' => 'nullable|string',
-                'is_cover' => 'nullable|boolean',
+                'is_cover' => 'nullable',
                 'origin' => ['required', 'string', Rule::in(['media', 'user', 'animal', 'event'])]
             ]);
 
@@ -58,7 +58,8 @@ class MediaController extends Controller
                 ],
                 'display_name' => 'nullable|string',
                 'description' => 'nullable|string',
-                'is_cover' => 'nullable|boolean',
+                'is_cover' => 'nullable',
+                'origin' => ['required', 'string', Rule::in(['media', 'user', 'animal', 'event'])]
             ]);
 
             $service = new UpdateMediaService();
