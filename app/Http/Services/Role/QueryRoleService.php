@@ -13,6 +13,6 @@ class QueryRoleService
 
     public function getRoleById(int $id)
     {
-        return (new RoleRepository())->getById($id);
+        return (new RoleRepository())->getById($id)->load('permissions');
     }
 }
