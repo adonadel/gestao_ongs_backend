@@ -16,7 +16,7 @@ class UpdateMediaService
 
         $media = $repository->getById($id);
 
-        if (data_get($data, 'is_cover') && (bool) data_get($data, 'is_cover') ===true) {
+        if (data_get($data, 'is_cover')) {
             $normalized = $this->normalize(data_get($data, 'origin'));
 
             if ($normalized !== UserRepository::class) {
