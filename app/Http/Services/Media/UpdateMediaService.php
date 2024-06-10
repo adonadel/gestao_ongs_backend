@@ -16,11 +16,13 @@ class UpdateMediaService
 
         $media = $repository->getById($id);
 
-        if (data_get($data, 'is_cover')) {
+        $isCover = data_get($data, 'is_cover');
+
+        if ($isCover !== null) {
             $normalized = $this->normalize(data_get($data, 'origin'));
 
             if ($normalized !== UserRepository::class) {
-                $normalized->newQuery()->where('media_id', $media->id)->update(['is_cover' => data_get($data, 'is_cover')]);
+                $normalized->newQuery()->where('media_id', $media->id)->update(['is_cover' => $isCover]);
             }
         }
 
