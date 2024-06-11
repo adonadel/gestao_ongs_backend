@@ -115,6 +115,7 @@ class MediaController extends Controller
                 'medias.*.display_name' => 'nullable|string',
                 'medias.*.description' => 'nullable|string',
                 'medias.*.is_cover' => 'nullable|boolean',
+                'animal_id' => 'nullable|exists:animals,id',
             ]);
 
             $service = new CreateMediaService();

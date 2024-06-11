@@ -26,7 +26,7 @@ return new class extends Migration
             $table->enum('animal_type', AnimalTypeEnum::toArrayWithString());
             $table->text('description')->nullable();
             $table->text('location')->nullable();
-            $table->text('tags');
+            $table->text('tags')->nullable();
             $table->timestamps();
         });
     }
