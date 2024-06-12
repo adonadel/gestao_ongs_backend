@@ -16,7 +16,7 @@ class CreateFinanceService
         $stripeClient = new StripeClient(env('STRIPE_SECRET'));
 
         $product = $stripeClient->products->create([
-            'name' => "Doação Patinhas Felizes",
+            'name' => "Doação Patinhas Carentes",
         ]);
 
         $price = $stripeClient->prices->create([

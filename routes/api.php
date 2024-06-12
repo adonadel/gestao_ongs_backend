@@ -57,7 +57,7 @@ Route::prefix('medias')->group( function() {
             Route::post('/', 'create');
             Route::post('/bulk', 'bulkCreate');
 
-            Route::put('/{id}', 'update');
+            Route::post('/{id}', 'update');
 
             Route::delete('/{id}', 'delete');
         });
@@ -133,7 +133,7 @@ Route::prefix('finances')->group( function() {
 
             Route::delete('/{id}', 'delete');
         });
-        
+
         Route::middleware('api')->group(function () {
             Route::post('/', 'create');
             Route::put('/{id}/success', 'success');

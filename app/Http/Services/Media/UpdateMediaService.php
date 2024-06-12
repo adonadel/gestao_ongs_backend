@@ -2,7 +2,10 @@
 
 namespace App\Http\Services\Media;
 
+use App\Repositories\AnimalMediaRepository;
+use App\Repositories\EventMediaRepository;
 use App\Repositories\MediaRepository;
+use App\Repositories\UserRepository;
 use Illuminate\Support\Facades\Storage;
 
 class UpdateMediaService
@@ -13,6 +16,16 @@ class UpdateMediaService
 
         $media = $repository->getById($id);
 
+        $isCover = data_get($data, 'is_cover');
+
+        if ($isCover !== null) {
+            $normalized = $this->normalize(data_get($data, 'origin'));
+
+            if ($normalized !== UserRepository::class) {
+                $normalized->newQuery()->where('media_id', $media->id)->update(['is_cover' => $isCover]);
+            }
+        }
+
         if (data_get($data, 'media')) {
             $oldFileName = $media->filename;
 
@@ -20,9 +33,20 @@ class UpdateMediaService
 
             Storage::disk('google')->delete($oldFileName);
         }
-        
+
         $updated = $repository->update($media, $data);
 
         return $updated;
+    }
+
+    private function normalize(string $origin)
+    {
+        $normalized =  [
+            'event' => new EventMediaRepository(),
+            'animal' => new AnimalMediaRepository(),
+            'user' => new UserRepository(),
+        ];
+
+        return $normalized[$origin];
     }
 }

@@ -91,7 +91,7 @@ class AnimalController extends Controller
                 'description' => 'nullable|string',
                 'location' => 'nullable|string',
                 'tags' => 'nullable|string',
-                'medias' => 'string|required',
+                'medias' => 'string|nullable',
             ]);
 
             DB::beginTransaction();

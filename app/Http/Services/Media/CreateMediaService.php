@@ -38,6 +38,17 @@ class CreateMediaService
             $allMedias[] = $this->create($media);
         }
 
+        if (data_get($data, 'animal_id')) {
+            $animalMediaRepository = new AnimalMediaRepository();
+
+            foreach ($allMedias as $media) {
+                $animalMediaRepository->create([
+                    'animal_id' => data_get($data, 'animal_id'),
+                    'media_id' => $media->id,
+                ]);
+            }
+        }
+
         return $allMedias;
     }
 

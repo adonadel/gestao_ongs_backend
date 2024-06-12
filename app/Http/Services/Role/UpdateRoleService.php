@@ -11,9 +11,13 @@ class UpdateRoleService
     {
         $repository = new RoleRepository();
 
-        $permissionsIds = collect($data['permissions'])
-            ->pluck('id')
-            ->toArray();
+        if(data_get($data, 'permissionsIds')) {
+            $permissionsIds = explode(',', data_get($data, 'permissionsIds'));
+        }else {
+            $permissionsIds = collect($data['permissions'])
+                ->pluck('id')
+                ->toArray();
+        }
 
         $role = $repository->getById($id);
 
