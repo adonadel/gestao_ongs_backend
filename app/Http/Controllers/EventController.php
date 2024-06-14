@@ -24,15 +24,14 @@ class EventController extends Controller
                 'name' => 'required|string',
                 'description' => 'nullable|string',
                 'location' => 'nullable|string',
-                'medias' => 'array|required',
-                'medias.*.id' => 'required|exists:medias,id',
+                'medias' => 'string|required',
             ]);
 
             DB::beginTransaction();
 
             $service = new CreateEventService();
 
-            $event = $service->create($request->all());
+            $event = $service->create($validated);
 
             DB::commit();
 

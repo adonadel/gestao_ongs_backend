@@ -12,14 +12,12 @@ class CreateEventService
     {
         $repository = new EventRepository();
 
-        $mediasIds = collect($data['medias'])
-            ->pluck('id')
-            ->toArray();
+        $mediasIds = data_get($data, 'medias');
 
         $event = $repository->create($data);
 
-        if ($mediasIds) {
-            $event->medias()->sync($mediasIds);
+        if ($mediasIds && $exploded = explode(",", trim($mediasIds))) {
+            $event->medias()->sync($exploded);
         }
 
         return $event;
