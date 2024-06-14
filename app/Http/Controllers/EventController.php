@@ -24,15 +24,26 @@ class EventController extends Controller
                 'name' => 'required|string',
                 'description' => 'nullable|string',
                 'location' => 'nullable|string',
-                'medias' => 'array|required',
-                'medias.*.id' => 'required|exists:medias,id',
+                'medias' => 'string|required',
+                'event_date' => 'nullable|date',
+                'address' => 'nullable|array',
+                'address.id' => 'nullable|int',
+                'address.zip' => 'required|string',
+                'address.street' => 'required|string',
+                'address.number' => 'nullable|string',
+                'address.neighborhood' => 'nullable|string',
+                'address.city' => 'nullable|string',
+                'address.state' => 'nullable|string',
+                'address.complement' => 'nullable|string',
+                'address.longitude' => 'nullable|string',
+                'address.latitude' => 'nullable|string',
             ]);
 
             DB::beginTransaction();
 
             $service = new CreateEventService();
 
-            $event = $service->create($request->all());
+            $event = $service->create($validated);
 
             DB::commit();
 
@@ -65,16 +76,35 @@ class EventController extends Controller
         }
     }
 
-    public function update(EventRequest $request, int $id)
+    public function update(Request $request, int $id)
     {
         Gate::authorize('update', Event::class);
 
         try {
+            $validated = $request->validate([
+                'name' => 'required|string',
+                'description' => 'nullable|string',
+                'location' => 'nullable|string',
+                'medias' => 'nullable|required',
+                'event_date' => 'nullable|date',
+                'address' => 'nullable|array',
+                'address.id' => 'nullable|int',
+                'address.zip' => 'required|string',
+                'address.street' => 'required|string',
+                'address.number' => 'nullable|string',
+                'address.neighborhood' => 'nullable|string',
+                'address.city' => 'nullable|string',
+                'address.state' => 'nullable|string',
+                'address.complement' => 'nullable|string',
+                'address.longitude' => 'nullable|string',
+                'address.latitude' => 'nullable|string',
+            ]);
+
             DB::beginTransaction();
 
             $service = new UpdateEventService();
 
-            $updated = $service->update($request->all(), $id);
+            $updated = $service->update($validated, $id);
 
             DB::commit();
 

@@ -24,6 +24,7 @@ class Event extends Model
         'description',
         'event_date',
         'location',
+        'address_id',
     ];
 
     public function address(): BelongsTo
@@ -33,6 +34,6 @@ class Event extends Model
 
     public function medias(): BelongsToMany
     {
-        return $this->belongsToMany(Media::class)->orderBy('is_cover');
+        return $this->belongsToMany(Media::class)->orderBy('is_cover')->withPivot('is_cover');
     }
 }
