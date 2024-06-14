@@ -20,6 +20,17 @@ class EventRequest extends FormRequest
             'medias.*.display_name' => 'nullable|string',
             'medias.*.description' => 'nullable|string',
             'medias.*.is_cover' => 'nullable|boolean',
+            'address' => 'nullable|array',
+            'address.id' => 'nullable|int',
+            'address.zip' => 'required|string',
+            'address.street' => 'required|string',
+            'address.number' => 'nullable|string',
+            'address.neighborhood' => 'nullable|string',
+            'address.city' => 'nullable|string',
+            'address.state' => 'nullable|string',
+            'address.complement' => 'nullable|string',
+            'address.longitude' => 'nullable|string',
+            'address.latitude' => 'nullable|string',
         ];
     }
 }

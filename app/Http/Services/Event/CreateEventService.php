@@ -3,6 +3,7 @@
 namespace App\Http\Services\Event;
 
 use App\Http\Services\Media\CreateMediaService;
+use App\Repositories\AddressRepository;
 use App\Repositories\EventRepository;
 
 class CreateEventService
@@ -23,9 +24,15 @@ class CreateEventService
         return $event;
     }
 
-    public function createWithMedias(array $data)
+    public function createWithMedias(array &$data)
     {
         $repository = new EventRepository();
+
+        if($addressData = data_get($data, 'address')) {
+            $address = $this->handleAddress($addressData);
+            $data['address_id'] = $address->id;
+            unset($data['address']);
+        }
 
         $event = $repository->create($data);
 
@@ -38,5 +45,19 @@ class CreateEventService
         }
 
         return $event;
+    }
+
+    private function handleAddress(array $addressData)
+    {
+        $addressRepository = new AddressRepository();
+
+        if ($id = data_get($addressData, 'id')) {
+            $address = $addressRepository->getById($id);
+            $addressRepository->update($address, $addressData);
+        }else {
+            $address = $addressRepository->create($addressData);
+        }
+
+        return $address;
     }
 }

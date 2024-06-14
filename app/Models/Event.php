@@ -24,6 +24,7 @@ class Event extends Model
         'description',
         'event_date',
         'location',
+        'address_id',
     ];
 
     public function address(): BelongsTo

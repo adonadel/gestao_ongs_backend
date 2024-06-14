@@ -13,6 +13,16 @@ class QueryEventService
 
     public function getEventById(int $id)
     {
-        return (new EventRepository())->getById($id);
+        $event = (new EventRepository())->getById($id)->load('medias', 'address');
+
+        return [
+            ...$event->toArray(),
+            'medias' => $event->medias->map(function ($media) {
+                return [
+                    ...$media->toArray(),
+                    'is_cover' => (bool) $media->pivot->is_cover
+                ];
+            })
+        ];
     }
 }

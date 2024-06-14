@@ -22,7 +22,6 @@ class CreateUserService
             unset($personData['address']);
         }
 
-
         $person = $personRepository->create($personData);
 
         $data['people_id'] = $person->id;
