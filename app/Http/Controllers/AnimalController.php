@@ -135,8 +135,6 @@ class AnimalController extends Controller
 
     public function getAnimals(Request $request)
     {
-        Gate::authorize('view', Animal::class);
-
         $service = new QueryAnimalService();
 
         return $service->getAnimals($request->all());
@@ -144,8 +142,6 @@ class AnimalController extends Controller
 
     public function getAnimalById(int $id)
     {
-        Gate::authorize('view', Animal::class);
-
         $service = new QueryAnimalService();
 
         return $service->getAnimalById($id);
