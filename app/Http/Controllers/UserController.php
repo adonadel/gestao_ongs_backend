@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Enums\UserTypeEnum;
 use App\Extensions\CustomPassword;
 use App\Http\Requests\UserRequest;
 use App\Http\Services\User\CreateUserService;
@@ -46,7 +47,25 @@ class UserController extends Controller
 
             $service = new CreateUserService();
 
-            $user = $service->create($request->all());
+            $user = $service->create($request->all(), null);
+
+            DB::commit();
+
+            return $user;
+        }catch(\Exception $exception) {
+            DB::rollBack();
+            throw new \Exception($exception->getMessage());
+        }
+    }
+
+    public function createExternal(UserRequest $request)
+    {
+        try {
+            DB::beginTransaction();
+
+            $service = new CreateUserService();
+
+            $user = $service->create($request->all(), UserTypeEnum::EXTERNAL);
 
             DB::commit();
 

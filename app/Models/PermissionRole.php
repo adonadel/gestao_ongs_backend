@@ -17,7 +17,8 @@ class PermissionRole extends Pivot
      * @var array<int, string>
      */
     protected $fillable = [
-        'name',
+        'role_id',
+        'permission_id',
     ];
 
     public function role(): BelongsTo
