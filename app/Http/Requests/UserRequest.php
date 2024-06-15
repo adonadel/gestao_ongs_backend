@@ -2,6 +2,7 @@
 
 namespace App\Http\Requests;
 
+use App\Enums\UserTypeEnum;
 use App\Models\Role;
 use App\Repositories\UserRepository;
 use App\Rules\UniqueCpfCnpj;
@@ -19,7 +20,7 @@ class UserRequest extends FormRequest
             'password' => [
                 'required', Password::min(6)->mixedCase()->letters()->numbers()
             ],
-            'role_id' => ['required', 'int', Rule::exists(Role::class, 'id')],
+            'role_id' => ['nullable', 'int', Rule::exists(Role::class, 'id')],
             'person' => 'array|required',
             'person.name' => 'required|string',
             'person.email' => [
@@ -49,6 +50,7 @@ class UserRequest extends FormRequest
             'person.address.complement' => 'nullable|string',
             'person.address.longitude' => 'nullable|string',
             'person.address.latitude' => 'nullable|string',
+            'type' => ['nullable', Rule::in(UserTypeEnum::cases())],
         ];
     }
 }

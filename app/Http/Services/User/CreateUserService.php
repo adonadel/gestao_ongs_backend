@@ -3,13 +3,15 @@
 namespace App\Http\Services\User;
 
 
+use App\Enums\UserTypeEnum;
 use App\Repositories\AddressRepository;
 use App\Repositories\PeopleRepository;
+use App\Repositories\RoleRepository;
 use App\Repositories\UserRepository;
 
 class CreateUserService
 {
-    public function create(array $data)
+    public function create(array $data, ?UserTypeEnum $type)
     {
         $userRepository = new UserRepository();
         $personRepository = new PeopleRepository();
@@ -26,7 +28,15 @@ class CreateUserService
 
         $data['people_id'] = $person->id;
 
-        return $userRepository->create($data);
+        if ($type !== null) {
+            $data['type'] = $type;
+        }
+
+        if (data_get($data, 'type') === UserTypeEnum::EXTERNAL) {
+            $data['role_id'] = (new RoleRepository())->newQuery()->where('name', 'user')->first()->id;
+        }
+
+        return $userRepository->create($data)->load('person', 'person.address');
     }
 
     private function handleAddress(array $addressData)
