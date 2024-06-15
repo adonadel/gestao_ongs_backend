@@ -77,6 +77,7 @@ Route::prefix('animals')->group( function() {
 
             Route::delete('/{id}', 'delete');
         });
+
         Route::middleware('api')->group(function () {
             Route::get('/', 'getAnimals');
             Route::get('/{id}', 'getAnimalById');
@@ -87,15 +88,17 @@ Route::prefix('animals')->group( function() {
 Route::prefix('events')->group( function() {
     Route::controller(EventController::class)->group( function() {
         Route::middleware('auth:api')->group(function () {
-            Route::get('/', 'getEvents');
-            Route::get('/{id}', 'getEventById');
-
             Route::post('/', 'create');
             Route::post('/with-medias', 'createWithMedias');
 
             Route::put('/{id}', 'update');
 
             Route::delete('/{id}', 'delete');
+        });
+
+        Route::middleware('api')->group(function () {
+            Route::get('/', 'getEvents');
+            Route::get('/{id}', 'getEventById');
         });
     });
 });
