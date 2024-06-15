@@ -77,6 +77,10 @@ Route::prefix('animals')->group( function() {
 
             Route::delete('/{id}', 'delete');
         });
+        Route::middleware('api')->group(function () {
+            Route::get('/', 'getAnimals');
+            Route::get('/{id}', 'getAnimalById');
+        });
     });
 });
 

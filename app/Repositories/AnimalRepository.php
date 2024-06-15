@@ -5,6 +5,7 @@ namespace App\Repositories;
 use App\Enums\AnimalAgeTypeEnum;
 use App\Enums\AnimalGenderEnum;
 use App\Enums\AnimalSizeEnum;
+use App\Enums\AnimalTypeEnum;
 use App\Models\Animal;
 use Illuminate\Database\Eloquent\Builder;
 
@@ -24,10 +25,12 @@ class AnimalRepository extends Repository
         $ageType = data_get($filters, 'age_type');
         $size = data_get($filters, 'size');
         $gender = data_get($filters, 'gender');
+        $animal_type = data_get($filters, 'animal_type');
 
         $ageTypeValidated = in_array($ageType, AnimalAgeTypeEnum::toArrayWithString(), true);
         $sizeValidated = in_array($size, AnimalSizeEnum::toArrayWithString(), true);
         $genderValidated = in_array($gender, AnimalGenderEnum::toArrayWithString(), true);
+        $animalTypeValidated = in_array($animal_type, AnimalTypeEnum::toArrayWithString(), true);
 
         $query = $this->newQuery();
 
@@ -50,6 +53,10 @@ class AnimalRepository extends Repository
             ->when($genderValidated, function (Builder $query) use ($gender){
                 $query
                     ->where('gender', $gender);
+            })
+            ->when($animalTypeValidated, function (Builder $query) use ($gender){
+                $query
+                    ->where('$animalTypeValidated', $gender);
             });
 
         if ($noPaginate) {

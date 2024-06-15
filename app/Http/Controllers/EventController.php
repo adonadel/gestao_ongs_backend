@@ -141,8 +141,6 @@ class EventController extends Controller
 
     public function getEvents(Request $request)
     {
-        Gate::authorize('view', Event::class);
-
         $service = new QueryEventService();
 
         return $service->getEvents($request->all());
@@ -150,8 +148,6 @@ class EventController extends Controller
 
     public function getEventById(int $id)
     {
-        Gate::authorize('view', Event::class);
-
         $service = new QueryEventService();
 
         return $service->getEventById($id);
