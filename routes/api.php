@@ -18,11 +18,11 @@ Route::prefix('auth')->group( function() {
             Route::get('/me', 'me');
 
             Route::post('/logout', 'logout');
-            Route::post('/refresh', 'refreshToken');
         });
 
         Route::middleware('api')->group(function () {
             Route::post('/login', 'login');
+            Route::post('/refresh', 'refreshToken');
         });
     });
 });
