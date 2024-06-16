@@ -25,12 +25,12 @@ class AnimalRepository extends Repository
         $ageType = data_get($filters, 'age_type');
         $size = data_get($filters, 'size');
         $gender = data_get($filters, 'gender');
-        $animal_type = data_get($filters, 'animal_type');
+        $animalType = data_get($filters, 'animal_type');
 
         $ageTypeValidated = in_array($ageType, AnimalAgeTypeEnum::toArrayWithString(), true);
         $sizeValidated = in_array($size, AnimalSizeEnum::toArrayWithString(), true);
         $genderValidated = in_array($gender, AnimalGenderEnum::toArrayWithString(), true);
-        $animalTypeValidated = in_array($animal_type, AnimalTypeEnum::toArrayWithString(), true);
+        $animalTypeValidated = in_array($animalType, AnimalTypeEnum::toArrayWithString(), true);
 
         $query = $this->newQuery();
 
@@ -54,11 +54,11 @@ class AnimalRepository extends Repository
                 $query
                     ->where('gender', $gender);
             })
-            ->when($animalTypeValidated, function (Builder $query) use ($animalTypeValidated){
+            ->when($animalTypeValidated, function (Builder $query) use ($animalType){
                 $query
-                    ->where('animal_type', $animalTypeValidated);
+                    ->where('animal_type', $animalType);
             });
-
+        
         if ($noPaginate) {
             return $query->get();
         }
