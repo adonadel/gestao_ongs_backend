@@ -54,9 +54,9 @@ class AnimalRepository extends Repository
                 $query
                     ->where('gender', $gender);
             })
-            ->when($animalTypeValidated, function (Builder $query) use ($gender){
+            ->when($animalTypeValidated, function (Builder $query) use ($animalTypeValidated){
                 $query
-                    ->where('animal_type', $gender);
+                    ->where('animal_type', $animalTypeValidated);
             });
 
         if ($noPaginate) {
