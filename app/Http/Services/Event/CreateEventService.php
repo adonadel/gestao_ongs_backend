@@ -15,6 +15,12 @@ class CreateEventService
 
         $mediasIds = data_get($data, 'medias');
 
+        if($addressData = data_get($data, 'address')) {
+            $address = $this->handleAddress($addressData);
+            $data['address_id'] = $address->id;
+            unset($data['address']);
+        }
+
         $event = $repository->create($data);
 
         if ($mediasIds && $exploded = explode(",", trim($mediasIds))) {
