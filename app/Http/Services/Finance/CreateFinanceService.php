@@ -29,8 +29,8 @@ class CreateFinanceService
         $finance = $repository->create($data);
 
         $checkOut = $stripeClient->checkout->sessions->create([
-            "success_url" => env("APP_URL") . "/payment/success/{$finance->id}",
-            "cancel_url" => env("APP_URL") . "/payment/cancel/{$finance->id}",
+            "success_url" => env("APP_URL") . "/donate/success/{$finance->id}",
+            "cancel_url" => env("APP_URL") . "/donate/cancel/{$finance->id}",
             'line_items' => [
                 [
                     'price' => $price->id,
