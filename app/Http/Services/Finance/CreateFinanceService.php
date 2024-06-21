@@ -25,15 +25,12 @@ class CreateFinanceService
             'product' => $product->id,
         ]);
 
-        if (!isset($data['date'])) {
-            $data['date'] = Carbon::now()->timezone('America/Sao_Paulo');
-        }
-
+        $data['date'] = Carbon::now()->timezone('America/Sao_Paulo');
         $finance = $repository->create($data);
 
         $checkOut = $stripeClient->checkout->sessions->create([
-            "success_url" => env("APP_URL") . "/donate/success/{$finance->id}",
-            "cancel_url" => env("APP_URL") . "/donate/cancel/{$finance->id}",
+            "success_url" => env("APP_URL") . "/payment/success/{$finance->id}",
+            "cancel_url" => env("APP_URL") . "/payment/cancel/{$finance->id}",
             'line_items' => [
                 [
                     'price' => $price->id,
