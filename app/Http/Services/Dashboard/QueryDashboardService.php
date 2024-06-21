@@ -96,10 +96,11 @@ class QueryDashboardService
                 $query->whereBetween('created_at', [$initial, $final]);
             })
             ->first();
-        
+
         return [
+            'total' => $totalIncome->total - $totalExpense->total,
             'totalIncome' => $totalIncome->total,
-            'totalExpense' => $totalExpense->total
+            'totalExpense' => $totalExpense->total,
         ];
     }
 }
