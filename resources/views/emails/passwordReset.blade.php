@@ -16,7 +16,7 @@
             Caso desconheça esta solicitação, ignore o email.
         </div>
         <div class="footer">
-            Patinhas love &copy;
+            Patinhas Carentes &copy;
         </div>
     </div>
 </body>
