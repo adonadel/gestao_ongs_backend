@@ -172,25 +172,35 @@ class UserController extends Controller
 
         $user = $userRepository->getByEmail($request->email);
 
-        if (!$user) {
-            return response()->json([
-                'message' => 'Erro ao enviar email de recuperação!'
-            ]);
-        }
-        $customPassword = new CustomPassword();
+        try {
+            DB::beginTransaction();
 
-        $status = $customPassword->sendResetLink([
-            'email' => $user->getEmailForPasswordReset(),
-        ]);
+            if (!$user) {
+                return response()->json([
+                    'message' => 'Erro ao enviar email de recuperação!'
+                ]);
+            }
+            $customPassword = new CustomPassword();
 
-        if ($status === PasswordForReset::RESET_LINK_SENT) {
-            return response()->json([
-                'message' => 'Link para recuperar senha enviado!'
+            $status = $customPassword->sendResetLink([
+                'email' => $user->getEmailForPasswordReset(),
             ]);
-        }else {
-            return response()->json([
-                'message' => 'Erro ao enviar email de recuperação!'
-            ]);
+
+            if ($status === PasswordForReset::RESET_LINK_SENT) {
+                DB::commit();
+
+                return response()->json([
+                    'message' => 'Link para recuperar senha enviado!'
+                ]);
+            }else {
+                DB::rollBack();
+                return response()->json([
+                    'message' => 'Erro ao enviar email de recuperação!'
+                ]);
+            }
+        }catch (\Exception $exception) {
+            DB::rollBack();
+            throw new \Exception($exception->getMessage());
         }
     }
 
@@ -205,17 +215,27 @@ class UserController extends Controller
         ]);
         $customPassword = new CustomPassword();
 
-        $status = $customPassword->reset($request->only('email', 'password', 'token'));
+        try {
+            DB::beginTransaction();
 
+            $status = $customPassword->reset($request->only('email', 'password', 'token'));
 
-        if ($status === PasswordForReset::PASSWORD_RESET) {
-            return response()->json([
-                'message' => 'Senha resetada com sucesso!'
-            ]);
-        }else {
-            return response()->json([
-                'message' => 'Erro ao resetar senha!'
-            ]);
+            if ($status === PasswordForReset::PASSWORD_RESET) {
+                DB::commit();
+
+                return response()->json([
+                    'message' => 'Senha resetada com sucesso!'
+                ]);
+            }else {
+                DB::rollBack();
+
+                return response()->json([
+                    'message' => 'Erro ao resetar senha!'
+                ]);
+            }
+        }catch (\Exception $exception) {
+            DB::rollBack();
+            throw new \Exception($exception->getMessage());
         }
     }
 
