@@ -22,4 +22,14 @@ class QueryUserService
             'person.profilePicture'
         ]);
     }
+
+    public function getUserByIdExternal(int $id)
+    {
+        $user = (new UserRepository())->getById($id);
+        
+        return [
+            'name' => $user->person->name,
+            'email' => $user->person->email,
+        ];
+    }
 }

@@ -48,6 +48,7 @@ Route::prefix('users')->group( function() {
             Route::post('/forgot-password', 'forgotPassword');
             Route::post('/reset-password', 'resetPassword');
             Route::post('/external', 'createExternal');
+            Route::get('/external/{id}', 'getUserByIdExternal');
         });
     });
 });
