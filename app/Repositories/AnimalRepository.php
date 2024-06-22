@@ -58,11 +58,13 @@ class AnimalRepository extends Repository
                 $query
                     ->where('animal_type', $animalType);
             });
-        
+
         if ($noPaginate) {
             return $query->get();
         }
 
         return $query->paginate();
     }
+
+
 }

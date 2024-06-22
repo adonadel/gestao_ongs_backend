@@ -3,11 +3,12 @@
 use App\Http\Controllers\AdoptionController;
 use App\Http\Controllers\AnimalController;
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\EventController;
 use App\Http\Controllers\FinanceController;
 use App\Http\Controllers\MediaController;
 use App\Http\Controllers\NgrController;
-use App\Http\Controllers\PermissionsController;
+use App\Http\Controllers\PermissionController;
 use App\Http\Controllers\RoleController;
 use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Route;
@@ -78,11 +79,6 @@ Route::prefix('animals')->group( function() {
             Route::put('/{id}', 'update');
 
             Route::delete('/{id}', 'delete');
-        });
-
-        Route::middleware('api')->group(function () {
-            Route::get('/', 'getAnimals');
-            Route::get('/{id}', 'getAnimalById');
         });
     });
 });
@@ -166,9 +162,22 @@ Route::prefix('roles')->group( function() {
 });
 
 Route::prefix('permissions')->group( function() {
-    Route::controller(PermissionsController::class)->group( function() {
+    Route::controller(PermissionController::class)->group( function() {
         Route::middleware('auth:api')->group(function () {
             Route::get('/', 'getPermissions');
+        });
+    });
+});
+
+Route::prefix('dashboards')->group( function() {
+    Route::controller(DashboardController::class)->group( function() {
+        Route::middleware('auth:api')->group(function () {
+        });
+
+        Route::middleware('api')->group(function () {
+            Route::get('/animals', 'getAnimalsTotal');
+            Route::get('/animals/castration', 'getAnimalsTotalCastration');
+            Route::get('/finances', 'getFinancesTotal');
         });
     });
 });

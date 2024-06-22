@@ -7,7 +7,7 @@ use App\Models\Permission;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Gate;
 
-class PermissionsController extends Controller
+class PermissionController extends Controller
 {
     public function getPermissions(Request $request)
     {
