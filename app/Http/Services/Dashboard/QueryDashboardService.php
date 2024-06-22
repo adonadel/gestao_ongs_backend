@@ -116,6 +116,10 @@ class QueryDashboardService
                 ->pluck('total', 'month')
                 ->toArray();
 
+            if(!$finances) {
+                return [];
+            }
+
             for ($i = 1; $i <= max(array_keys($finances)); $i++) {
                 if (!isset($finances[$i])) {
                     $finances[$i] = 0;
@@ -142,6 +146,11 @@ class QueryDashboardService
                 ->pluck('total', 'week')
                 ->toArray();
 
+            if(!$finances) {
+                return [];
+            }
+
+
             $weeks = $this->getMonthWeeks();
             foreach ($weeks as $week) {
                 if (!isset($finances[$week]) && $week < array_key_first($finances)) {
@@ -166,6 +175,11 @@ class QueryDashboardService
                 ->pluck('total', 'dayofweek')
                 ->toArray();
 
+            if(!$finances) {
+                return [];
+            }
+
+
             $data = $this->handleWeeklyFill($finances);
 
         }
@@ -178,6 +192,11 @@ class QueryDashboardService
                 ->orderBy('year')
                 ->pluck('total', 'year')
                 ->toArray();
+
+            if(!$data) {
+                return [];
+            }
+
 
             $years = $this->getYears();
 
@@ -212,6 +231,11 @@ class QueryDashboardService
             })
             ->where('type', $financeType)
             ->sum('value');
+
+        if(!$finances) {
+            return 0;
+        }
+
 
         return $finances;
     }
