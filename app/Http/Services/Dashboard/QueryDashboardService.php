@@ -39,11 +39,9 @@ class QueryDashboardService
     {
         $type = data_get($filters, 'type', 'yearly');
 
-        $totalCastrated = $this->getAnimalCastrattion($type, AnimalCastrateEnum::CASTRATED);
-
-        $totalNotCastrated = $this->getAnimalCastrattion($type, AnimalCastrateEnum::NOT_CASTRATED);
-
-        $totalAwaitingCastration = $this->getAnimalCastrattion($type, AnimalCastrateEnum::AWAITING_CASTRATION);
+        $totalCastrated = $this->getAnimalCastration($type, AnimalCastrateEnum::CASTRATED);
+        $totalNotCastrated = $this->getAnimalCastration($type, AnimalCastrateEnum::NOT_CASTRATED);
+        $totalAwaitingCastration = $this->getAnimalCastration($type, AnimalCastrateEnum::AWAITING_CASTRATION);
 
         return [
             'totalCastrated' => $totalCastrated,
@@ -72,9 +70,9 @@ class QueryDashboardService
         );
 
         return [
-            'total' => $totalIncome->total - $totalExpense->total,
-            'totalIncome' => $totalIncome->total,
-            'totalExpense' => $totalExpense->total,
+            'total' => $totalIncome - $totalExpense,
+            'totalIncome' => $totalIncome,
+            'totalExpense' => $totalExpense,
             'chart' => [
                 [
                     'name' => 'Entradas',
@@ -85,7 +83,8 @@ class QueryDashboardService
                     ],
                     'itemStyle' => [
                         'color' => '#15b6b1'
-                    ]
+                    ],
+                    'footerData' => $type === 'all' ? $this->getYears() : [],
                 ],
                 [
                     'name' => 'Saídas',
@@ -96,7 +95,8 @@ class QueryDashboardService
                     ],
                     'itemStyle' => [
                         'color' => '#ff6868'
-                    ]
+                    ],
+                    'footerData' => $type === 'all' ? $this->getYears() : [],
                 ],
             ]
         ];
@@ -136,6 +136,7 @@ class QueryDashboardService
                     DB::raw('SUM(value) as total')
                 )
                 ->where('type', $financeType)
+                ->whereYear('date', now()->year)
                 ->whereMonth('date', now()->month)
                 ->groupBy(DB::raw('EXTRACT(YEAR FROM date)'), DB::raw('EXTRACT(WEEK FROM date)'))
                 ->pluck('total', 'week')
@@ -170,10 +171,23 @@ class QueryDashboardService
         }
 
         if ($filterType === 'all'){
-            $finances = $this->financeRepository->newQuery()
-            ->select(DB::raw('SUM(value) as total'))
-            ->where('type', FinanceTypeEnum::INCOME)
-            ->first();
+            $data = $this->financeRepository->newQuery()
+                ->selectRaw('SUM(value) AS total, EXTRACT(year FROM date) AS year')
+                ->where('type', $financeType)
+                ->groupBy('year')
+                ->orderBy('year')
+                ->pluck('total', 'year')
+                ->toArray();
+
+            $years = $this->getYears();
+
+            foreach ($years as $year) {
+                if(!isset($data[$year])) {
+                    $data[$year] = 0;
+                }
+            }
+
+            ksort($data);
         }
 
         return array_values($data);
@@ -181,19 +195,25 @@ class QueryDashboardService
 
     private function getFinances(string $filterType, FinanceTypeEnum $financeType)
     {
-        return $this->financeRepository->newQuery()
+        $finances = $this->financeRepository->newQuery()
             ->select(DB::raw('SUM(value) as total'))
             ->when($filterType === 'yearly', function ($query) {
-                $query->whereYear('date', now()->year);
+                $query
+                    ->whereYear('date', now()->year);
             })
             ->when($filterType === 'monthly', function ($query) {
-                $query->whereMonth('date', now()->month);
+                $query
+                    ->whereYear('date', now()->year)
+                    ->whereMonth('date', now()->month);
             })
             ->when($filterType === 'weekly', function ($query) {
-                $query->whereBetween('date', [Carbon::now()->subDays(7), Carbon::now()]);
+                $query
+                    ->whereBetween('date', [Carbon::now()->subDays(6)->startOfDay(), Carbon::now()->endOfDay()]);
             })
             ->where('type', $financeType)
-            ->first();
+            ->sum('value');
+
+        return $finances;
     }
 
     private function equalizeFinances(int $incomesCount, int $expensesCount, ?array $expensesToChart, ?array $incomesToChart): array
@@ -205,6 +225,8 @@ class QueryDashboardService
                 $incomesToChart = array_merge($incomesToChart, array_fill(0, $expensesCount - $incomesCount, 0));
             }
         }
+        ksort($incomesToChart);
+        ksort($expensesToChart);
 
         return [$expensesToChart, $incomesToChart];
     }
@@ -294,7 +316,7 @@ class QueryDashboardService
             ->count();
     }
 
-    private function getAnimalCastrattion(string $filterType, AnimalCastrateEnum $castrationType)
+    private function getAnimalCastration(string $filterType, AnimalCastrateEnum $castrationType)
     {
         return $this->animalRepository->newQuery()
             ->where('castrate_type', $castrationType)
@@ -308,5 +330,15 @@ class QueryDashboardService
                 return $query->whereBetween('created_at', [Carbon::now()->subDays(7), Carbon::now()]);
             })
             ->count();
+    }
+
+    private function getYears()
+    {
+        return $this->financeRepository->newQuery()
+            ->selectRaw('EXTRACT(year FROM date) as year')
+            ->groupBy('year')
+            ->orderBy('year')
+            ->pluck('year')
+            ->toArray();
     }
 }
