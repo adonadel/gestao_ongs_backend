@@ -12,8 +12,6 @@ use Illuminate\Support\Facades\DB;
 
 class QueryDashboardService
 {
-    private $initial;
-    private $final;
     private $financeRepository;
     private $animalRepository;
 
@@ -27,21 +25,8 @@ class QueryDashboardService
     {
         $type = data_get($filters, 'type', 'yearly');
 
-        $this->handleType($type);
-
-        $totalAnimals = $this->animalRepository->newQuery()
-            ->when($this->initial && $this->final, function ($query){
-                $query->whereBetween('created_at', [$this->initial, $this->final]);
-            })
-            ->count();
-
-        $totalAdopted = $this->animalRepository->newQuery()
-            ->join('adoptions', 'animals.id', '=', 'adoptions.animal_id')
-            ->where('adoptions.status', AdoptionsStatusEnum::ADOPTED)
-            ->when($this->initial && $this->final, function ($query){
-                $query->whereBetween('animals.created_at', [$this->initial, $this->final]);
-            })
-            ->count();
+        $totalAnimals = $this->getAnimals($type);
+        $totalAdopted = $this->getAnimalsAdopted($type);
 
         return [
             'total' => $totalAnimals,
@@ -54,28 +39,11 @@ class QueryDashboardService
     {
         $type = data_get($filters, 'type', 'yearly');
 
-        $this->handleType($type);
+        $totalCastrated = $this->getAnimalCastrattion($type, AnimalCastrateEnum::CASTRATED);
 
-        $totalCastrated = $this->animalRepository->newQuery()
-            ->where('castrate_type', AnimalCastrateEnum::CASTRATED)
-            ->when($this->initial && $this->final, function ($query){
-                $query->whereBetween('created_at', [$this->initial, $this->final]);
-            })
-            ->count();
+        $totalNotCastrated = $this->getAnimalCastrattion($type, AnimalCastrateEnum::NOT_CASTRATED);
 
-        $totalNotCastrated = $this->animalRepository->newQuery()
-            ->where('castrate_type', AnimalCastrateEnum::NOT_CASTRATED)
-            ->when($this->initial && $this->final, function ($query){
-                $query->whereBetween('created_at', [$this->initial, $this->final]);
-            })
-            ->count();
-
-        $totalAwaitingCastration = $this->animalRepository->newQuery()
-            ->where('castrate_type', AnimalCastrateEnum::AWAITING_CASTRATION)
-            ->when($this->initial && $this->final, function ($query){
-                $query->whereBetween('created_at', [$this->initial, $this->final]);
-            })
-            ->count();
+        $totalAwaitingCastration = $this->getAnimalCastrattion($type, AnimalCastrateEnum::AWAITING_CASTRATION);
 
         return [
             'totalCastrated' => $totalCastrated,
@@ -88,18 +56,8 @@ class QueryDashboardService
     {
         $type = data_get($filters, 'type', 'yearly');
 
-        $this->handleType($type);
-
-        $totalIncome = $this->financeRepository->newQuery()
-            ->select(DB::raw('SUM(value) as total'))
-            ->where('type', FinanceTypeEnum::INCOME)
-            ->first();
-
-        $totalExpense = $this->financeRepository->newQuery()
-            ->select(DB::raw('SUM(value) as total'))
-            ->where('type', FinanceTypeEnum::EXPENSE)
-            ->first();
-
+        $totalIncome = $this->getFinances($type, FinanceTypeEnum::INCOME);
+        $totalExpense = $this->getFinances($type, FinanceTypeEnum::EXPENSE);
         $expensesToChart = $this->getFinancesToChart($type, FinanceTypeEnum::EXPENSE);
         $incomesToChart = $this->getFinancesToChart($type, FinanceTypeEnum::INCOME);
 
@@ -107,7 +65,6 @@ class QueryDashboardService
         $expensesCount = count($expensesToChart);
 
         [$expensesToChart, $incomesToChart] = $this->equalizeFinances(
-            $type,
             $incomesCount,
             $expensesCount,
             $expensesToChart,
@@ -122,19 +79,6 @@ class QueryDashboardService
                 [
                     'name' => 'Entradas',
                     'type' => 'line',
-                    'stack'=> 'Total',
-                    'data' => $expensesToChart,
-                    'lineStyle' => [
-                        'color' => '#ff6868'
-                    ],
-                    'itemStyle' => [
-                        'color' => '#ff6868'
-                    ]
-                ],
-                [
-                    'name' => 'Saídas',
-                    'type' => 'line',
-                    'stack'=> 'Total',
                     'data' => $incomesToChart,
                     'lineStyle' => [
                         'color' => '#15b6b1'
@@ -143,33 +87,25 @@ class QueryDashboardService
                         'color' => '#15b6b1'
                     ]
                 ],
+                [
+                    'name' => 'Saídas',
+                    'type' => 'line',
+                    'data' => $expensesToChart,
+                    'lineStyle' => [
+                        'color' => '#ff6868'
+                    ],
+                    'itemStyle' => [
+                        'color' => '#ff6868'
+                    ]
+                ],
             ]
         ];
     }
 
-    private function handleType(string $type)
-    {
-        switch ($type) {
-            case 'yearly':
-                $this->initial = now()->year.'-01-01';
-                $this->final = now()->year.'-12-31';
-                break;
-            case 'monthly':
-                $this->initial = now()->month.'-01-01';
-                $this->final = now()->month.'-12-'.now()->month( now()->month)->daysInMonth;
-                break;
-            case 'weekly':
-                $this->initial = now()->subDays(7)->format('Y-m-d');
-                $this->final = now()->format('Y-m-d');
-                break;
-            case 'all':
-                $this->initial = null;
-                $this->final = null;
-        }
-    }
-
     private function getFinancesToChart(string $filterType, FinanceTypeEnum $financeType)
     {
+        $data = [];
+
         if ($filterType === 'yearly') {
             $finances = $this->financeRepository->newQuery()
                 ->select(DB::raw('EXTRACT(month FROM date) as month'), DB::raw('SUM(value) as total'))
@@ -188,21 +124,9 @@ class QueryDashboardService
 
             ksort($finances);
 
-            $runningTotal = 0;
-            $data = [];
-
             foreach ($finances as $i => $value) {
-                $runningTotal += $value;
-                $data[$i] = $runningTotal;
+                $data[$i] = $value === 0 ? $value : (float) $value;
             }
-
-            for ($i = 1; $i <= max(array_keys($finances)); $i++) {
-                if (!isset($finances[$i])) {
-                    $finances[$i] = 0;
-                }
-            }
-
-            return array_values($data);
         }
 
         if ($filterType === 'monthly') {
@@ -218,38 +142,67 @@ class QueryDashboardService
                 ->toArray();
 
             $weeks = $this->getMonthWeeks();
-
-            foreach ($weeks as  $week) {
-                if (!isset($finances[$week])) {
+            foreach ($weeks as $week) {
+                if (!isset($finances[$week]) && $week < array_key_first($finances)) {
                     $finances[$week] = 0;
                 }
             }
 
             ksort($finances);
 
-            $runningTotal = 0;
-            $data = [];
-
             foreach ($finances as $i => $value) {
-                $runningTotal += $value;
-                $data[$i] = $runningTotal;
+                $data[$i] = $value === 0 ? $value : (float) $value;
             }
-
-            return array_values($data);
         }
+
+        if ($filterType === 'weekly') {
+            $finances = $this->financeRepository->newQuery()
+                ->selectRaw('SUM(value) AS total, EXTRACT(dow FROM date) AS dayofweek')
+                ->where('type', $financeType)
+                ->whereBetween('date', [Carbon::now()->subDays(7), Carbon::now()])
+                ->groupBy('dayofweek')
+                ->orderBy('dayofweek')
+                ->pluck('total', 'dayofweek')
+                ->toArray();
+
+            $data = $this->handleWeeklyFill($finances);
+
+        }
+
+        if ($filterType === 'all'){
+            $finances = $this->financeRepository->newQuery()
+            ->select(DB::raw('SUM(value) as total'))
+            ->where('type', FinanceTypeEnum::INCOME)
+            ->first();
+        }
+
+        return array_values($data);
     }
 
-    private function equalizeFinances(string $filterType, int $incomesCount, int $expensesCount, ?array $expensesToChart, ?array $incomesToChart): array
+    private function getFinances(string $filterType, FinanceTypeEnum $financeType)
     {
-        if ($filterType === 'yearly') {
-            if ($incomesCount !== $expensesCount) {
-                if ($incomesCount > $expensesCount) {
-                    $lastExpense = $expensesToChart[$expensesCount - 1];
-                    $expensesToChart = array_merge($expensesToChart, array_fill(0, $incomesCount - $expensesCount, $lastExpense));
-                } else {
-                    $lastIncome = $incomesToChart[$incomesCount - 1];
-                    $incomesToChart = array_merge($incomesToChart, array_fill(0, $expensesCount - $incomesCount, $lastIncome));
-                }
+        return $this->financeRepository->newQuery()
+            ->select(DB::raw('SUM(value) as total'))
+            ->when($filterType === 'yearly', function ($query) {
+                $query->whereYear('date', now()->year);
+            })
+            ->when($filterType === 'monthly', function ($query) {
+                $query->whereMonth('date', now()->month);
+            })
+            ->when($filterType === 'weekly', function ($query) {
+                $query->whereBetween('date', [Carbon::now()->subDays(7), Carbon::now()]);
+            })
+            ->where('type', $financeType)
+            ->first();
+    }
+
+    private function equalizeFinances(int $incomesCount, int $expensesCount, ?array $expensesToChart, ?array $incomesToChart): array
+    {
+        if ($incomesCount !== $expensesCount) {
+            if ($incomesCount > $expensesCount) {
+                $expensesToChart = array_merge($expensesToChart, array_fill(0, $incomesCount - $expensesCount, 0));
+            } else {
+                $incomesToChart = array_merge($incomesToChart, array_fill(0, $expensesCount - $incomesCount, 0));
             }
         }
 
@@ -268,24 +221,92 @@ class QueryDashboardService
         $weeks = [];
 
         while ($firstDayOfMonth <= $lastDayOfMonth) {
-            $weekStartDate = $firstDayOfMonth->copy(); // Create a copy of the first day of the week
-            $weekEndDate = $weekStartDate->copy()->addDays(6); // Calculate the last day of the week
+            $weekStartDate = $firstDayOfMonth->copy();
+            $weekEndDate = $weekStartDate->copy()->addDays(6);
 
             $weeks[] = [
                 'start_date' => $weekStartDate->format('Y-m-d'),
                 'end_date' => $weekEndDate->format('Y-m-d'),
             ];
 
-            $firstDayOfMonth->addDays(7); // Increment the first day of the week to the next week
+            $firstDayOfMonth->addDays(7);
         }
 
-        $weekNumbers = []; // Initialize an empty array to store week numbers
+        $weekNumbers = [];
 
         foreach ($weeks as $week) {
-            $weekNumber = Carbon::parse($week['start_date'])->isoWeek(); // Extract week number from start date
+            $weekNumber = Carbon::parse($week['start_date'])->isoWeek();
             $weekNumbers[] = $weekNumber;
         }
 
         return $weekNumbers;
+    }
+
+    private function handleWeeklyFill(array $finances)
+    {
+        $daysOfWeek = range(0, 6);
+        $filledArray = [];
+
+        foreach ($daysOfWeek as $dayOfWeek) {
+            $foundValue = null;
+            foreach ($finances as $key => $data) {
+                if ($key === $dayOfWeek) {
+                    $foundValue = $data;
+                    break;
+                }
+            }
+
+            $filledArray[$dayOfWeek] = $foundValue ? (float) $foundValue : 0;
+        }
+
+        return $filledArray;
+    }
+
+    private function getAnimals(string $filterType)
+    {
+        return $this->animalRepository->newQuery()
+            ->when($filterType === 'yearly', function ($query) {
+                return $query->whereYear('created_at', now()->year);
+            })
+            ->when($filterType === 'monthly', function ($query) {
+                return $query->whereMonth('created_at', now()->month);
+            })
+            ->when($filterType === 'weekly', function ($query) {
+                return $query->whereBetween('created_at', [Carbon::now()->subDays(7), Carbon::now()]);
+            })
+            ->count();
+    }
+
+    private function getAnimalsAdopted(string $filterType)
+    {
+        return $this->animalRepository->newQuery()
+            ->join('adoptions', 'animals.id', '=', 'adoptions.animal_id')
+            ->when($filterType === 'yearly', function ($query) {
+                return $query->whereYear('animals.created_at', now()->year);
+            })
+            ->when($filterType === 'monthly', function ($query) {
+                return $query->whereMonth('animals.created_at', now()->month);
+            })
+            ->when($filterType === 'weekly', function ($query) {
+                return $query->whereBetween('animals.created_at', [Carbon::now()->subDays(7), Carbon::now()]);
+            })
+            ->where('adoptions.status', AdoptionsStatusEnum::ADOPTED)
+            ->count();
+    }
+
+    private function getAnimalCastrattion(string $filterType, AnimalCastrateEnum $castrationType)
+    {
+        return $this->animalRepository->newQuery()
+            ->where('castrate_type', $castrationType)
+            ->when($filterType === 'yearly', function ($query) {
+                return $query->whereYear('created_at', now()->year);
+            })
+            ->when($filterType === 'monthly', function ($query) {
+                return $query->whereMonth('created_at', now()->month);
+            })
+            ->when($filterType === 'weekly', function ($query) {
+                return $query->whereBetween('created_at', [Carbon::now()->subDays(7), Carbon::now()]);
+            })
+            ->count();
     }
 }
