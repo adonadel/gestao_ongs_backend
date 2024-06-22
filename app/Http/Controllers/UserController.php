@@ -218,4 +218,11 @@ class UserController extends Controller
             ]);
         }
     }
+
+    public function getUserByIdExternal(int $id)
+    {
+        $service = new QueryUserService();
+
+        return $service->getUserByIdExternal($id);
+    }
 }
