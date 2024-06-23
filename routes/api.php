@@ -70,7 +70,6 @@ Route::prefix('medias')->group( function() {
 Route::prefix('animals')->group( function() {
     Route::controller(AnimalController::class)->group( function() {
         Route::middleware('auth:api')->group(function () {
-            Route::get('/', 'getAnimals');
             Route::get('/{id}', 'getAnimalById');
 
             Route::post('/', 'create');
@@ -79,6 +78,9 @@ Route::prefix('animals')->group( function() {
             Route::put('/{id}', 'update');
 
             Route::delete('/{id}', 'delete');
+        });
+        Route::middleware('api')->group(function () {
+            Route::get('/', 'getAnimals');
         });
     });
 });
@@ -125,6 +127,7 @@ Route::prefix('adoptions')->group( function() {
             Route::put('/{id}/confirm', 'confirmAdoption');
             Route::put('/{id}/cancel', 'cancelAdoption');
             Route::put('/{id}/deny', 'denyAdoption');
+            Route::put('/{id}/process', 'processAdoption');
         });
     });
 });

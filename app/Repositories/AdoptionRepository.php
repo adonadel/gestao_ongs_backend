@@ -22,7 +22,7 @@ class AdoptionRepository extends Repository
         $query = $this->newQuery();
 
         $query
-            ->with('medias')
+            ->with('animal', 'user')
             ->when($search, function(Builder $query, $search){
                 $query
                     ->whereRaw('unaccent(description) ilike unaccent(?)', ["%{$search}%"]);
