@@ -16,6 +16,7 @@ class Adoption extends Model
         'animal_id',
         'user_id',
         'adoption_date',
+        'status',
     ];
 
     public function animal(): BelongsTo

@@ -13,8 +13,8 @@ class AdoptionRequest extends FormRequest
         return [
             'status' => ['required', Rule::in(AdoptionsStatusEnum::cases())],
             'description' => 'nullable|string',
-            'user_id' => 'required|int|exists:users,1',
-            'animal_id' => 'required|int|exists:animals,1'
+            'user_id' => 'required|int|exists:users,id',
+            'animal_id' => 'required|int|exists:animals,id'
         ];
     }
 }
