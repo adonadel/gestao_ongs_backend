@@ -69,6 +69,14 @@ class QueryDashboardService
             $incomesToChart
         );
 
+        $years = $this->getYears();
+        if(count($this->getYears()) === 1 && $type === 'all') {
+            $oldYear = $this->getYears()[0] - 1;
+            array_unshift($incomesToChart, 0);
+            array_unshift($expensesToChart, 0);
+            array_unshift($years, "{$oldYear}");
+        }
+
         return [
             'total' => $totalIncome - $totalExpense,
             'totalIncome' => $totalIncome,
@@ -84,7 +92,7 @@ class QueryDashboardService
                     'itemStyle' => [
                         'color' => '#15b6b1'
                     ],
-                    'footerData' => $type === 'all' ? $this->getYears() : [],
+                    'footerData' => $type === 'all' ? $years : [],
                 ],
                 [
                     'name' => 'Saídas',
@@ -93,10 +101,11 @@ class QueryDashboardService
                     'lineStyle' => [
                         'color' => '#ff6868'
                     ],
+
                     'itemStyle' => [
                         'color' => '#ff6868'
                     ],
-                    'footerData' => $type === 'all' ? $this->getYears() : [],
+                    'footerData' => $type === 'all' ? $years : [],
                 ],
             ]
         ];

@@ -70,7 +70,6 @@ Route::prefix('medias')->group( function() {
 Route::prefix('animals')->group( function() {
     Route::controller(AnimalController::class)->group( function() {
         Route::middleware('auth:api')->group(function () {
-            Route::get('/{id}', 'getAnimalById');
 
             Route::post('/', 'create');
             Route::post('/with-medias', 'createWithMedias');
@@ -81,6 +80,7 @@ Route::prefix('animals')->group( function() {
         });
         Route::middleware('api')->group(function () {
             Route::get('/', 'getAnimals');
+            Route::get('/{id}', 'getAnimalById');
         });
     });
 });
