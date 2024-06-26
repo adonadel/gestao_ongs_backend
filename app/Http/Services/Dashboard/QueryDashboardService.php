@@ -111,6 +111,43 @@ class QueryDashboardService
         ];
     }
 
+    public function getFinancesTotalToExternal()
+    {
+        $monthIncome = $this->financeRepository->newQuery()
+            ->select(DB::raw('SUM(value) as total'))
+            ->where('type', FinanceTypeEnum::INCOME)
+            ->whereYear('date', now()->year)
+            ->whereMonth('date', now()->month)
+            ->first();
+
+        $monthExpense = $this->financeRepository->newQuery()
+            ->select(DB::raw('SUM(value) as total'))
+            ->where('type', FinanceTypeEnum::EXPENSE)
+            ->whereYear('date', now()->year)
+            ->whereMonth('date', now()->month)
+            ->first();
+
+        $yearIncome = $this->financeRepository->newQuery()
+            ->select(DB::raw('SUM(value) as total'))
+            ->where('type', FinanceTypeEnum::INCOME)
+            ->whereYear('date', now()->year)
+            ->first();
+
+        $yearExpense = $this->financeRepository->newQuery()
+            ->select(DB::raw('SUM(value) as total'))
+            ->where('type', FinanceTypeEnum::EXPENSE)
+            ->whereYear('date', now()->year)
+            ->first();
+
+        return [
+            'yearIncome' => $yearIncome->total ?? 0,
+            'yearExpense' => $yearExpense->total ?? 0,
+            'monthIncome' => $monthIncome->total ?? 0,
+            'monthExpense' => $monthExpense->total ?? 0,
+        ];
+
+    }
+
     private function getFinancesToChart(string $filterType, FinanceTypeEnum $financeType)
     {
         $data = [];

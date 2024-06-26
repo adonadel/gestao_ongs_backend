@@ -49,6 +49,7 @@ Route::prefix('users')->group( function() {
             Route::post('/forgot-password', 'forgotPassword');
             Route::post('/reset-password', 'resetPassword');
             Route::post('/external', 'createExternal');
+            Route::put('/external/{id}', 'updateExternal');
             Route::get('/external/{id}', 'getUserByIdExternal');
         });
     });
@@ -181,6 +182,7 @@ Route::prefix('dashboards')->group( function() {
             Route::get('/animals', 'getAnimalsTotal');
             Route::get('/animals/castration', 'getAnimalsTotalCastration');
             Route::get('/finances', 'getFinancesTotal');
+            Route::get('/finances-external', 'getFinancesTotalToExternal');
         });
     });
 });

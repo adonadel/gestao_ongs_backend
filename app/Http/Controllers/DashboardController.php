@@ -25,4 +25,11 @@ class DashboardController extends Controller
 
         return $service->getFinancesTotal($request->all());
     }
+
+    public function getFinancesTotalToExternal()
+    {
+        $service = new QueryDashboardService();
+
+        return $service->getFinancesTotalToExternal();
+    }
 }

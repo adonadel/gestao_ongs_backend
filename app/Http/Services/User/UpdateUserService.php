@@ -3,6 +3,7 @@
 namespace App\Http\Services\User;
 
 
+use App\Enums\UserTypeEnum;
 use App\Repositories\AddressRepository;
 use App\Repositories\PeopleRepository;
 use App\Repositories\UserRepository;
@@ -42,5 +43,27 @@ class UpdateUserService
         }
 
         return $address;
+    }
+
+    public function updateExternal(array $data, int $id)
+    {
+        $userRepository = new UserRepository();
+        $personRepository = new PeopleRepository();
+
+        $personData = data_get($data, 'person');
+
+        if($addressData = data_get($personData, 'address')) {
+            $address = $this->handleAddress($addressData);
+            $personData['address_id'] = $address->id;
+            unset($personData['address']);
+        }
+        $user = $userRepository->getById($id);
+
+        $personRepository->update($user->person, $personData);
+
+        if ($user->type === UserTypeEnum::INTERNAL) {
+            return $user->fresh()->load(['person.address', 'role', 'role.permissions', 'person.profilePicture']);
+        }
+        return $user->fresh();
     }
 }

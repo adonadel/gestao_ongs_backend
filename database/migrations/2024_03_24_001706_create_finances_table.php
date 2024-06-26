@@ -20,7 +20,7 @@ return new class extends Migration
             $table->foreignIdFor(User::class)->nullable();
             $table->foreignIdFor(Animal::class)->nullable();
             $table->string('session_id')->nullable();
-            $table->text('description');
+            $table->text('description')->nullable();
             $table->date('date');
             $table->double('value');
             $table->enum('type', FinanceTypeEnum::toArrayWithString());
