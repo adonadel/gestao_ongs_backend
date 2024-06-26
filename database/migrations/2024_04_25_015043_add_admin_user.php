@@ -2,8 +2,6 @@
 
 use App\Enums\UserTypeEnum;
 use App\Models\People;
-use App\Models\Permission;
-use App\Models\PermissionRole;
 use App\Models\Role;
 use App\Models\User;
 use Illuminate\Database\Migrations\Migration;
@@ -23,13 +21,6 @@ return new class extends Migration
         ]);
 
         $role = Role::whereName('admin')->first();
-
-        foreach (Permission::all() as $permission) {
-            PermissionRole::create([
-                'role_id' => $role->id,
-                'permission_id' => $permission->id,
-            ]);
-        }
 
         User::create([
             'password' => Hash::make('Pw12345678!'),
