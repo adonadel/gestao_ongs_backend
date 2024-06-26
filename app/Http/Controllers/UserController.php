@@ -96,6 +96,42 @@ class UserController extends Controller
         }
     }
 
+    public function updateExternal(Request $request, int $id)
+    {
+        $validated = $request->validate([
+            'person' => 'array|required',
+            'person.name' => 'required|string',
+            'person.phone' => 'nullable|string',
+            'person.address_id' => 'nullable|int',
+            'person.address' => 'nullable|array',
+            'person.address.id' => 'nullable|int',
+            'person.address.zip' => 'nullable|string',
+            'person.address.street' => 'nullable|string',
+            'person.address.number' => 'nullable|string',
+            'person.address.neighborhood' => 'nullable|string',
+            'person.address.city' => 'nullable|string',
+            'person.address.state' => 'nullable|string',
+            'person.address.complement' => 'nullable|string',
+            'person.address.longitude' => 'nullable|string',
+            'person.address.latitude' => 'nullable|string',
+        ]);
+
+        try {
+            DB::beginTransaction();
+
+            $service = new UpdateUserService();
+
+            $updated = $service->updateExternal($validated, $id);
+
+            DB::commit();
+
+            return $updated;
+        }catch(\Exception $exception) {
+            DB::rollBack();
+            throw new \Exception($exception->getMessage());
+        }
+    }
+
     public function delete(int $id)
     {
         Gate::authorize('delete', auth()->user());
