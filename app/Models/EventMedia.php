@@ -14,7 +14,7 @@ class EventMedia extends Pivot
     protected $fillable = [
         'event_id',
         'media_id',
-        'order',
+        'is_cover',
     ];
 
     public function event(): BelongsTo

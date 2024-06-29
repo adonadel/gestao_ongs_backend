@@ -23,7 +23,7 @@ class UserRepository extends Repository
         $query = $this->newQuery();
 
         $query
-            ->with(['person.address', 'role', 'role.permissions'])
+            ->with(['person.address', 'role', 'role.permissions', 'person.profilePicture'])
             ->when($search, function(Builder $query, $search){
                 $query->whereHas('person', function (Builder $query) use ($search){
                    $check = StringUtils::checkIfStringStartWithNumber($search);

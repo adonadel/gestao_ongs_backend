@@ -2,7 +2,6 @@
 
 namespace App\Http\Services\Animal;
 
-use App\Http\Services\Media\CreateMediaService;
 use App\Repositories\AnimalRepository;
 
 class UpdateAnimalService
@@ -16,12 +15,10 @@ class UpdateAnimalService
 
         $repository->update($animal, $data);
 
-        if (data_get($data, 'medias')) {
-            foreach (data_get($data, 'medias') as $media){
-                $createMediaService = new CreateMediaService();
-
-                $createMediaService->create($media);
-            }
+        $mediasIds = data_get($data, 'medias');
+        
+        if ($mediasIds && $exploded = explode(",", trim($mediasIds))) {
+            $animal->medias()->sync($exploded);
         }
 
         return $animal;

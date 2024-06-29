@@ -1,6 +1,7 @@
 <?php
 
 use App\Enums\UserStatusEnum;
+use App\Enums\UserTypeEnum;
 use App\Models\People;
 use App\Models\Role;
 use Illuminate\Database\Migrations\Migration;
@@ -19,6 +20,7 @@ return new class extends Migration
             $table->foreignIdFor(Role::class);
             $table->foreignIdFor(People::class);
             $table->enum('status', UserStatusEnum::toArrayWithString())->default(UserStatusEnum::ENABLED);
+            $table->enum('type', UserTypeEnum::toArrayWithString());
             $table->string('password');
             $table->timestamps();
             $table->softDeletes();

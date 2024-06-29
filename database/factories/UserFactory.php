@@ -2,11 +2,11 @@
 
 namespace Database\Factories;
 
+use App\Enums\UserTypeEnum;
 use App\Models\People;
 use App\Models\Role;
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Support\Facades\Hash;
-use Illuminate\Support\Str;
 
 /**
  * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\User>
@@ -32,6 +32,7 @@ class UserFactory extends Factory
             'password' => static::$password ??= Hash::make('password'),
             'people_id' => $person->id,
             'role_id' => $role->id,
+            'type' => UserTypeEnum::INTERNAL
         ];
     }
 }

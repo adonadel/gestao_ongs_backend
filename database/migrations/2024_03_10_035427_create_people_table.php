@@ -19,7 +19,8 @@ return new class extends Migration
             $table->foreignIdFor(Media::class, 'profile_picture_id')->nullable();
             $table->string('name', 100);
             $table->string('email', 100)->unique();
-            $table->string('cpf_cnpj', 20);
+            $table->string('cpf_cnpj', 20)->unique();
+            $table->string('phone', 20)->nullable();
             $table->timestamps();
             $table->softDeletes();
         });

@@ -23,7 +23,8 @@ class PermissionRepository extends Repository
             ->when($search, function(Builder $query, $search){
                 $query
                     ->whereRaw('unaccent(name) ilike unaccent(?)', ["%{$search}%"])
-                    ->orWhereRaw('unaccent(display_name) ilike unaccent(?)', ["%{$search}%"]);
+                    ->orWhereRaw('unaccent(display_name) ilike unaccent(?)', ["%{$search}%"])
+                    ->orWhereRaw('unaccent(type) ilike unaccent(?)', ["%{$search}%"]);
             });
 
         if ($noPaginate) {

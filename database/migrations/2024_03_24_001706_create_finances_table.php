@@ -1,5 +1,6 @@
 <?php
 
+use App\Enums\FinancePaymentStatusEnum;
 use App\Enums\FinanceTypeEnum;
 use App\Models\Animal;
 use App\Models\User;
@@ -18,10 +19,12 @@ return new class extends Migration
             $table->id();
             $table->foreignIdFor(User::class)->nullable();
             $table->foreignIdFor(Animal::class)->nullable();
-            $table->text('description');
+            $table->string('session_id')->nullable();
+            $table->text('description')->nullable();
             $table->date('date');
             $table->double('value');
             $table->enum('type', FinanceTypeEnum::toArrayWithString());
+            $table->enum('status', FinancePaymentStatusEnum::toArrayWithString())->default(FinancePaymentStatusEnum::UNPAID);
             $table->timestamps();
         });
     }

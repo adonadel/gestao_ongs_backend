@@ -6,7 +6,14 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+
+
+/**
+ *
+ * @property Address $address
+ * @property Media $medias
+ */
 
 class Event extends Model
 {
@@ -17,6 +24,7 @@ class Event extends Model
         'description',
         'event_date',
         'location',
+        'address_id',
     ];
 
     public function address(): BelongsTo
@@ -24,8 +32,8 @@ class Event extends Model
         return $this->belongsTo(Address::class);
     }
 
-    public function medias(): HasMany
+    public function medias(): BelongsToMany
     {
-        return $this->hasMany(Media::class);
+        return $this->belongsToMany(Media::class)->orderBy('is_cover')->withPivot('is_cover');
     }
 }

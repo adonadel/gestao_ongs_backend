@@ -1614,6 +1614,122 @@
                 }
             }
         },
+        "/finances/{id}/success": {
+            "put": {
+                "tags": [
+                    "Finances"
+                ],
+                "summary": "Através dessa rota, o usuário poderá atualizar o status da finança para pago",
+                "description": "",
+                "operationId": "financeUpdateStatusToSuccess",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path"
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Se houver uma finança com o id informado e as informações estiverem corretas, o status da finança será editada",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "message": {
+                                            "type": "string"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Indica que há algum problema com as credenciais",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "message": {
+                                            "type": "string"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Erro de validação da request",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#components/schemas/ValidationError"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/finances/{id}/cancel": {
+            "put": {
+                "tags": [
+                    "Finances"
+                ],
+                "summary": "Através dessa rota, o usuário poderá atualizar o status da finança para cancelado",
+                "description": "",
+                "operationId": "financeUpdateStatusToCancel",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path"
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Se houver uma finança com o id informado e as informações estiverem corretas, o status da finança será editada",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "message": {
+                                            "type": "string"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Indica que há algum problema com as credenciais",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "message": {
+                                            "type": "string"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Erro de validação da request",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#components/schemas/ValidationError"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
         "/medias": {
             "post": {
                 "tags": [
@@ -1979,7 +2095,7 @@
                     "content": {
                         "application/json": {
                             "schema": {
-                                "$ref": "#components/schemas/RoleModel"
+                                "$ref": "#components/schemas/RoleCreateModel"
                             }
                         }
                     }
@@ -2142,7 +2258,7 @@
                     "content": {
                         "application/json": {
                             "schema": {
-                                "$ref": "#components/schemas/RoleModel"
+                                "$ref": "#components/schemas/RoleCreateModel"
                             }
                         }
                     }
@@ -2779,8 +2895,16 @@
                         "description": "Nível de idade do animal criado",
                         "type": "string"
                     },
+                    "castrate_type": {
+                        "description": "Estado de castraçcão do animal criado",
+                        "type": "string"
+                    },
                     "description": {
                         "description": "Descrição do animal criado",
+                        "type": "string"
+                    },
+                    "location": {
+                        "description": "Localização atual do animal criado",
                         "type": "string"
                     },
                     "tags": {
@@ -2989,6 +3113,10 @@
                         "description": "Altura da imagem criada",
                         "type": "integer"
                     },
+                    "order": {
+                        "description": "Ordem da imagem",
+                        "type": "integer"
+                    },
                     "created_at": {
                         "description": "Data de criação da imagem criada",
                         "type": "string"
@@ -3041,6 +3169,10 @@
                     },
                     "created_at": {
                         "description": "Data de criação da ong criada",
+                        "type": "string"
+                    },
+                    "phone": {
+                        "description": "Telefone da ong criada",
                         "type": "string"
                     },
                     "address": {
@@ -3115,6 +3247,26 @@
                     "created_at": {
                         "description": "Data de criação do nível permissão criada",
                         "type": "string"
+                    },
+                    "permissions": {
+                        "description": "Array com as permissões a serem ligadas ao nível de permissão",
+                        "type": "array",
+                        "items": {
+                            "properties": {
+                                "id": {
+                                    "description": "Id da permissão criada",
+                                    "type": "integer"
+                                },
+                                "name": {
+                                    "description": "Nome da permissão criada",
+                                    "type": "string"
+                                },
+                                "display_name": {
+                                    "description": "Nome de exibição da permissão criada",
+                                    "type": "string"
+                                }
+                            }
+                        }
                     }
                 }
             },
@@ -3157,6 +3309,10 @@
                                 },
                                 "cpf_cnpj": {
                                     "description": "CPF/CNPJ do usuário criado",
+                                    "type": "string"
+                                },
+                                "phone": {
+                                    "description": "Telefone do usuário criado",
                                     "type": "string"
                                 },
                                 "address_id": {
@@ -3236,10 +3392,6 @@
                         "type": "integer",
                         "required": false
                     },
-                    "created_at": {
-                        "description": "Data de criação do usuário criado",
-                        "type": "string"
-                    },
                     "person": {
                         "description": "Pessoa com os dados do usuário criado",
                         "type": "array",
@@ -3296,6 +3448,39 @@
                                 "profile_picture_id": {
                                     "description": "Id da foto de perfil",
                                     "type": "integer"
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "RoleCreateModel": {
+                "type": "object",
+                "properties": {
+                    "id": {
+                        "description": "Id do nível permissão criada",
+                        "type": "integer"
+                    },
+                    "name": {
+                        "description": "Nome do nível permissão criada",
+                        "type": "string"
+                    },
+                    "permissions": {
+                        "description": "Array com as permissões a serem ligadas ao nível de permissão",
+                        "type": "array",
+                        "items": {
+                            "properties": {
+                                "id": {
+                                    "description": "Id da permissão criada",
+                                    "type": "integer"
+                                },
+                                "name": {
+                                    "description": "Nome da permissão criada",
+                                    "type": "string"
+                                },
+                                "display_name": {
+                                    "description": "Nome de exibição da permissão criada",
+                                    "type": "string"
                                 }
                             }
                         }

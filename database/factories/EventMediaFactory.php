@@ -17,7 +17,7 @@ class EventMediaFactory extends Factory
         return [
             'animal_id' => $event->id,
             'media_id' => $media->id,
-            'order' => fake()->unique()->randomNumber(),
+            'is_cover' => false,
         ];
     }
 }

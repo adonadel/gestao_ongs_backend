@@ -10,7 +10,8 @@ class RoleRequest extends FormRequest
     {
         return [
             'name' => 'required|string',
-            'permissions' => 'required|array'
+            'permissions' => 'required_without:permissionsIds|array',
+            'permissionsIds' => 'required_without:permissions|string'
         ];
     }
 }

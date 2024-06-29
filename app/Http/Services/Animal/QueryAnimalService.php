@@ -13,6 +13,16 @@ class QueryAnimalService
 
     public function getAnimalById(int $id)
     {
-        return (new AnimalRepository())->getById($id);
+        $animal = (new AnimalRepository())->getById($id)->load('medias');
+
+        return [
+            ...$animal->toArray(),
+            'medias' => $animal->medias->map(function ($media) {
+                return [
+                    ...$media->toArray(),
+                    'is_cover' => (bool) $media->pivot->is_cover
+                ];
+            })
+        ];
     }
 }

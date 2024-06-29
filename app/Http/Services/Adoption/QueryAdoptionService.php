@@ -13,6 +13,6 @@ class QueryAdoptionService
 
     public function getAdoptionById(int $id)
     {
-        return (new AdoptionRepository())->getById($id);
+        return (new AdoptionRepository())->getById($id)->load('animal', 'user');
     }
 }

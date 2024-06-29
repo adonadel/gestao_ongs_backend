@@ -2,22 +2,20 @@
 
 namespace App\Http\Controllers;
 
+use App\Enums\UserTypeEnum;
 use App\Extensions\CustomPassword;
+use App\Http\Requests\UserRequest;
 use App\Http\Services\User\CreateUserService;
 use App\Http\Services\User\DeleteUserService;
 use App\Http\Services\User\DisableUserService;
 use App\Http\Services\User\EnableUserService;
 use App\Http\Services\User\QueryUserService;
 use App\Http\Services\User\UpdateUserService;
-use App\Models\Role;
 use App\Repositories\UserRepository;
-use App\Rules\UniqueCpfCnpj;
-use App\Rules\UniqueEmail;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Password as PasswordForReset;
-use Illuminate\Validation\Rule;
 use Illuminate\Validation\Rules\Password;
 
 class UserController extends Controller
@@ -40,7 +38,7 @@ class UserController extends Controller
         return $service->getUserById($id);
     }
 
-    public function create(Request $request)
+    public function create(UserRequest $request)
     {
         Gate::authorize('create', auth()->user());
 
@@ -49,18 +47,25 @@ class UserController extends Controller
 
             $service = new CreateUserService();
 
-            $validated = $request->validate([
-                'password' => [
-                    'required', Password::min(6)->mixedCase()->letters()->numbers()
-                ],
-                'role_id' => ['required', 'int', Rule::exists(Role::class, 'id')],
-                'person' => 'array|required',
-                'person.name' => 'required|string',
-                'person.email' => ['required', 'email', new UniqueEmail(new UserRepository())],
-                'person.cpf_cnpj' => ['required', 'string', new UniqueCpfCnpj(new UserRepository())],
-            ]);
+            $user = $service->create($request->all(), null);
 
-            $user = $service->create($validated);
+            DB::commit();
+
+            return $user;
+        }catch(\Exception $exception) {
+            DB::rollBack();
+            throw new \Exception($exception->getMessage());
+        }
+    }
+
+    public function createExternal(UserRequest $request)
+    {
+        try {
+            DB::beginTransaction();
+
+            $service = new CreateUserService();
+
+            $user = $service->create($request->all(), UserTypeEnum::EXTERNAL);
 
             DB::commit();
 
@@ -80,19 +85,43 @@ class UserController extends Controller
 
             $service = new UpdateUserService();
 
-            $validated = $request->validate([
-                'password' => [
-                    'nullable', Password::min(6)->mixedCase()->letters()->numbers()
-                ],
-                'role_id' => ['required', 'int', Rule::exists(Role::class, 'id')],
-                'person' => 'array|required',
-                'person.id' => 'required|int',
-                'person.name' => 'required|string',
-                'person.email' => ['required', 'email', new UniqueEmail(new UserRepository())],
-                'person.cpf_cnpj' => ['required', 'string', new UniqueCpfCnpj(new UserRepository())],
-            ]);
+            $updated = $service->update($request->all(), $id);
 
-            $updated = $service->update($validated, $id);
+            DB::commit();
+
+            return $updated;
+        }catch(\Exception $exception) {
+            DB::rollBack();
+            throw new \Exception($exception->getMessage());
+        }
+    }
+
+    public function updateExternal(Request $request, int $id)
+    {
+        $validated = $request->validate([
+            'person' => 'array|required',
+            'person.name' => 'required|string',
+            'person.phone' => 'nullable|string',
+            'person.address_id' => 'nullable|int',
+            'person.address' => 'nullable|array',
+            'person.address.id' => 'nullable|int',
+            'person.address.zip' => 'nullable|string',
+            'person.address.street' => 'nullable|string',
+            'person.address.number' => 'nullable|string',
+            'person.address.neighborhood' => 'nullable|string',
+            'person.address.city' => 'nullable|string',
+            'person.address.state' => 'nullable|string',
+            'person.address.complement' => 'nullable|string',
+            'person.address.longitude' => 'nullable|string',
+            'person.address.latitude' => 'nullable|string',
+        ]);
+
+        try {
+            DB::beginTransaction();
+
+            $service = new UpdateUserService();
+
+            $updated = $service->updateExternal($validated, $id);
 
             DB::commit();
 
@@ -179,25 +208,35 @@ class UserController extends Controller
 
         $user = $userRepository->getByEmail($request->email);
 
-        if (!$user) {
-            return response()->json([
-                'message' => 'Erro ao enviar email de recuperação!'
-            ]);
-        }
-        $customPassword = new CustomPassword();
+        try {
+            DB::beginTransaction();
 
-        $status = $customPassword->sendResetLink([
-            'email' => $user->getEmailForPasswordReset(),
-        ]);
+            if (!$user) {
+                return response()->json([
+                    'message' => 'Erro ao enviar email de recuperação!'
+                ]);
+            }
+            $customPassword = new CustomPassword();
 
-        if ($status === PasswordForReset::RESET_LINK_SENT) {
-            return response()->json([
-                'message' => 'Link para recuperar senha enviado!'
+            $status = $customPassword->sendResetLink([
+                'email' => $user->getEmailForPasswordReset(),
             ]);
-        }else {
-            return response()->json([
-                'message' => 'Erro ao enviar email de recuperação!'
-            ]);
+
+            if ($status === PasswordForReset::RESET_LINK_SENT) {
+                DB::commit();
+
+                return response()->json([
+                    'message' => 'Link para recuperar senha enviado!'
+                ]);
+            }else {
+                DB::rollBack();
+                return response()->json([
+                    'message' => 'Erro ao enviar email de recuperação!'
+                ]);
+            }
+        }catch (\Exception $exception) {
+            DB::rollBack();
+            throw new \Exception($exception->getMessage());
         }
     }
 
@@ -212,17 +251,34 @@ class UserController extends Controller
         ]);
         $customPassword = new CustomPassword();
 
-        $status = $customPassword->reset($request->only('email', 'password', 'token'));
+        try {
+            DB::beginTransaction();
 
+            $status = $customPassword->reset($request->only('email', 'password', 'token'));
 
-        if ($status === PasswordForReset::PASSWORD_RESET) {
-            return response()->json([
-                'message' => 'Senha resetada com sucesso!'
-            ]);
-        }else {
-            return response()->json([
-                'message' => 'Erro ao resetar senha!'
-            ]);
+            if ($status === PasswordForReset::PASSWORD_RESET) {
+                DB::commit();
+
+                return response()->json([
+                    'message' => 'Senha resetada com sucesso!'
+                ]);
+            }else {
+                DB::rollBack();
+
+                return response()->json([
+                    'message' => 'Erro ao resetar senha!'
+                ]);
+            }
+        }catch (\Exception $exception) {
+            DB::rollBack();
+            throw new \Exception($exception->getMessage());
         }
+    }
+
+    public function getUserByIdExternal(int $id)
+    {
+        $service = new QueryUserService();
+
+        return $service->getUserByIdExternal($id);
     }
 }

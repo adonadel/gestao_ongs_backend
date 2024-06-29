@@ -29,7 +29,7 @@ class AuthController extends Controller
         return response()->json([
             'data' => [
                 'token' => $token,
-                'expires_in' => auth()->factory()->getTTL() * 60 * 8
+                'expires_in' => auth()->factory()->getTTL() * 60 * 60
             ]
         ]);
     }
@@ -57,7 +57,7 @@ class AuthController extends Controller
             throw new \Exception('Nenhum usuário logado');
         }
 
-        return auth()->user();
+        return auth()->user()->load(['person.address', 'role', 'role.permissions', 'person.profilePicture']);
     }
 
     public function refreshToken(Request $request)

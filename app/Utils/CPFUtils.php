@@ -19,7 +19,7 @@ abstract class CPFUtils
         return preg_replace('/[^\da-zA-Z]/', '', $string);
     }
 
-    public function validateCPF($cpf)
+    public static function validateCPF($cpf)
     {
         $cpf = preg_replace( '/[^0-9]/is', '', $cpf );
 

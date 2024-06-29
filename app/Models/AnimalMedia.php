@@ -14,7 +14,7 @@ class AnimalMedia extends Pivot
     protected $fillable = [
         'animal_id',
         'media_id',
-        'order',
+        'is_cover',
     ];
 
     public function animal(): BelongsTo
